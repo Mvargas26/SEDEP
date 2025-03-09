@@ -7,16 +7,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DAL
+namespace Datos
 {
-    public class SQLServerContext
+    public class SQLServerContext_Datos
     {
         //Variables
         SqlConnection? sqlConn = null;
 
 
         //Constructor
-        public SQLServerContext()
+        public SQLServerContext_Datos()
         {
             var _configuration = new ConfigurationBuilder()
                .AddJsonFile("appsettings.json")
@@ -72,7 +72,7 @@ namespace DAL
             }
         }
 
-        public void EjecutarSQLconSP(string NombreSP, List<SqlParameter> listaParametro)
+        public void EjecutarSQLconSP_Void(string NombreSP, List<SqlParameter> listaParametro)
         {
             try
             {
@@ -108,7 +108,40 @@ namespace DAL
             }
         }
 
-        public DataTable EjecutarSqlDT(string consulta)
+        public DataTable EjecutarSQLconSP_DT(string NombreSP, List<SqlParameter> listaParametro)
+        {
+            try
+            {
+                SqlCommand cmd = new()
+                {
+                    CommandType = CommandType.StoredProcedure,
+                    CommandText = NombreSP,
+                    Connection = this.sqlConn,
+                };
+
+                foreach (SqlParameter sqlParam in listaParametro)
+                    cmd.Parameters.Add(sqlParam);
+
+                if (this.sqlConn.State != ConnectionState.Open)
+                    this.sqlConn.Open();
+
+                SqlDataAdapter da = new(cmd);
+                DataTable dt = new();
+                da.Fill(dt);
+
+                this.sqlConn.Close();
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                if (this.sqlConn.State == ConnectionState.Open)
+                    this.sqlConn.Close();
+
+                throw new Exception("Se ha producido un error al ejecutar el procedimiento almacenado", ex);
+            }
+        }
+
+        public DataTable EjecutarSqlDirecto_DT(string consulta)
         {
             try
             {
