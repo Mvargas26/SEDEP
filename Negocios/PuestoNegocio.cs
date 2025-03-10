@@ -20,10 +20,10 @@ namespace Negocios
         }
 
         //Obtener todos
-        public List<PuestoModel> ObtenerTodosLosPuestos()
+        public List<PuestoModel> ObtenerPuestos()
         {
             List<PuestoModel> listaPuestos = new();
-            DataTable dt = _contexto.EjecutarSqlDirecto_DT("SELECT * FROM Puesto");
+            DataTable dt = _contexto.EjecutarSqlDirecto_DT("sp_ObtenerPuesto");
 
             foreach (DataRow row in dt.Rows)
             {
@@ -38,7 +38,7 @@ namespace Negocios
         }
 
         // Obtener por ID
-        public PuestoModel ObtenerPuestoPorId(int id)
+        public PuestoModel ObtenerPuestoId(int id)
         {
             List<SqlParameter> parametros = new()
             {
