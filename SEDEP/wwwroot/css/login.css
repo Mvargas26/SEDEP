@@ -1,5 +1,5 @@
 ﻿body {
-    background-color: #0A0F3D;
+    background-color: #202859;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -64,7 +64,7 @@
     }
 
     .login-container .btn-login {
-        background-color: #5A67D8;
+        background-color: #202859;
         color: white;
         font-size: 18px;
         font-weight: bold;
