@@ -16,7 +16,7 @@ namespace Negocios
         //***************** VARIABLES *******************
         private readonly SQLServerContext_Datos _datos;
 
-        public DepartamentoNegocios(SQLServerContext_Datos datos)
+        public DepartamentosNegocio(SQLServerContext_Datos datos)
         {
             _datos = datos;
         }
