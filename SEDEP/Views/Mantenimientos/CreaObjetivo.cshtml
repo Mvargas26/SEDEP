@@ -1,0 +1,37 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Crear Objetivo";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">@ViewData["Title"]</h2>
+    <form>
+        <div class="mb-3">
+            <label for="nombreObjetivo" class="form-label">Nombre del Objetivo</label>
+            <input type="text" id="nombreObjetivo" class="form-control" required maxlength="255">
+        </div>
+        <div class="mb-3">
+            <label for="porcentaje" class="form-label">Porcentaje</label>
+            <input type="number" id="porcentaje" class="form-control" required min="0" max="100">
+        </div>
+        <div class="mb-3">
+            <label for="tipoObjetivo" class="form-label">Tipo de Objetivo</label>
+            <select id="tipoObjetivo" class="form-control">
+                <option value="Estratégico">Estratégico</option>
+                <option value="Operativo">Operativo</option>
+                <option value="Táctico">Táctico</option>
+            </select>
+        </div>
+        <div class="d-flex justify-content-between">
+            <a href="/Mantenimientos/GestionObjetivos" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Guardar
+            </button>
+        </div>
+    </form>
+</div>

@@ -10,6 +10,26 @@ namespace SEDEP.Controllers
             return View();
         }
 
+        public IActionResult GestionObjetivos()
+        {
+            var objetivos = new List<ObjetivoModel>
+        {
+            new ObjetivoModel { Id = 1, Nombre = "Mejorar productividad", Porcentaje = 80, Tipo = "Estratégico" },
+            new ObjetivoModel { Id = 2, Nombre = "Aumentar satisfacción del cliente", Porcentaje = 90, Tipo = "Operativo" }
+        };
+            return View(objetivos);
+        }
+
+        public IActionResult CreaObjetivo()
+        {
+            return View(new ObjetivoModel());
+        }
+
+        public IActionResult EditaObjetivo(int id)
+        {
+            var objetivo = new ObjetivoModel { Id = id, Nombre = "Mejorar productividad", Porcentaje = 80, Tipo = "Estratégico" };
+            return View(objetivo);
+        }
         // Gestión de Departamentos (ya existente)
         public IActionResult ManteniDepartamentos()
         {
@@ -53,5 +73,18 @@ namespace SEDEP.Controllers
             var conglomerado = new ConglomeradoModel { IdConglomerado = id, Nombre = "Técnico", Descripcion = "Nivel Técnico" };
             return View(conglomerado);
         }
+
+
+
     }
+
+    // lo ideal es crearlo en modelos, pero lo puse aqui solo para probar el front
+    public class ObjetivoModel
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public int Porcentaje { get; set; } // Entre 0 y 100
+        public string Tipo { get; set; } // Estratégico, Operativo, Táctico
+    }
+
 }
