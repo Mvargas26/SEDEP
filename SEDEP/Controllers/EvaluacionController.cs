@@ -8,5 +8,10 @@ namespace SEDEP.Controllers
         {
             return View();
         }
+
+        public IActionResult EvaluacionSubalterno()
+        {
+            return View();
+        }
     }
 }
