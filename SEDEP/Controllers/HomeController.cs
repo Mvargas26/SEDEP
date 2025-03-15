@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Negocios;
 using SEDEP.Models;
 using System.Diagnostics;
 
@@ -27,6 +28,15 @@ namespace SEDEP.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public IActionResult pruebaConexion()
+        {
+            ConglomeradosNegocios obj1 = new ConglomeradosNegocios();
+
+           TempData["Mensaje"] = obj1.pruebaConexion(); ;
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

@@ -18,15 +18,21 @@ namespace Datos
         //Constructor
         public SQLServerContext_Datos()
         {
-            var _configuration = new ConfigurationBuilder()
-               .AddJsonFile("appsettings.json")
-               .Build();
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
 
-            if (!string.IsNullOrEmpty(_configuration.GetConnectionString("SEDEP")))
-                this.sqlConn = new SqlConnection(_configuration.GetConnectionString("SEDEP")?.ToString());
+            var _configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory()) 
+                .AddJsonFile(path, optional: false, reloadOnChange: true)
+                .Build();
+
+            string? connectionString = _configuration.GetConnectionString("SEDEP");
+
+            if (!string.IsNullOrEmpty(connectionString))
+                this.sqlConn = new SqlConnection(connectionString);
             else
                 throw new ArgumentNullException("No se ha obtenido un string de conexión desde el archivo de configuración.");
-        }//fn constructor
+        }
+        //fn constructor
 
         public void pruebaCon()
         {
