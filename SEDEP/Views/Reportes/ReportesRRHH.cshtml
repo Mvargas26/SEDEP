@@ -1,0 +1,58 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Reportes por Departamento, Funcionario, Conglomerado o Puesto";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">@ViewData["Title"]</h2>
+    <form>
+        <div class="mb-3">
+            <label for="tipoReporte" class="form-label">Tipo de Reporte:</label>
+            <select id="tipoReporte" class="form-control">
+                <option value="Departamento">Departamento</option>
+                <option value="Funcionario">Funcionario</option>
+                <option value="Conglomerado">Conglomerado</option>
+                <option value="Puesto">Puesto</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="filtro" class="form-label">Seleccione Filtro:</label>
+            <input type="text" id="filtro" class="form-control" placeholder="Ingrese criterio">
+        </div>
+        <div class="mb-3">
+            <label for="periodoRRHH" class="form-label">Seleccionar Período:</label>
+            <input type="month" id="periodoRRHH" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+    <div class="table-responsive mt-4">
+        <table class="table table-striped table-bordered text-center">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Objetivo</th>
+                    <th>Observaciones</th>
+                    <th>Nota Final</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Juan Pérez</td>
+                    <td>Atención al Cliente</td>
+                    <td>Siempre amable y atento</td>
+                    <td>90</td>
+                </tr>
+                <tr>
+                    <td>María González</td>
+                    <td>Resolución de Problemas</td>
+                    <td>Encuentra soluciones efectivas</td>
+                    <td>85</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <button class="btn btn-danger">Exportar a PDF</button>
+</div>

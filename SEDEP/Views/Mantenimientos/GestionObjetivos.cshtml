@@ -1,0 +1,82 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Gestión de Objetivos";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">@ViewData["Title"]</h2>
+
+    <!-- Botón para crear un nuevo objetivo -->
+    <div class="d-flex justify-content-between">
+        <a href="/Mantenimientos/CreaObjetivo" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Crear Nuevo Objetivo
+        </a>
+    </div>
+
+    <!-- Tabla de objetivos -->
+    <div class="table-responsive mt-3">
+        <table class="table table-striped table-bordered text-center">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre del Objetivo</th>
+                    <th>Porcentaje</th>
+                    <th>Tipo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Mejorar productividad</td>
+                    <td>80</td>
+                    <td>Estratégico</td>
+                    <td>
+                        <a href="/Mantenimientos/EditaObjetivo/1" class="btn btn-primary btn-sm">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <button class="btn btn-danger btn-sm" onclick="confirmarEliminar(1, 'Mejorar productividad')">
+                            <i class="fas fa-trash-alt"></i> Eliminar
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Aumentar satisfacción del cliente</td>
+                    <td>90</td>
+                    <td>Operativo</td>
+                    <td>
+                        <a href="/Mantenimientos/EditaObjetivo/2" class="btn btn-primary btn-sm">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <button class="btn btn-danger btn-sm" onclick="confirmarEliminar(2, 'Aumentar satisfacción del cliente')">
+                            <i class="fas fa-trash-alt"></i> Eliminar
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal para Confirmación de Eliminación -->
+<div class="modal fade" id="confirmacionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title">Confirmación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p id="mensajeConfirmacion"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                <button type="button" class="btn btn-danger" id="btnEliminar">Sí</button>
+            </div>
+        </div>
+    </div>
+</div>

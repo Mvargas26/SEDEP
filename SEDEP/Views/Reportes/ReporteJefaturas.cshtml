@@ -1,0 +1,46 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Consulta por Funcionario";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">@ViewData["Title"]</h2>
+    <form>
+        <div class="mb-3">
+            <label for="subordinado" class="form-label">Seleccionar Funcionario:</label>
+            <input type="text" id="subordinado" class="form-control" placeholder="Ingrese ID o nombre">
+        </div>
+        <div class="mb-3">
+            <label for="periodo" class="form-label">Seleccionar Período:</label>
+            <input type="month" id="periodo" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+    <div class="table-responsive mt-4">
+        <table class="table table-striped table-bordered text-center">
+            <thead>
+                <tr>
+                    <th>Objetivo Evaluado</th>
+                    <th>Observaciones</th>
+                    <th>Nota Final</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Entrega de Proyectos</td>
+                    <td>Finalizó antes del plazo</td>
+                    <td>95</td>
+                </tr>
+                <tr>
+                    <td>Trabajo en Equipo</td>
+                    <td>Colaboración excelente</td>
+                    <td>88</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <button class="btn btn-danger">Exportar a PDF</button>
+</div>

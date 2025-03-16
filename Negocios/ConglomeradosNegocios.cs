@@ -15,14 +15,9 @@ namespace Negocios
     public class ConglomeradosNegocios
     {
        //***************** VARIABLES *******************
-        private readonly SQLServerContext_Datos _datos;
+        SQLServerContext_Datos objDatos = new SQLServerContext_Datos();
 
-
-        public ConglomeradosNegocios(SQLServerContext_Datos datos)
-        {
-            _datos = datos;
-        }
-
+       
         public ConglomeradoModel ConsultarConglomeradoID(int id)
         {
             List<SqlParameter> parametros = new()
@@ -30,7 +25,7 @@ namespace Negocios
                 new SqlParameter("@idConglomerado", id)
             };
 
-            DataTable dt = _datos.EjecutarSQLconSP_DT("sp_ConsultarConglomeradoID", parametros);
+            DataTable dt = objDatos.EjecutarSQLconSP_DT("sp_ConsultarConglomeradoID", parametros);
 
             if (dt.Rows.Count == 0)
                 return null;
@@ -47,7 +42,7 @@ namespace Negocios
 
         public List<ConglomeradoModel> ListarConglomerados()
         {
-            DataTable dt = _datos.EjecutarSQLconSP_DT("sp_ListarConglomerados", new List<SqlParameter>());
+            DataTable dt = objDatos.EjecutarSQLconSP_DT("sp_ListarConglomerados", new List<SqlParameter>());
             List<ConglomeradoModel> lista = new();
 
             foreach (DataRow row in dt.Rows)
@@ -71,7 +66,7 @@ namespace Negocios
                 new SqlParameter("@Descripcion", conglomerado.Descripcion)
             };
 
-            _datos.EjecutarSQLconSP_Void("sp_CrearConglomerado", parametros);
+            objDatos.EjecutarSQLconSP_Void("sp_CrearConglomerado", parametros);
         }//fin CrearConglomerado 
 
         public void ModificarConglomerado(ConglomeradoModel conglomerado)
@@ -83,7 +78,7 @@ namespace Negocios
                 new SqlParameter("@Descripcion", conglomerado.Descripcion)
             };
 
-            _datos.EjecutarSQLconSP_Void("sp_ModificarConglomerado", parametros);
+            objDatos.EjecutarSQLconSP_Void("sp_ModificarConglomerado", parametros);
         }//fin ModificarConglomerado
 
         public void EliminarConglomerado(int id)
@@ -93,9 +88,26 @@ namespace Negocios
                 new SqlParameter("@idConglomerado", id)
             };
 
-            _datos.EjecutarSQLconSP_Void("sp_EliminarConglomerado", parametros);
+            objDatos.EjecutarSQLconSP_Void("sp_EliminarConglomerado", parametros);
         }//fin class
 
+        public string pruebaConexion()
+        {
+            string mensaje = "";
+            try
+            {
 
+                objDatos.pruebaCon();
+
+                mensaje = "Conexion Exitosa";
+            }
+            catch (Exception)
+            {
+                mensaje = "Conexion fallo";
+                throw;
+            }
+
+            return mensaje;
+        }
     }//fin class
 }//fin space
