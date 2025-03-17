@@ -17,15 +17,16 @@ namespace Negocios
        //***************** VARIABLES *******************
         SQLServerContext_Datos objDatos = new SQLServerContext_Datos();
 
-       
+
         public ConglomeradoModel ConsultarConglomeradoID(int id)
         {
             List<SqlParameter> parametros = new()
             {
+                new SqlParameter("@Operacion", "SELECT"),
                 new SqlParameter("@idConglomerado", id)
             };
 
-            DataTable dt = objDatos.EjecutarSQLconSP_DT("sp_ConsultarConglomeradoID", parametros);
+            DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_Conglomerados_CRUD", parametros);
 
             if (dt.Rows.Count == 0)
                 return null;
@@ -40,9 +41,16 @@ namespace Negocios
             };
         }//fin ConsultarConglomeradoID
 
+
         public List<ConglomeradoModel> ListarConglomerados()
         {
-            DataTable dt = objDatos.EjecutarSQLconSP_DT("sp_ListarConglomerados", new List<SqlParameter>());
+            List<SqlParameter> parametros = new()
+            {
+                new SqlParameter("@Operacion", "SELECT"),
+                new SqlParameter("@idConglomerado", DBNull.Value)
+            };
+
+            DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_Conglomerados_CRUD", parametros);
             List<ConglomeradoModel> lista = new();
 
             foreach (DataRow row in dt.Rows)
@@ -62,34 +70,38 @@ namespace Negocios
         {
             List<SqlParameter> parametros = new()
             {
+                new SqlParameter("@Operacion", "INSERT"),
                 new SqlParameter("@nombreConglomerado", conglomerado.NombreConglomerado),
                 new SqlParameter("@Descripcion", conglomerado.Descripcion)
             };
 
-            objDatos.EjecutarSQLconSP_Void("sp_CrearConglomerado", parametros);
-        }//fin CrearConglomerado 
+            objDatos.EjecutarSQLconSP_Void("adm.sp_Conglomerados_CRUD", parametros);
+        }//fin CrearConglomerado
 
         public void ModificarConglomerado(ConglomeradoModel conglomerado)
         {
             List<SqlParameter> parametros = new()
             {
+                new SqlParameter("@Operacion", "UPDATE"),
                 new SqlParameter("@idConglomerado", conglomerado.IdConglomerado),
                 new SqlParameter("@nombreConglomerado", conglomerado.NombreConglomerado),
                 new SqlParameter("@Descripcion", conglomerado.Descripcion)
             };
 
-            objDatos.EjecutarSQLconSP_Void("sp_ModificarConglomerado", parametros);
+            objDatos.EjecutarSQLconSP_Void("adm.sp_Conglomerados_CRUD", parametros);
         }//fin ModificarConglomerado
 
         public void EliminarConglomerado(int id)
         {
             List<SqlParameter> parametros = new()
             {
+                new SqlParameter("@Operacion", "D"),
                 new SqlParameter("@idConglomerado", id)
             };
 
-            objDatos.EjecutarSQLconSP_Void("sp_EliminarConglomerado", parametros);
-        }//fin class
+            objDatos.EjecutarSQLconSP_Void("adm.sp_Conglomerados_CRUD", parametros);
+        }//fin EliminarConglomerado
+
 
         public string pruebaConexion()
         {
