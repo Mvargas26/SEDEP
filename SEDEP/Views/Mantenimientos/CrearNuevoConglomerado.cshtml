@@ -1,4 +1,5 @@
-﻿@{
+﻿@model Modelos.ConglomeradoModel
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Creación de Conglomerado";
 }
@@ -6,15 +7,17 @@
 <div class="container mt-4">
     <h2 class="mb-4">@ViewData["Title"]</h2>
 
-    <form>
+    <form asp-action="CrearNuevoConglomerado" method="post">
+        <input type="hidden" asp-for="IdConglomerado" />
+
         <div class="mb-3">
-            <label for="Nombre" class="form-label">Nombre del Conglomerado</label>
-            <input type="text" id="NombreConglomerado" class="form-control" required maxlength="255">
+            <label asp-for="NombreConglomerado" class="form-label">Nombre del Conglomerado</label>
+            <input asp-for="NombreConglomerado" class="form-control" required maxlength="255">
         </div>
 
         <div class="mb-3">
-            <label for="Descripcion" class="form-label">Descripción del Conglomerado</label>
-            <input type="text" id="Descripcion" class="form-control" required maxlength="500">
+            <label asp-for="Descripcion" class="form-label">Descripción del Conglomerado</label>
+            <input asp-for="Descripcion" class="form-control" required maxlength="500">
         </div>
 
         <div class="d-flex justify-content-between">

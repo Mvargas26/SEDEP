@@ -10,18 +10,10 @@ namespace Modelos
 {
     public class ConglomeradoModel
     {
-        [Display(Name = "Id Conglomerado")]
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int IdConglomerado { get; set; }
-
-        [Required]
-        [StringLength(255)]
-        [Display(Name = "Nombre Conglomerado")]
+     
         public string NombreConglomerado { get; set; }
-
-        [Required]
-        [Display(Name = "Descripcion Conglomerado")]
+     
         public string Descripcion { get; set; }
 
     }//fin class

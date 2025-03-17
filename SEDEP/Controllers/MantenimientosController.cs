@@ -1,10 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Modelos;
+using Negocios;
 
 namespace SEDEP.Controllers
 {
     public class MantenimientosController : Controller
     {
+        //***********************************************************************************************
+        //Objetos de la cap Negocios
+        ConglomeradosNegocios objeto_ConglomeradosNegocios = new ConglomeradosNegocios();
+
+        //***********************************************************************************************
+
         public IActionResult Index()
         {
             return View();
@@ -52,31 +59,68 @@ namespace SEDEP.Controllers
             return View(departamento);
         }
 
+        #region CONGLOMERADOS
         // Gestión de Conglomerados (Nuevo)
         public IActionResult ManteniConglomerados()
         {
-            var conglomerados = new List<ConglomeradoModel>
+            try
             {
-                new ConglomeradoModel { IdConglomerado = 1, Nombre = "Profesional", Descripcion = "Nivel Profesional" },
-                new ConglomeradoModel { IdConglomerado = 2, Nombre = "Técnico", Descripcion = "Nivel Técnico" }
-            };
-            return View(conglomerados);
-        }
+                var conglomerados = objeto_ConglomeradosNegocios.ListarConglomerados();
+                return View(conglomerados);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al obtener los conglomerados: {ex.Message}";
+                return View(new List<ConglomeradoModel>());
+            }
+        }//fin ManteniConglomerados
 
+        //este no
         public IActionResult CreaConglomerado()
         {
             return View(new ConglomeradoModel());
         }
 
-        public IActionResult EditaConglomerado(int id)
+        public IActionResult CrearNuevoConglomerado()
         {
-            var conglomerado = new ConglomeradoModel { IdConglomerado = id, Nombre = "Técnico", Descripcion = "Nivel Técnico" };
-            return View(conglomerado);
+            return View(new ConglomeradoModel());
+        }
+
+        [HttpPost]
+        public IActionResult CrearNuevoConglomerado(IFormCollection collection)
+        {
+            try
+            {
+                ConglomeradoModel newConglomerado = new ConglomeradoModel
+
+                {
+                    IdConglomerado = Convert.ToInt32(collection["IdConglomerado"]),
+                    NombreConglomerado = collection["NombreConglomerado"],
+                    Descripcion = collection["Descripcion"]
+                };
+
+                objeto_ConglomeradosNegocios.CrearConglomerado(newConglomerado);
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al crear el conglomerado: {ex.Message}";
+                return View();
+            }
         }
 
 
+        public IActionResult EditaConglomerado(int id)
+        {
+            var conglomerado = new ConglomeradoModel { IdConglomerado = id, NombreConglomerado = "Técnico", Descripcion = "Nivel Técnico" };
+            return View(conglomerado);
+        }
 
-    }
+        #endregion
+
+
+    }//fin class
 
     // lo ideal es crearlo en modelos, pero lo puse aqui solo para probar el front
     public class ObjetivoModel
@@ -87,4 +131,4 @@ namespace SEDEP.Controllers
         public string Tipo { get; set; } // Estratégico, Operativo, Táctico
     }
 
-}
+}//fin space
