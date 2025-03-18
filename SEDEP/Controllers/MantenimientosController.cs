@@ -17,6 +17,7 @@ namespace SEDEP.Controllers
             return View();
         }
 
+        #region OBJETIVOS
         public IActionResult GestionObjetivos()
         {
             var objetivos = new List<ObjetivoModel>
@@ -37,6 +38,9 @@ namespace SEDEP.Controllers
             var objetivo = new ObjetivoModel { Id = id, Nombre = "Mejorar productividad", Porcentaje = 80, Tipo = "Estratégico" };
             return View(objetivo);
         }
+        #endregion
+
+        #region DEPARTAMENTOS
         // Gestión de Departamentos (ya existente)
         public IActionResult ManteniDepartamentos()
         {
@@ -58,6 +62,7 @@ namespace SEDEP.Controllers
             var departamento = new DepartamentoModel { IdDepartamento = id, Departamento = "IT" };
             return View(departamento);
         }
+        #endregion
 
         #region CONGLOMERADOS
         // Gestión de Conglomerados (Nuevo)
@@ -74,12 +79,6 @@ namespace SEDEP.Controllers
                 return View(new List<ConglomeradoModel>());
             }
         }//fin ManteniConglomerados
-
-        //este no
-        public IActionResult CreaConglomerado()
-        {
-            return View(new ConglomeradoModel());
-        }
 
         public IActionResult CrearNuevoConglomerado()
         {
@@ -113,10 +112,54 @@ namespace SEDEP.Controllers
 
         public IActionResult EditaConglomerado(int id)
         {
-            var conglomerado = new ConglomeradoModel { IdConglomerado = id, NombreConglomerado = "Técnico", Descripcion = "Nivel Técnico" };
-            return View(conglomerado);
+            return View(objeto_ConglomeradosNegocios.ConsultarConglomeradoID(id));
+
+        }//fin EditaConglomerado
+
+        [HttpPost]
+        public IActionResult EditaConglomerado(int id, IFormCollection collection)
+        {
+            try
+            {
+                ConglomeradoModel conglomeradoEditar = new()
+                {
+                    IdConglomerado = id,
+                    NombreConglomerado = collection["NombreConglomerado"],
+                    Descripcion = collection["Descripcion"]
+                };
+
+                objeto_ConglomeradosNegocios.ModificarConglomerado(conglomeradoEditar);
+                return RedirectToAction(nameof(Index));
+
+            }
+            catch (Exception ex)
+            {
+
+                return View();
+            }
+
+
+        }//fin EditaConglomerado
+
+        public ActionResult BorrarConglomerado(int id)
+        {
+            return View(objeto_ConglomeradosNegocios.ConsultarConglomeradoID(id));
         }
 
+        [HttpPost]
+        public ActionResult BorrarConglomerado(int id, IFormCollection collection)
+        {
+            try
+            {
+                objeto_ConglomeradosNegocios.EliminarConglomerado(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                TempData["mensajeError"] = "No puede borrar este Conglomerado, verifique las relaciones.";
+                return View();
+            }
+        }
         #endregion
 
 

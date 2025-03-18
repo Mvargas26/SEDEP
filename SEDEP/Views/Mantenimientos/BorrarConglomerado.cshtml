@@ -1,34 +1,32 @@
 ﻿@model Modelos.ConglomeradoModel
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = "Edición de Conglomerado";
+    ViewData["Title"] = "Eliminar  Conglomerado";
 }
 
 <div class="container mt-4">
     <h2 class="mb-4">@ViewData["Title"]</h2>
 
-    <form asp-action="EditaConglomerado">
+    <form asp-action="BorrarConglomerado">
         <div class="mb-3">
             <label asp-for="IdConglomerado" class="form-label">Id del Conglomerado</label>
             <input asp-for="IdConglomerado" class="form-control" readonly disabled />
         </div>
         <div class="mb-3">
             <label asp-for="NombreConglomerado" class="form-label">Nombre del Conglomerado</label>
-            <input asp-for="NombreConglomerado" class="form-control" required maxlength="255">
+            <input asp-for="NombreConglomerado" class="form-control" required maxlength="255" readonly disabled>
         </div>
 
         <div class="mb-3">
             <label asp-for="Descripcion" class="form-label">Descripción del Conglomerado</label>
-            <input asp-for="Descripcion" id="Descripcion" class="form-control" value="@Model.Descripcion" required maxlength="500">
+            <input asp-for="Descripcion" id="Descripcion" class="form-control" value="@Model.Descripcion" required maxlength="500" readonly disabled>
         </div>
 
         <div class="d-flex justify-content-between">
             <a href="/Mantenimientos/ManteniConglomerados" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Volver
             </a>
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save"></i> Guardar
-            </button>
+            <button type="submit" class="btn btn-danger btn-sm"> <i class="fas fa-trash-alt"></i> Eliminar </button>
         </div>
     </form>
 </div>

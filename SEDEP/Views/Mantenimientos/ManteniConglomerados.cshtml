@@ -33,9 +33,12 @@
                             <a href="/Mantenimientos/EditaConglomerado/@cong.IdConglomerado" class="btn btn-primary btn-sm">
                                 <i class="fas fa-edit"></i> Editar
                             </a>
-                            <button class="btn btn-danger btn-sm" onclick="confirmarEliminar(@cong.IdConglomerado, '@cong.NombreConglomerado')">
+                            <a href="/Mantenimientos/BorrarConglomerado/@cong.IdConglomerado" class="btn btn-danger btn-sm">
                                 <i class="fas fa-trash-alt"></i> Eliminar
-                            </button>
+                            </a>
+                            @* <button class="btn btn-danger btn-sm" onclick="confirmarEliminar(@cong.IdConglomerado, '@cong.NombreConglomerado')">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </button> *@
                         </td>
                     </tr>
                 }
