@@ -17,50 +17,65 @@ namespace Negocios
        //***************** VARIABLES *******************
         SQLServerContext_Datos objDatos = new SQLServerContext_Datos();
 
-
         public ConglomeradoModel ConsultarConglomeradoID(int id)
         {
-            List<SqlParameter> parametros = new()
+            try
             {
+                List<SqlParameter> parametros = new()
+                {
                 new SqlParameter("@Operacion", "SELECT"),
                 new SqlParameter("@idConglomerado", id)
-            };
+                };
 
-            DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_Conglomerados_CRUD", parametros);
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_Conglomerados_CRUD", parametros);
 
-            if (dt.Rows.Count == 0)
-                return null;
+                if (dt.Rows.Count == 0)
+                    return null;
 
-            DataRow row = dt.Rows[0];
+                DataRow row = dt.Rows[0];
 
-            return new ConglomeradoModel
+                return new ConglomeradoModel
+                {
+                    IdConglomerado = Convert.ToInt32(row["idConglomerado"]),
+                    NombreConglomerado = row["nombreConglomerado"].ToString(),
+                    Descripcion = row["Descripcion"].ToString()
+                };
+            }
+            catch (Exception ex)
             {
-                IdConglomerado = Convert.ToInt32(row["idConglomerado"]),
-                NombreConglomerado = row["nombreConglomerado"].ToString(),
-                Descripcion = row["Descripcion"].ToString()
-            };
-        }//fin ConsultarConglomeradoID
 
+                throw new Exception("Fallo en Conglomerado Negocios " + ex);
+            }
+        }//fin ConsultarConglomeradoID
 
         public List<ConglomeradoModel> ListarConglomerados()
         {
-            List<SqlParameter> parametros = new()
+            List<ConglomeradoModel> lista = new();
+
+            try
+            {
+                List<SqlParameter> parametros = new()
             {
                 new SqlParameter("@Operacion", "SELECT"),
                 new SqlParameter("@idConglomerado", DBNull.Value)
             };
 
-            DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_Conglomerados_CRUD", parametros);
-            List<ConglomeradoModel> lista = new();
-
-            foreach (DataRow row in dt.Rows)
-            {
-                lista.Add(new ConglomeradoModel
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_Conglomerados_CRUD", parametros);
+                
+                foreach (DataRow row in dt.Rows)
                 {
-                    IdConglomerado = Convert.ToInt32(row["idConglomerado"]),
-                    NombreConglomerado = row["nombreConglomerado"].ToString(),
-                    Descripcion = row["Descripcion"].ToString()
-                });
+                    lista.Add(new ConglomeradoModel
+                    {
+                        IdConglomerado = Convert.ToInt32(row["idConglomerado"]),
+                        NombreConglomerado = row["nombreConglomerado"].ToString(),
+                        Descripcion = row["Descripcion"].ToString()
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Fallo en Conglomerado Negocios " + ex);
             }
 
             return lista;
@@ -68,38 +83,62 @@ namespace Negocios
 
         public void CrearConglomerado(ConglomeradoModel conglomerado)
         {
-            List<SqlParameter> parametros = new()
+            try
+            {
+                List<SqlParameter> parametros = new()
             {
                 new SqlParameter("@Operacion", "INSERT"),
                 new SqlParameter("@nombreConglomerado", conglomerado.NombreConglomerado),
                 new SqlParameter("@Descripcion", conglomerado.Descripcion)
             };
 
-            objDatos.EjecutarSQLconSP_Void("adm.sp_Conglomerados_CRUD", parametros);
+                objDatos.EjecutarSQLconSP_Void("adm.sp_Conglomerados_CRUD", parametros);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Fallo en Conglomerado Negocios " + ex);
+            }
         }//fin CrearConglomerado
 
         public void ModificarConglomerado(ConglomeradoModel conglomerado)
         {
-            List<SqlParameter> parametros = new()
+            try
             {
+                List<SqlParameter> parametros = new()
+                {
                 new SqlParameter("@Operacion", "UPDATE"),
                 new SqlParameter("@idConglomerado", conglomerado.IdConglomerado),
                 new SqlParameter("@nombreConglomerado", conglomerado.NombreConglomerado),
                 new SqlParameter("@Descripcion", conglomerado.Descripcion)
-            };
+                };
 
-            objDatos.EjecutarSQLconSP_Void("adm.sp_Conglomerados_CRUD", parametros);
+                objDatos.EjecutarSQLconSP_Void("adm.sp_Conglomerados_CRUD", parametros);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Fallo en Conglomerado Negocios " + ex);
+            }
         }//fin ModificarConglomerado
 
         public void EliminarConglomerado(int id)
         {
-            List<SqlParameter> parametros = new()
+            try
             {
+                List<SqlParameter> parametros = new()
+                {
                 new SqlParameter("@Operacion", "D"),
                 new SqlParameter("@idConglomerado", id)
-            };
+                };
 
-            objDatos.EjecutarSQLconSP_Void("adm.sp_Conglomerados_CRUD", parametros);
+                objDatos.EjecutarSQLconSP_Void("adm.sp_Conglomerados_CRUD", parametros);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Fallo en Conglomerado Negocios " + ex);
+            }
         }//fin EliminarConglomerado
 
 

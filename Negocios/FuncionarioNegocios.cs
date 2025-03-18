@@ -18,47 +18,21 @@ namespace Negocios
 
         public FuncionarioModel ConsultarFuncionarioID(string cedula)
         {
-            List<SqlParameter> parametros = new()
-    {
-        new SqlParameter("@cedula", cedula)
-    };
-
-            DataTable dt = objDatos.EjecutarSQLconSP_DT("sp_ConsultarFuncionarioID", parametros);
-
-            if (dt.Rows.Count == 0)
-                return null;
-
-            DataRow row = dt.Rows[0];
-
-            return new FuncionarioModel
+            try
             {
-                Cedula = row["cedula"].ToString(),
-                Nombre = row["nombre"].ToString(),
-                Apellido1 = row["apellido1"].ToString(),
-                Apellido2 = row["apellido2"].ToString(),
-                Correo = row["correo"].ToString(),
-                Password = row["password"].ToString(),
-                IdDepartamento = Convert.ToInt32(row["idDepartamento"]),
-                IdRol = Convert.ToInt32(row["idRol"]),
-                IdPuesto = Convert.ToInt32(row["idPuesto"]),
-                IdEstadoFuncionario = Convert.ToInt32(row["idEstadoFuncionario"])
-            };
-        }
+                List<SqlParameter> parametros = new()
+                {
+                new SqlParameter("@cedula", cedula)
+                };
 
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("sp_ConsultarFuncionarioID", parametros);
 
-        public List<FuncionarioModel> ListarFuncionarios()
-        {
-            List<SqlParameter> parametros = new()
-        {
-            new SqlParameter("@Accion", "SELECT")
-        };
+                if (dt.Rows.Count == 0)
+                    return null;
 
-            DataTable dt = objDatos.EjecutarSQLconSP_DT("[adm].[sp_CrudFuncionarios]", parametros);
-            List<FuncionarioModel> lista = new();
+                DataRow row = dt.Rows[0];
 
-            foreach (DataRow row in dt.Rows)
-            {
-                lista.Add(new FuncionarioModel
+                return new FuncionarioModel
                 {
                     Cedula = row["cedula"].ToString(),
                     Nombre = row["nombre"].ToString(),
@@ -70,16 +44,60 @@ namespace Negocios
                     IdRol = Convert.ToInt32(row["idRol"]),
                     IdPuesto = Convert.ToInt32(row["idPuesto"]),
                     IdEstadoFuncionario = Convert.ToInt32(row["idEstadoFuncionario"])
-                });
+                };
             }
+            catch (Exception ex)
+            {
 
+                throw new Exception("Fallo en Funcionario Negocios " + ex);
+            }
+        }//fn ConsultarFuncionarioID
+
+        public List<FuncionarioModel> ListarFuncionarios()
+        {
+            List<FuncionarioModel> lista = new();
+
+            try
+            {
+                List<SqlParameter> parametros = new()
+            {
+                new SqlParameter("@Accion", "SELECT")
+            };
+
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("[adm].[sp_CrudFuncionarios]", parametros);
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    lista.Add(new FuncionarioModel
+                    {
+                        Cedula = row["cedula"].ToString(),
+                        Nombre = row["nombre"].ToString(),
+                        Apellido1 = row["apellido1"].ToString(),
+                        Apellido2 = row["apellido2"].ToString(),
+                        Correo = row["correo"].ToString(),
+                        Password = row["password"].ToString(),
+                        IdDepartamento = Convert.ToInt32(row["idDepartamento"]),
+                        IdRol = Convert.ToInt32(row["idRol"]),
+                        IdPuesto = Convert.ToInt32(row["idPuesto"]),
+                        IdEstadoFuncionario = Convert.ToInt32(row["idEstadoFuncionario"])
+                    });
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Fallo en Funcionario Negocios " + ex);
+            }
             return lista;
-        }
+        }//fn ListarFuncionarios
 
 
         public void CrearFuncionario(FuncionarioModel funcionarioNuevo)
         {
-            List<SqlParameter> parametros = new()
+            try
+            {
+                List<SqlParameter> parametros = new()
             {
                 new SqlParameter("@Accion", "INSERT"),
                 new SqlParameter("@Cedula", funcionarioNuevo.Cedula),
@@ -94,13 +112,21 @@ namespace Negocios
                 new SqlParameter("@IdEstadoFuncionario", funcionarioNuevo.IdEstadoFuncionario)
             };
 
-            objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudFuncionarios]", parametros);
+                objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudFuncionarios]", parametros);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Fallo en Funcionario Negocios " + ex);
+            }
         }//fin CrearFuncionario
 
 
         public void ModificarFuncionario(FuncionarioModel funcionario)
         {
-            List<SqlParameter> parametros = new()
+            try
+            {
+                List<SqlParameter> parametros = new()
             {
                 new SqlParameter("@Accion", "UPDATE"),
                 new SqlParameter("@Cedula", funcionario.Cedula),
@@ -112,23 +138,33 @@ namespace Negocios
                 new SqlParameter("@IdDepartamento", funcionario.IdDepartamento) ,
                 new SqlParameter("@IdRol", funcionario.IdRol) ,
                 new SqlParameter("@IdPuesto", funcionario.IdPuesto) ,
-                new SqlParameter("@IdEstadoFuncionario", funcionario.IdEstadoFuncionario) 
+                new SqlParameter("@IdEstadoFuncionario", funcionario.IdEstadoFuncionario)
             };
 
-            objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudFuncionarios]", parametros);
-        }
-
+                objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudFuncionarios]", parametros);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Fallo en Funcionario Negocios " + ex);
+            }
+        }//fin ModificarFuncionario
 
         public void EliminarFuncionario(string cedula)
         {
-            List<SqlParameter> parametros = new()
+            try
+            {
+                List<SqlParameter> parametros = new()
             {
                 new SqlParameter("@Accion", "DELETE"),
                 new SqlParameter("@Cedula", cedula)
             };
-            objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudFuncionarios]", parametros);
+                objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudFuncionarios]", parametros);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Fallo en Funcionario Negocios " + ex);
+            }
         }//fin EliminarFuncionario
-
 
     }//fn class
 }//fn space
