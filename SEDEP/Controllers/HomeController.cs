@@ -33,6 +33,8 @@ namespace SEDEP.Controllers
         public IActionResult pruebaConexion()
         {
             ConglomeradosNegocios obj1 = new ConglomeradosNegocios();
+            FuncionarioNegocios objFuncionarios = new FuncionarioNegocios();
+
 
            TempData["Mensaje"] = obj1.pruebaConexion(); ;
 

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Negocios
 {
-    class FuncionarioNegocios
+    public class FuncionarioNegocios
     {
         //***************** VARIABLES *******************
         SQLServerContext_Datos objDatos = new SQLServerContext_Datos();
@@ -165,6 +165,43 @@ namespace Negocios
                 throw new Exception("Fallo en Funcionario Negocios " + ex);
             }
         }//fin EliminarFuncionario
+
+        public List<FuncionarioModel> ObtenerFuncionariosPorDepartamento(int idDepartamento)
+        {
+            try
+            {
+                List<SqlParameter> parametros = new()
+                {
+                    new SqlParameter("@idDepartamento", idDepartamento)
+                };
+
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_FuncionariosXDepartamento", parametros);
+                List<FuncionarioModel> lista = new();
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    lista.Add(new FuncionarioModel
+                    {
+                        Cedula = row["cedula"].ToString(),
+                        Nombre = row["nombre"].ToString(),
+                        Apellido1 = row["apellido1"].ToString(),
+                        Apellido2 = row["apellido2"]?.ToString(), // Manejo de nulos
+                        Correo = row["correo"].ToString(),
+                        Password = row["password"].ToString(),
+                        IdDepartamento = Convert.ToInt32(row["idDepartamento"]),
+                        IdRol = Convert.ToInt32(row["idRol"]),
+                        IdPuesto = Convert.ToInt32(row["idPuesto"]),
+                        IdEstadoFuncionario = Convert.ToInt32(row["idEstadoFuncionario"])
+                    });
+                }
+
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener los funcionarios por departamento: " + ex.Message);
+            }
+        }
 
     }//fn class
 }//fn space
