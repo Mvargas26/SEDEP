@@ -71,5 +71,18 @@ namespace SEDEP.Controllers
             // Si no hay cédula o no la usas, simplemente retornas la vista
             return View();
         }
+
+        [HttpGet]
+        public IActionResult ModificarPeso(string tipo, int obj, string objName, string pesoActual)
+        {
+            // Podrías guardar estos valores en un ViewBag, ViewData o en un modelo
+            // Por simplicidad, usaremos ViewBag
+            ViewBag.Tipo = tipo;
+            ViewBag.Obj = obj;
+            ViewBag.ObjName = objName;
+            ViewBag.PesoActual = pesoActual;
+
+            return View();
+        }
     }
 }
