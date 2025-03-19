@@ -14,85 +14,116 @@ namespace Negocios
     public class DepartamentosNegocio
     {
         //***************** VARIABLES *******************
-        private readonly SQLServerContext_Datos _datos;
-
-        public DepartamentosNegocio(SQLServerContext_Datos datos)
-        {
-            _datos = datos;
-        }
+        SQLServerContext_Datos objDatos = new SQLServerContext_Datos();
 
         // Consultar un departamento por ID
-        public DepartamentoModel ConsultarDepartamentoID(int id)
-        {
-            List<SqlParameter> parametros = new()
-        {
-            new SqlParameter("@idDepartamento", id)
-        };
+        //public DepartamentoModel ConsultarDepartamentoID(int id)
+        //{
+        //    List<SqlParameter> parametros = new()
+        //    {
+        //        new SqlParameter("@idDepartamento", id)
+        //    };
 
-            DataTable dt = _datos.EjecutarSQLconSP_DT("sp_ConsultarDepartamentoID", parametros);
+        //    DataTable dt = objDatos.EjecutarSQLconSP_DT("sp_ConsultarDepartamentoID", parametros);
 
-            if (dt.Rows.Count == 0)
-                return null;
+        //    if (dt.Rows.Count == 0)
+        //        return null;
 
-            DataRow row = dt.Rows[0];
+        //    DataRow row = dt.Rows[0];
 
-            return new DepartamentoModel
-            {
-                IdDepartamento = Convert.ToInt32(row["idDepartamento"]),
-                Departamento = row["Departamento"].ToString()
-            };
-        }//fin ConsultarDepartamentoID
+        //    return new DepartamentoModel
+        //    {
+        //        IdDepartamento = Convert.ToInt32(row["idDepartamento"]),
+        //        Departamento = row["Departamento"].ToString()
+        //    };
+        //}//fin ConsultarDepartamentoID
 
         // Listar todos los departamentos
         public List<DepartamentoModel> ListarDepartamentos()
         {
-            DataTable dt = _datos.EjecutarSQLconSP_DT("sp_ListarDepartamentos", new List<SqlParameter>());
-            List<DepartamentoModel> lista = new();
-
-            foreach (DataRow row in dt.Rows)
+            try
             {
-                lista.Add(new DepartamentoModel
+                List<SqlParameter> parametros = new()
                 {
-                    IdDepartamento = Convert.ToInt32(row["idDepartamento"]),
-                    Departamento = row["Departamento"].ToString()
-                });
-            }
+                    new SqlParameter("@Accion", "SELECT")
+                };
 
-            return lista;
-        }//fin ListarDepartamentos
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_CrudDepartamentos", parametros);
+                List<DepartamentoModel> lista = new();
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    lista.Add(new DepartamentoModel
+                    {
+                        IdDepartamento = Convert.ToInt32(row["idDepartamento"]),
+                        Departamento = row["Departamento"].ToString()
+                    });
+                }
+
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al listar los departamentos: " + ex.Message);
+            }
+        }//ListarDepartamentos
 
         // Crear un nuevo departamento
         public void CrearDepartamento(DepartamentoModel departamento)
         {
-            List<SqlParameter> parametros = new()
-        {
-            new SqlParameter("@Departamento", departamento.Departamento)
-        };
+            try
+            {
+                List<SqlParameter> parametros = new()
+            {
+                new SqlParameter("@Accion", "INSERT"),
+                new SqlParameter("@Departamento", departamento.Departamento)
+            };
 
-            _datos.EjecutarSQLconSP_Void("sp_CrearDepartamento", parametros);
-        }//fin CrearDepartamento 
+                objDatos.EjecutarSQLconSP_Void("adm.sp_CrudDepartamentos", parametros);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al crear el departamento: " + ex.Message);
+            }
+        }//fin CrearDepartamento
 
         // Modificar un departamento existente
         public void ModificarDepartamento(DepartamentoModel departamento)
         {
-            List<SqlParameter> parametros = new()
+            try
+            {
+                List<SqlParameter> parametros = new()
         {
+            new SqlParameter("@Accion", "UPDATE"),
             new SqlParameter("@idDepartamento", departamento.IdDepartamento),
             new SqlParameter("@Departamento", departamento.Departamento)
         };
 
-            _datos.EjecutarSQLconSP_Void("sp_ModificarDepartamento", parametros);
+                objDatos.EjecutarSQLconSP_Void("adm.sp_CrudDepartamentos", parametros);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al modificar el departamento: " + ex.Message);
+            }
         }//fin ModificarDepartamento
 
         // Eliminar un departamento por ID
         public void EliminarDepartamento(int id)
         {
-            List<SqlParameter> parametros = new()
-        {
-            new SqlParameter("@idDepartamento", id)
-        };
+            try
+            {
+                List<SqlParameter> parametros = new()
+                {
+                    new SqlParameter("@Accion", "DELETE"),
+                    new SqlParameter("@idDepartamento", id)
+                };
 
-            _datos.EjecutarSQLconSP_Void("sp_EliminarDepartamento", parametros);
+                objDatos.EjecutarSQLconSP_Void("adm.sp_CrudDepartamentos", parametros);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al eliminar el departamento: " + ex.Message);
+            }
         }//fin EliminarDepartamento
 
     } //Fin Clase

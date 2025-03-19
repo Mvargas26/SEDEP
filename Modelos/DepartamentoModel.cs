@@ -10,14 +10,8 @@ namespace Modelos
 {
     public class DepartamentoModel
     {
-        [Display(Name = "Id Departamento")]
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int IdDepartamento { get; set; }  
 
-        [Required]
-        [StringLength(255)]
-        [Display(Name = "Nombre del Departamento")]
+        public int IdDepartamento { get; set; }  
         public string Departamento { get; set; }
 
     } //Fin clase
