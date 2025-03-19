@@ -255,14 +255,14 @@
         // Ejemplo de función para mostrar modal (si la usas)
         function confirmarEliminar(id, nombre) {
             document.getElementById("mensajeConfirmacion").innerText =
-                `¿Desea eliminar el registro: ${nombre} (ID: ${id})?`;
+                ¿Desea eliminar el registro: ${nombre} (ID: ${id})?;
             var myModal = new bootstrap.Modal(document.getElementById("confirmacionModal"));
             myModal.show();
 
             // Al hacer clic en Sí
             document.getElementById("btnEliminar").onclick = function () {
                 // Lógica para eliminar
-                // Por ejemplo: window.location.href = `/Mantenimientos/EliminaConglomerado/${id}`;
+                // Por ejemplo: window.location.href = /Mantenimientos/EliminaConglomerado/${id};
             };
         }
     </script>
