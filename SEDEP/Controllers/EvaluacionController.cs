@@ -3,6 +3,7 @@ using Negocios;
 using Modelos;
 using System.Linq;
 using System.Collections.Generic;
+using Microsoft.IdentityModel.Tokens;
 
 namespace SEDEP.Controllers
 {
@@ -12,6 +13,8 @@ namespace SEDEP.Controllers
         //Objetos de la capa Negocios
         ConglomeradosNegocios objeto_ConglomeradosNegocios = new();
         FuncionarioNegocios objeto_FuncionarioNegocios = new();
+        TiposObjetivosNegocios objeto_TiposObjetivoNegocios = new();
+        TiposCompetenciasNegocios objeto_TiposCompenNegocis = new();
         //***********************************************************************************************
 
         public IActionResult Index()
@@ -56,14 +59,25 @@ namespace SEDEP.Controllers
         [HttpGet]
         public IActionResult EvaluacionSubalterno(string cedula,int idConglomerado)
         {
+            if (string.IsNullOrEmpty(cedula) || idConglomerado == 0)
+            {
+                TempData["Error"] = "Debe seleccionar un Conglomerado para el funcionario a evaluar.";
+                return RedirectToAction("SeleccionarSubalterno");
+            }
+
             if (!string.IsNullOrEmpty(cedula))
             {
                  var subalterno = objeto_FuncionarioNegocios.ConsultarFuncionarioID(cedula);
 
-                var conglomeradoPertenece = objeto_ConglomeradosNegocios.ConsultarConglomeradoXFuncionario(subalterno.Cedula);
+                var PesosConglomerados = objeto_ConglomeradosNegocios.ConsultarPesosXConglomerado(idConglomerado);
 
-                //var PesosConglomerados = objeto_ConglomeradosNegocios.ConsultarPesosXConglomerado(conglomeradoPertenece.IdConglomerado);
-                // return View(subalterno);
+                ViewBag.PesosConglomerados = PesosConglomerados;
+                ViewBag.IdConglomerado = idConglomerado;
+                ViewData["ListaConglomerados"] = objeto_ConglomeradosNegocios.ListarConglomerados();
+                ViewData["ListaTiposObjetivos"] = objeto_TiposObjetivoNegocios.ListarTiposObjetivos();
+                ViewData["ListaTiposCompetencias"] = objeto_TiposCompenNegocis.ListarTiposCompetencias();
+
+                return View(subalterno);
             }
 
             return View();

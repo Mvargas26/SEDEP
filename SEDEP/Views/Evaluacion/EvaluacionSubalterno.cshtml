@@ -2,6 +2,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Evaluación del Desempeño 2025";
 }
+@functions {
+    static Random rnd = new Random();
+}
+
+@{
+    string[] coloresFuertes = { "#E63946", "#F4A261", "#2A9D8F", "#264653", "#8E44AD", "#D72638", "#3D348B", "#FF7F50" };
+}
 
 <div class="container mt-4 mb-5">
     <!-- Encabezado principal -->
@@ -23,29 +30,43 @@
 
     <!-- Sección "Conglomerado Cualificado" con círculos -->
     <div class="my-5">
-        <h4 class="text-center">Conglomerado Cualificado</h4>
+        @{
+            var idConglomerado = ViewBag.IdConglomerado;
+            var listaConglomerados = ViewData["ListaConglomerados"] as List<Modelos.ConglomeradoModel>;
+            var nombreConglomerado = listaConglomerados?.FirstOrDefault(c => c.IdConglomerado == idConglomerado)?.NombreConglomerado ?? "Conglomerado ?";
+        }
+
+        <h4 class="text-center">@nombreConglomerado</h4>
         <div class="row justify-content-center mt-4">
-            <div class="col-sm-3 text-center">
-                <div class="rounded-circle bg-primary text-white mx-auto d-flex align-items-center justify-content-center"
-                     style="width:80px; height:80px;">
-                    30%
-                </div>
-                <p class="mt-2">Nivel 2</p>
-            </div>
-            <div class="col-sm-3 text-center">
-                <div class="rounded-circle bg-success text-white mx-auto d-flex align-items-center justify-content-center"
-                     style="width:80px; height:80px;">
-                    30%
-                </div>
-                <p class="mt-2">Nivel 4</p>
-            </div>
-            <div class="col-sm-3 text-center">
-                <div class="rounded-circle bg-warning text-white mx-auto d-flex align-items-center justify-content-center"
-                     style="width:80px; height:80px;">
-                    30%
-                </div>
-                <p class="mt-2">Competencias</p>
-            </div>
+            @if (ViewBag.PesosConglomerados != null)
+            {
+                @foreach (var item in ViewBag.PesosConglomerados)
+                {
+                    var randomColor = coloresFuertes[rnd.Next(coloresFuertes.Length)];
+
+                    <div class="col-sm-3 text-center">
+                        <div class="rounded-circle text-white mx-auto d-flex align-items-center justify-content-center"
+                             style="width:80px; height:80px; background-color:@randomColor;">
+                            @item.Porcentaje%
+                        </div>
+                        @{
+                            // Traemos lista de Tipos de Objetivos
+                            var listaTiposObjetivos = ViewData["ListaTiposObjetivos"] as List<Modelos.TiposObjetivosModel>;
+                            var nombreTipo = listaTiposObjetivos?.FirstOrDefault(t => t.IdTipoObjetivo == item.IdTipoObjetivo)?.Tipo;
+
+                            // Traemos lista de Tipos de Competencias
+                            var listaTiposCompetencias = ViewData["ListaTiposCompetencias"] as List<Modelos.TiposCompetenciasModel>;
+                            var nombreTipoCompet = listaTiposCompetencias?.FirstOrDefault(t => t.idTipoCompetencia == item.IdTipoCompetencia)?.Tipo;
+
+                            // Seleccionamos el nombre correcto
+                            var nombreFinal = !string.IsNullOrEmpty(nombreTipo) ? nombreTipo
+                            : !string.IsNullOrEmpty(nombreTipoCompet) ? nombreTipoCompet
+                            : "Desconocido";
+                        }
+                        <p class="mt-2">@nombreFinal</p>
+                    </div>
+                }
+            }
         </div>
     </div>
 
