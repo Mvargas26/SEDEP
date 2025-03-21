@@ -35,9 +35,6 @@ namespace SEDEP.Controllers
             return View(listaSubalternos);
         }
 
-        /// <summary>
-        /// Acción que procesa la selección del subalterno y redirige a la evaluación (EVA3).
-        /// </summary>
         [HttpPost]
         public IActionResult SeleccionarSubalterno(string cedulaSeleccionada)
         {
@@ -49,7 +46,7 @@ namespace SEDEP.Controllers
             }
 
             // Redirige a la pantalla de evaluación (EVA3), pasando la cédula como parámetro
-            return RedirectToAction("EvaluacionSubalterno", new { cedula = cedulaSeleccionada });
+            return RedirectToAction("ConglomeradosPorFunc", new { cedula = cedulaSeleccionada });
         }
 
         /// <summary>
@@ -57,18 +54,18 @@ namespace SEDEP.Controllers
         /// pero ahora le añadimos la capacidad de recibir la cédula del subalterno.
         /// </summary>
         [HttpGet]
-        public IActionResult EvaluacionSubalterno(string cedula)
+        public IActionResult EvaluacionSubalterno(string cedula,int idConglomerado)
         {
             if (!string.IsNullOrEmpty(cedula))
             {
-                // Aquí puedes cargar datos del subalterno si lo deseas
-                // var subalterno = objeto_FuncionarioNegocios.ConsultarFuncionarioID(cedula);
+                 var subalterno = objeto_FuncionarioNegocios.ConsultarFuncionarioID(cedula);
 
-                // También podrías pasar subalterno a la vista
+                var conglomeradoPertenece = objeto_ConglomeradosNegocios.ConsultarConglomeradoXFuncionario(subalterno.Cedula);
+
+                //var PesosConglomerados = objeto_ConglomeradosNegocios.ConsultarPesosXConglomerado(conglomeradoPertenece.IdConglomerado);
                 // return View(subalterno);
             }
 
-            // Si no hay cédula o no la usas, simplemente retornas la vista
             return View();
         }
 
@@ -84,5 +81,24 @@ namespace SEDEP.Controllers
 
             return View();
         }
-    }
-}
+
+        [HttpGet]
+        public IActionResult ConglomeradosPorFunc(string cedula)
+        {
+            try
+            {
+                ViewData["ListaConglomerados"] = objeto_ConglomeradosNegocios.ListarConglomerados();
+
+                return View(objeto_ConglomeradosNegocios.ConsultarConglomeradoXFuncionario(cedula));
+
+            }
+            catch (Exception)
+            {
+                return View();
+
+            }
+        }
+
+        
+    }//fin class
+}//fin space

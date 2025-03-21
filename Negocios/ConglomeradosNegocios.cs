@@ -141,6 +141,70 @@ namespace Negocios
             }
         }//fin EliminarConglomerado
 
+        public List<PesosConglomeradoModel> ConsultarPesosXConglomerado(int id)
+        {
+            try
+            {
+                List<SqlParameter> parametros = new()
+                {
+                    new SqlParameter("@conglomeradoID", id)
+                };
+
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("SP_PesosXConglomerado", parametros);
+
+                List<PesosConglomeradoModel> listaPesos = new();
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    listaPesos.Add(new PesosConglomeradoModel
+                    {
+                        IdPesoXConglomerado = Convert.ToInt32(row["idPesoXConglomerado"]),
+                        IdConglomerado = Convert.ToInt32(row["idConglomerado"]),
+                        IdTipoObjetivo = row["idTipoObjetivo"] as int?,
+                        IdTipoCompetencia = row["idTipoCompetencia"] as int?,
+                        Porcentaje = Convert.ToDecimal(row["Porcentaje"])
+                    });
+                }
+
+                return listaPesos;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Fallo en PesosConglomerado Negocios " + ex);
+            }
+        }//fin ConsultarPesosXConglomerado
+
+        public List<FuncionarioXConglomeradoModel> ConsultarConglomeradoXFuncionario(string idFuncionario)
+        {
+            try
+            {
+                List<SqlParameter> parametros = new()
+        {
+            new SqlParameter("@idFuncionario", idFuncionario)
+        };
+
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("SP_ConsultarConglomeradoXFuncionario", parametros);
+
+                List<FuncionarioXConglomeradoModel> listaFuncionarios = new();
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    listaFuncionarios.Add(new FuncionarioXConglomeradoModel
+                    {
+                        IdFuncXConglo = Convert.ToInt32(row["idFuncXConglo"]),
+                        IdFuncionario = row["idFuncionario"].ToString(),
+                        IdConglomerado = Convert.ToInt32(row["idConglomerado"])
+                    });
+                }
+
+                return listaFuncionarios;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Fallo en ConsultarConglomeradoXFuncionario " + ex);
+            }
+        }
+
 
         public string pruebaConexion()
         {

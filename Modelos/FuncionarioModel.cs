@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Specialized;
 
 namespace Modelos
 {
@@ -30,22 +31,18 @@ namespace Modelos
         public string Password { get; set; }
 
         public int IdDepartamento { get; set; }
+        public string Departamento { get; set; }
         public int IdRol { get; set; }
+        public string Rol { get; set; }
+       
         public int IdPuesto { get; set; }
+        public string Puesto { get; set; }
+       
         public int IdEstadoFuncionario { get; set; }
 
-        // Relaciones
-        //[ForeignKey("IdDepartamento")]
-        //public virtual Departamento Departamento { get; set; }
+        public string Estado { get; set; }
 
-        //[ForeignKey("IdRol")]
-        //public virtual Rol Rol { get; set; }
 
-        //[ForeignKey("IdPuesto")]
-        //public virtual Puesto Puesto { get; set; }
-
-        //[ForeignKey("IdEstadoFuncionario")]
-        //public virtual EstadoFuncionario EstadoFuncionario { get; set; }
 
     }//public class
 }//fin space

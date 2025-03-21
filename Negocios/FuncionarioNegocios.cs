@@ -21,11 +21,12 @@ namespace Negocios
             try
             {
                 List<SqlParameter> parametros = new()
-                {
-                new SqlParameter("@cedula", cedula)
-                };
+        {
+            new SqlParameter("@Accion", "CONSULTAID"),
+            new SqlParameter("@Cedula", cedula)
+        };
 
-                DataTable dt = objDatos.EjecutarSQLconSP_DT("sp_ConsultarFuncionarioID", parametros);
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_CrudFuncionarios", parametros);
 
                 if (dt.Rows.Count == 0)
                     return null;
@@ -40,18 +41,18 @@ namespace Negocios
                     Apellido2 = row["apellido2"].ToString(),
                     Correo = row["correo"].ToString(),
                     Password = row["password"].ToString(),
-                    IdDepartamento = Convert.ToInt32(row["idDepartamento"]),
-                    IdRol = Convert.ToInt32(row["idRol"]),
-                    IdPuesto = Convert.ToInt32(row["idPuesto"]),
-                    IdEstadoFuncionario = Convert.ToInt32(row["idEstadoFuncionario"])
+                    Departamento = row["Departamento"].ToString(),
+                    Rol = row["Rol"].ToString(),
+                    Puesto = row["Puesto"].ToString(),
+                    Estado = row["Estado"].ToString()
                 };
             }
             catch (Exception ex)
             {
-
-                throw new Exception("Fallo en Funcionario Negocios " + ex);
+                throw new Exception("Fallo en Funcionario Negocios " + ex.Message);
             }
-        }//fn ConsultarFuncionarioID
+        }//fin ConsultarFuncionarioID
+
 
         public List<FuncionarioModel> ListarFuncionarios()
         {
