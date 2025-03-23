@@ -160,6 +160,18 @@ namespace SEDEP.Controllers
                 return View();
             }
         }
+
+        public IActionResult InformativaConglomerado()
+        {
+            var conglomerados = new List<ConglomeradoModel>
+        {
+            new ConglomeradoModel { IdConglomerado = 1, NombreConglomerado = "Grupo Empresarial Tico", Descripcion = "Conglomerado nacional con enfoque en retail y servicios financieros." },
+            new ConglomeradoModel { IdConglomerado = 2, NombreConglomerado = "Inversiones Globales S.A.", Descripcion = "Empresa internacional dedicada a bienes raíces y tecnología." },
+            new ConglomeradoModel { IdConglomerado = 3, NombreConglomerado = "Corporación Verde", Descripcion = "Conglomerado enfocado en energías renovables y sostenibilidad." }
+        };
+
+            return View(conglomerados);
+        }
         #endregion
 
 
