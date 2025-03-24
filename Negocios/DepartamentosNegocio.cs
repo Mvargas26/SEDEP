@@ -17,28 +17,29 @@ namespace Negocios
         SQLServerContext_Datos objDatos = new SQLServerContext_Datos();
 
         // Consultar un departamento por ID
-        //public DepartamentoModel ConsultarDepartamentoID(int id)
-        //{
-        //    List<SqlParameter> parametros = new()
-        //    {
-        //        new SqlParameter("@idDepartamento", id)
-        //    };
+        public DepartamentoModel ConsultarDepartamentoID(int id)
+        {
+            List<SqlParameter> parametros = new()
+            {
+               new SqlParameter("@Accion", "CONSULTAID"), 
+                new SqlParameter("@idDepartamento", id)
+            };
 
-        //    DataTable dt = objDatos.EjecutarSQLconSP_DT("sp_ConsultarDepartamentoID", parametros);
+            DataTable dt = objDatos.EjecutarSQLconSP_DT("sp_CrudDepartamentos", parametros);
 
-        //    if (dt.Rows.Count == 0)
-        //        return null;
+            if (dt.Rows.Count == 0)
+                return null;
 
-        //    DataRow row = dt.Rows[0];
+            DataRow row = dt.Rows[0];
 
-        //    return new DepartamentoModel
-        //    {
-        //        IdDepartamento = Convert.ToInt32(row["idDepartamento"]),
-        //        Departamento = row["Departamento"].ToString()
-        //    };
-        //}//fin ConsultarDepartamentoID
+            return new DepartamentoModel
+            {
+                IdDepartamento = Convert.ToInt32(row["idDepartamento"]),
+                Departamento = row["Departamento"].ToString()
+            };
+        }//fin ConsultarDepartamentoID
 
-        // Listar todos los departamentos
+            // Listar todos los departamentos
         public List<DepartamentoModel> ListarDepartamentos()
         {
             try
