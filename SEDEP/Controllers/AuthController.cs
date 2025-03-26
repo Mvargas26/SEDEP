@@ -21,10 +21,11 @@ namespace SEDEP.Controllers
             // Simulación de autenticación
             if (model.Usuario == "admin" && model.Password == "1234")
             {
+                TempData["SuccessMessage"] = "Inicio de sesión exitoso. Bienvenido.";
                 return RedirectToAction("Index", "Home");
             }
 
-            ModelState.AddModelError("", "Usuario o contraseña incorrectos.");
+            ModelState.AddModelError("", "Error, Datos incorrectos.");
             return View(model);
         }
     }
