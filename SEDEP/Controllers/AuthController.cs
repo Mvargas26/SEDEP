@@ -1,11 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SEDEP.Models;
 using Microsoft.AspNetCore.Http;
+using SEDEP.Models;
+using Negocios;
+using System;
+using System.Collections.Generic;
 
 namespace SEDEP.Controllers
 {
     public class AuthController : Controller
     {
+        private readonly FuncionarioNegocios _funcionarioNegocios;
+        private static Dictionary<string, (int intentos, DateTime? bloqueo)> intentosFallidos = new();
+
+        public AuthController()
+        {
+            _funcionarioNegocios = new FuncionarioNegocios();
+        }
+
         public IActionResult Login()
         {
             return View();
@@ -19,28 +30,74 @@ namespace SEDEP.Controllers
                 return View(model);
             }
 
-            // Simulación de autenticación con roles
-            if (model.Usuario == "admin" && model.Password == "1234")
+            string cedula = model.Cedula;
+
+            // Verificar si el usuario está bloqueado
+            if (intentosFallidos.ContainsKey(cedula) && intentosFallidos[cedula].bloqueo.HasValue)
             {
-                TempData["SuccessMessage"] = "Inicio de sesión exitoso. Bienvenido, Administrador.";
-                HttpContext.Session.SetString("UserRole", "Administración");
-                return RedirectToAction("DashboardAdmin", "Home"); // Redirigir a la vista de administrador
-            }
-            else if (model.Usuario == "user" && model.Password == "1234")
-            {
-                TempData["SuccessMessage"] = "Inicio de sesión exitoso. Bienvenido, Usuario.";
-                HttpContext.Session.SetString("UserRole", "Jefatura");
-                return RedirectToAction("DashboardJefatura", "Home"); // Redirigir a la vista de jefatura
-            }
-            else if (model.Usuario == "user" && model.Password == "1234")
-            {
-                TempData["SuccessMessage"] = "Inicio de sesión exitoso. Bienvenido, Usuario.";
-                HttpContext.Session.SetString("UserRole", "SubAlterno");
-                return RedirectToAction("DashboardUser", "Home"); // Redirigir a la vista de usuario
+                DateTime tiempoBloqueo = intentosFallidos[cedula].bloqueo.Value;
+                if (DateTime.Now < tiempoBloqueo)
+                {
+                    ModelState.AddModelError("", $"Usuario bloqueado. Intente nuevamente en {(tiempoBloqueo - DateTime.Now).Seconds} segundos.");
+                    return View(model);
+                }
+                else
+                {
+                    intentosFallidos[cedula] = (0, null);
+                }
             }
 
-            ModelState.AddModelError("", "Error, Datos incorrectos.");
-            return View(model);
+            // Consultar el funcionario en la base de datos
+            var funcionario = _funcionarioNegocios.ConsultarFuncionarioID(cedula);
+
+            if (funcionario == null || funcionario.Password != model.Password)
+            {
+                RegistrarIntentoFallido(cedula);
+                ModelState.AddModelError("", "Error, Datos incorrectos.");
+                return View(model);
+            }
+
+            // Limpiar intentos fallidos si el login es correcto
+            intentosFallidos.Remove(cedula);
+
+            // Verificación extra: si no tiene rol definido, mostrar error genérico
+            if (string.IsNullOrEmpty(funcionario.Rol))
+            {
+                ModelState.AddModelError("", "Ocurrió un error con la cuenta. Contacte al administrador.");
+                return View(model);
+            }
+
+            TempData["Mensaje"] = $"Inicio de sesión exitoso. Bienvenido, {funcionario.Rol}.";
+            HttpContext.Session.SetString("UserRole", funcionario.Rol);
+
+            return RedirectToAction("Index", "Home"); //Esto es una simulacion
+
+            return funcionario.Rol switch
+            {
+                "Administración" => RedirectToAction("DashboardAdmin", "Home"),
+                "Jefatura" => RedirectToAction("DashboardJefatura", "Home"),
+                "SubAlterno" => RedirectToAction("DashboardUser", "Home"),
+                _ => RedirectToAction("Login")
+            };
+        }
+
+        private void RegistrarIntentoFallido(string cedula)
+        {
+            if (!intentosFallidos.ContainsKey(cedula))
+                intentosFallidos[cedula] = (0, null);
+
+            intentosFallidos[cedula] = (intentosFallidos[cedula].intentos + 1, null);
+
+            if (intentosFallidos[cedula].intentos >= 3)
+            {
+                intentosFallidos[cedula] = (3, DateTime.Now.AddSeconds(30));
+                ModelState.AddModelError("", "Demasiados intentos fallidos. Su cuenta ha sido bloqueada por 30 segundos.");
+            }
+        }
+
+        public IActionResult RecuperarPassword()
+        {
+            return View();
         }
     }
 }
