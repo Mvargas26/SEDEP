@@ -8,8 +8,8 @@ namespace Modelos
 {
   public   class TiposCompetenciasModel
     {
-       public int idTipoCompetencia { get; set; }
-        public string Tipo { get; set; }
+       public int IdTipoCompetencia { get; set; }
+        public required string Tipo { get; set; }
 
-    }//fin class
-}//fin space
+    }
+}
