@@ -2,8 +2,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSession(); // Habilita sesiones
 
 var app = builder.Build();
+app.UseSession(); // Activa el uso de sesiones
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
