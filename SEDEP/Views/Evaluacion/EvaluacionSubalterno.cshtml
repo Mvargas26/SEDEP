@@ -56,7 +56,7 @@
 
                             // Traemos lista de Tipos de Competencias
                             var listaTiposCompetencias = ViewData["ListaTiposCompetencias"] as List<Modelos.TiposCompetenciasModel>;
-                            var nombreTipoCompet = listaTiposCompetencias?.FirstOrDefault(t => t.idTipoCompetencia == item.IdTipoCompetencia)?.Tipo;
+                            var nombreTipoCompet = listaTiposCompetencias?.FirstOrDefault(t => t.IdTipoCompetencia == item.IdTipoCompetencia)?.Tipo;
 
                             // Seleccionamos el nombre correcto
                             var nombreFinal = !string.IsNullOrEmpty(nombreTipo) ? nombreTipo
