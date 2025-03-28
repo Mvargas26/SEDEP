@@ -100,9 +100,56 @@ namespace SEDEP.Controllers
             }
         }
 
+        [HttpGet]
         public IActionResult RecuperarPassword()
         {
-            return View();
+            return View(new RecuperarPasswordViewModel());
         }
+
+
+        [HttpPost]
+        public IActionResult RecuperarPassword(RecuperarPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var funcionario = _funcionarioNegocios.ConsultarFuncionarioID(model.Cedula);
+
+            // Validar que exista y coincida el correo
+            if (funcionario == null || string.IsNullOrEmpty(funcionario.Correo) || !funcionario.Correo.Equals(model.Correo, StringComparison.OrdinalIgnoreCase))
+            {
+                ModelState.AddModelError(string.Empty, "Datos incorrectos.");
+                return View(model);
+            }
+
+            // Simulación
+            string passwordTemporal = GenerarPasswordTemporal();
+            
+            
+            // Llamar a un servicio real de correo
+
+            // Mensaje emergente
+            TempData["MensajeExito"] = $"📧 Se ha enviado una contraseña temporal al correo {model.Correo}.";
+            TempData["DuracionMensajeEmergente"] = 8000;
+            ModelState.AddModelError(string.Empty, "Se ha enviado un correo");
+
+            return RedirectToAction("Login");
+        }
+
+        [HttpGet]
+        private string GenerarPasswordTemporal()
+        {
+            var caracteres = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+            var random = new Random();
+            var clave = new char[8];
+            for (int i = 0; i < clave.Length; i++)
+            {
+                clave[i] = caracteres[random.Next(caracteres.Length)];
+            }
+            return new string(clave);
+        }
+
     }
 }
