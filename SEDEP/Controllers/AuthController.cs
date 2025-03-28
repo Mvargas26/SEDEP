@@ -11,6 +11,7 @@ namespace SEDEP.Controllers
     {
         private readonly FuncionarioNegocios _funcionarioNegocios;
         private static Dictionary<string, (int intentos, DateTime? bloqueo)> intentosFallidos = new();
+        private int segundosDeEspera = 30;
 
         public AuthController()
         {
@@ -38,8 +39,9 @@ namespace SEDEP.Controllers
                 DateTime tiempoBloqueo = intentosFallidos[cedula].bloqueo.Value;
                 if (DateTime.Now < tiempoBloqueo)
                 {
-                    ModelState.AddModelError("", $"Usuario bloqueado. Intente nuevamente en {(tiempoBloqueo - DateTime.Now).Seconds} segundos.");
-                    return View(model);
+                    TempData["DuracionMensajeEmergente"] = segundosDeEspera * 1000; // milisegundos
+                    TempData["MensajeError"] = $"🔒 Usuario bloqueado. Intente nuevamente en {(tiempoBloqueo - DateTime.Now).Seconds} segundos.";
+                    return RedirectToAction("Login");
                 }
                 else
                 {
@@ -53,7 +55,7 @@ namespace SEDEP.Controllers
             if (funcionario == null || funcionario.Password != model.Password)
             {
                 RegistrarIntentoFallido(cedula);
-                ModelState.AddModelError("", "Error, Datos incorrectos.");
+                ModelState.AddModelError("", "Datos incorrectos.");
                 return View(model);
             }
 
@@ -63,15 +65,17 @@ namespace SEDEP.Controllers
             // Verificación extra: si no tiene rol definido, mostrar error genérico
             if (string.IsNullOrEmpty(funcionario.Rol))
             {
-                ModelState.AddModelError("", "Ocurrió un error con la cuenta. Contacte al administrador.");
-                return View(model);
+                TempData["MensajeError"] = "⚠️ Ocurrió un error con la cuenta. Contacte al administrador.";
+                return RedirectToAction("Login");
             }
 
-            TempData["Mensaje"] = $"Inicio de sesión exitoso. Bienvenido, {funcionario.Rol}.";
+            TempData["MensajeExito"] = $"✅ Inicio de sesión exitoso. Bienvenido, {funcionario.Rol}.";
             HttpContext.Session.SetString("UserRole", funcionario.Rol);
 
-            return RedirectToAction("Index", "Home"); //Esto es una simulacion
+            return RedirectToAction("Index", "Home"); // Simulación del redireccionamiento general
 
+            // En producción podrías usar esto:
+            /*
             return funcionario.Rol switch
             {
                 "Administración" => RedirectToAction("DashboardAdmin", "Home"),
@@ -79,6 +83,7 @@ namespace SEDEP.Controllers
                 "SubAlterno" => RedirectToAction("DashboardUser", "Home"),
                 _ => RedirectToAction("Login")
             };
+            */
         }
 
         private void RegistrarIntentoFallido(string cedula)
@@ -90,8 +95,8 @@ namespace SEDEP.Controllers
 
             if (intentosFallidos[cedula].intentos >= 3)
             {
-                intentosFallidos[cedula] = (3, DateTime.Now.AddSeconds(30));
-                ModelState.AddModelError("", "Demasiados intentos fallidos. Su cuenta ha sido bloqueada por 30 segundos.");
+                intentosFallidos[cedula] = (3, DateTime.Now.AddSeconds(segundosDeEspera));
+                TempData["MensajeError"] = "🔒 Demasiados intentos fallidos. Su cuenta ha sido bloqueada por 30 segundos.";
             }
         }
 

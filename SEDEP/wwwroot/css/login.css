@@ -63,18 +63,22 @@
         margin: 10px 0;
     }
 
-    .login-container .btn-login {
-        background-color: #202859;
-        color: white;
-        font-size: 18px;
-        font-weight: bold;
-        padding: 12px;
-        border-radius: 10px;
-        width: 100%;
-        border: none;
-        cursor: pointer;
-    }
+.text-decoration-none {
+    color: #ceb16b;
+}
+
+.login-container .btn-login {
+    background-color: #202859;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 12px;
+    border-radius: 10px;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+}
 
         .login-container .btn-login:hover {
-            background-color: #434190;
+            background-color: #202859;
         }
