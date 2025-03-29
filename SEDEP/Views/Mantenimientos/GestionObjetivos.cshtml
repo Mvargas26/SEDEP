@@ -10,11 +10,10 @@
     <h2 class="mb-4">@ViewData["Title"]</h2>
 
     <!-- Botón para crear un nuevo objetivo -->
-    <div class="d-flex justify-content-between">
-        <a href="/Mantenimientos/CreaObjetivo" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Crear Nuevo Objetivo
-        </a>
-    </div>
+    <p>
+        <a asp-action="CrearNuevoObjetivo" class="btn btn-primary">Nuevo Objetivo <i class="fa-solid fa-square-plus fa-beat"></i></a>
+    </p>
+
 
     <!-- Tabla de objetivos -->
     <div class="table-responsive mt-3">
@@ -29,34 +28,26 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Mejorar productividad</td>
-                    <td>80</td>
-                    <td>Estratégico</td>
-                    <td>
-                        <a href="/Mantenimientos/EditaObjetivo/1" class="btn btn-primary btn-sm">
-                            <i class="fas fa-edit"></i> Editar
-                        </a>
-                        <button class="btn btn-danger btn-sm" onclick="confirmarEliminar(1, 'Mejorar productividad')">
-                            <i class="fas fa-trash-alt"></i> Eliminar
-                        </button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Aumentar satisfacción del cliente</td>
-                    <td>90</td>
-                    <td>Operativo</td>
-                    <td>
-                        <a href="/Mantenimientos/EditaObjetivo/2" class="btn btn-primary btn-sm">
-                            <i class="fas fa-edit"></i> Editar
-                        </a>
-                        <button class="btn btn-danger btn-sm" onclick="confirmarEliminar(2, 'Aumentar satisfacción del cliente')">
-                            <i class="fas fa-trash-alt"></i> Eliminar
-                        </button>
-                    </td>
-                </tr>
+                @foreach (var objetivo in Model)
+                {
+                    <tr>
+                        <td>@objetivo.IdObjetivo</td>
+                        <td>@objetivo.Objetivo</td>
+                        <td>@objetivo.Porcentaje</td>
+                        <td>@(objetivo.Tipo)</td>
+                        <td>
+                            <a href="/Mantenimientos/EditaObjetivo/@objetivo.IdObjetivo" class="btn btn-primary btn-sm">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            <form asp-action="BorraObjetivo" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@objetivo.IdObjetivo" />
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este objetivo?');">
+                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
