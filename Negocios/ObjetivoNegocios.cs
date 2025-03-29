@@ -7,6 +7,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Negocios
 {
@@ -67,6 +68,7 @@ namespace Negocios
                         IdObjetivo = Convert.ToInt32(row["idObjetivo"]),
                         Objetivo = row["Objetivo"].ToString(),
                         Porcentaje = Convert.ToDecimal(row["Porcentaje"]),
+                        Tipo = row["Tipo"].ToString(),
                         IdTipoObjetivo = row["idTipoObjetivo"] != DBNull.Value ? Convert.ToInt32(row["idTipoObjetivo"]) : (int?)null
                     });
                 }
