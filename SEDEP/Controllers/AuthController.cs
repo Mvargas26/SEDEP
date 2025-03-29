@@ -146,7 +146,7 @@ namespace SEDEP.Controllers
             if (funcionario != null && funcionario.CodigoSeguridad == codigoSeguridad)
             {
                 //si el codigo es correcto redirige al index
-                return RedirectToAction("Index", "Home"); // Redirigir al dashboard o la vista principal
+                return RedirectToAction("Index", "Home");
             }
             else
             {
