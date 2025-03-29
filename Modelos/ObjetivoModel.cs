@@ -13,7 +13,7 @@ namespace Modelos
         public int IdObjetivo { get; set; }
         public string Objetivo { get; set; }
         public decimal Porcentaje { get; set; }
-        public string Tipo { get; set; }
+        public string? Tipo { get; set; }
         public int? IdTipoObjetivo { get; set; }
 
     }//fin class
