@@ -20,15 +20,15 @@ namespace Negocios
                 var clienteCorreo = new SmtpClient("smtp.gmail.com")
                 {
                     Port = 587,  
-                    Credentials = new NetworkCredential("mandacorreosproyecto@gmail.com", "bdbq obsx vwtp qxjl"),  // correo del remitente
+                    Credentials = new NetworkCredential("sedep8099@gmail.com", "serm psmx uakd qdmo"),  // correo del remitente
                     EnableSsl = true
                 };
 
                 // crea el mensaje del correo
                 var mensaje = new MailMessage
                 {
-                    From = new MailAddress("mandacorreosproyecto@gmail.com"),  // correo del remitente
-                    Subject = "Tu código de seguridad",
+                    From = new MailAddress("sedep8099@gmail.com"),  // correo del remitente
+                    Subject = "Código de seguridad",
                     Body = $"Tu código de seguridad es {codigo}",
                     IsBodyHtml = false
                 };
