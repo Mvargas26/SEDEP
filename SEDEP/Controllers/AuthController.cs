@@ -9,6 +9,7 @@ namespace SEDEP.Controllers
 {
     public class AuthController : Controller
     {
+        private readonly CorreoService _correoService;
         private readonly FuncionarioNegocios _funcionarioNegocios;
         private static Dictionary<string, (int intentos, DateTime? bloqueo)> intentosFallidos = new();
         private int segundosDeEspera = 30;
@@ -16,6 +17,7 @@ namespace SEDEP.Controllers
         public AuthController()
         {
             _funcionarioNegocios = new FuncionarioNegocios();
+            _correoService = new CorreoService();
         }
 
         public IActionResult Login()
@@ -24,7 +26,7 @@ namespace SEDEP.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -59,6 +61,8 @@ namespace SEDEP.Controllers
                 return View(model);
             }
 
+
+
             // Limpiar intentos fallidos si el login es correcto
             intentosFallidos.Remove(cedula);
 
@@ -72,7 +76,19 @@ namespace SEDEP.Controllers
             TempData["MensajeExito"] = $"✅ Inicio de sesión exitoso. Bienvenido, {funcionario.Rol}.";
             HttpContext.Session.SetString("UserRole", funcionario.Rol);
 
-            return RedirectToAction("Index", "Home"); // Simulación del redireccionamiento general
+            // genera y guarda el code de seguridad
+            string codigoSeguridad = _funcionarioNegocios.GenerarCodigoSeguridad();
+            _funcionarioNegocios.EstablecerCodigoSeguridad(cedula, codigoSeguridad);
+
+            // envia el correo
+            await _correoService.EnviarCodigoSeguridad(funcionario.Correo, codigoSeguridad);
+
+            // pasa la cedula a la vista de verificar codigo
+            TempData["Cedula"] = cedula;
+
+            // redirigfe a la vista
+            return RedirectToAction("VerificarCodigo", "Auth");
+
 
             // En producción podrías usar esto:
             /*
@@ -99,6 +115,46 @@ namespace SEDEP.Controllers
                 TempData["MensajeError"] = "🔒 Demasiados intentos fallidos. Su cuenta ha sido bloqueada por 30 segundos.";
             }
         }
+
+
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult VerificarCodigo()
+        {
+            // Verifica que la cédula esté en TempData
+            var cedula = TempData["Cedula"]?.ToString();
+            if (cedula == null)
+            {
+                return RedirectToAction("Login");  // Si no hay cédula en TempData, redirige al login
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult VerificarCodigo(string cedula, string codigoSeguridad)
+        {
+            // consultar al funcionario utilizando la cedula
+            var funcionario = _funcionarioNegocios.ConsultarFuncionarioID(cedula);
+
+            // compara el codigo de seguridad del correo y el ingresado
+            if (funcionario != null && funcionario.CodigoSeguridad == codigoSeguridad)
+            {
+                //si el codigo es correcto redirige al index
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Código incorrecto.");
+                return View();
+            }
+        }
+
 
         [HttpGet]
         public IActionResult RecuperarPassword()

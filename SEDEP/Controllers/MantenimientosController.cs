@@ -9,9 +9,18 @@ namespace SEDEP.Controllers
         //***********************************************************************************************
         //Objetos de la cap Negocios
         ConglomeradosNegocios objeto_ConglomeradosNegocios = new ConglomeradosNegocios();
+        ObjetivoNegocios _objetivoNegocios = new ObjetivoNegocios();
+        FuncionarioNegocios objeto_funcionario= new FuncionarioNegocios();
 
         //***********************************************************************************************
+        #region FUNCIONARIOS
 
+        public IActionResult FuncionariosManteni()
+        {
+            return View();
+        }
+
+        #endregion
         public IActionResult Index()
         {
             return View();
@@ -20,23 +29,87 @@ namespace SEDEP.Controllers
         #region OBJETIVOS
         public IActionResult GestionObjetivos()
         {
-            var objetivos = new List<ObjetivoModel>
-        {
-            new ObjetivoModel { Id = 1, Nombre = "Mejorar productividad", Porcentaje = 80, Tipo = "Estratégico" },
-            new ObjetivoModel { Id = 2, Nombre = "Aumentar satisfacción del cliente", Porcentaje = 90, Tipo = "Operativo" }
-        };
-            return View(objetivos);
+            // Obtener la lista de objetivos desde la base de datos
+            try
+            {
+                var objetivos = _objetivoNegocios.ListarObjetivos();
+                return View(objetivos);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al obtener los objetivos: {ex.Message}";
+                return View(new List<ObjetivoModel>());
+            }
         }
 
-        public IActionResult CreaObjetivo()
+        public IActionResult CrearNuevoObjetivo()
         {
-            return View(new ObjetivoModel());
+            return View("CreaObjetivo", new ObjetivoModel());
+        }
+
+        [HttpPost]
+        public IActionResult CrearObjetivo(ObjetivoModel nuevoObjetivo)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _objetivoNegocios.CrearObjetivo(nuevoObjetivo);
+                    return RedirectToAction(nameof(GestionObjetivos)); // Redirigir a la vista de gestión
+                }
+                else
+                {
+                    return View(nuevoObjetivo); // Mostrar errores de validación si los hay
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al crear el conglomerado: {ex.Message}";
+                return View();
+            }
         }
 
         public IActionResult EditaObjetivo(int id)
         {
-            var objetivo = new ObjetivoModel { Id = id, Nombre = "Mejorar productividad", Porcentaje = 80, Tipo = "Estratégico" };
-            return View(objetivo);
+            return View(_objetivoNegocios.ConsultarObjetivoID(id));
+
+        }//fin EditaConglomerado
+
+        [HttpPost]
+        public IActionResult EditarObjetivo(ObjetivoModel objetivoEditado)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _objetivoNegocios.ModificarObjetivo(objetivoEditado);
+                    return RedirectToAction(nameof(GestionObjetivos)); // Redirigir a la lista de objetivos
+                }
+                else
+                {
+                    return View(objetivoEditado); // Mostrar errores de validación
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al actualizar el objetivo: {ex.Message}";
+                return View(objetivoEditado);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult BorraObjetivo(int id)
+        {
+            try
+            {
+                _objetivoNegocios.EliminarObjetivo(id);
+                return RedirectToAction(nameof(GestionObjetivos));
+            }
+            catch
+            {
+                TempData["mensajeError"] = "No puede borrar este Conglomerado, verifique las relaciones.";
+                return RedirectToAction(nameof(GestionObjetivos));
+            }
         }
         #endregion
 
@@ -79,7 +152,26 @@ namespace SEDEP.Controllers
                 return View(new List<ConglomeradoModel>());
             }
         }//fin ManteniConglomerados
-
+         // Gestión de Funcionarios
+        public IActionResult ManteniFuncionarios()
+        {
+            try
+            {
+               
+                var funcionarios = objeto_funcionario.ListarFuncionarios();
+                return View(funcionarios);
+            }
+            catch (Exception ex)
+            {
+                // Si ocurre un error, muestra un mensaje de error
+                TempData["ErrorMessage"] = $"Error al obtener los funcionarios: {ex.Message}";
+                return View(new List<FuncionarioModel>()); // Retorna una lista vacía si ocurre un error
+            }
+        }
+        public IActionResult funcionario()
+        {
+            return View(new FuncionarioModel());
+        }
         public IActionResult CrearNuevoConglomerado()
         {
             return View(new ConglomeradoModel());
@@ -163,14 +255,17 @@ namespace SEDEP.Controllers
 
         public IActionResult InformativaConglomerado()
         {
-            var conglomerados = new List<ConglomeradoModel>
-        {
-            new ConglomeradoModel { IdConglomerado = 1, NombreConglomerado = "Grupo Empresarial Tico", Descripcion = "Conglomerado nacional con enfoque en retail y servicios financieros." },
-            new ConglomeradoModel { IdConglomerado = 2, NombreConglomerado = "Inversiones Globales S.A.", Descripcion = "Empresa internacional dedicada a bienes raíces y tecnología." },
-            new ConglomeradoModel { IdConglomerado = 3, NombreConglomerado = "Corporación Verde", Descripcion = "Conglomerado enfocado en energías renovables y sostenibilidad." }
-        };
-
-            return View(conglomerados);
+            try
+            {
+                // obtiene lista conglomerados
+                var conglomerados = objeto_ConglomeradosNegocios.ListarConglomerados();
+                return View(conglomerados);  // pasa los conglomerados a la vista
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al obtener los conglomerados: {ex.Message}";
+                return View(new List<ConglomeradoModel>());
+            }
         }
         #endregion
 
@@ -178,12 +273,12 @@ namespace SEDEP.Controllers
     }//fin class
 
     // lo ideal es crearlo en modelos, pero lo puse aqui solo para probar el front
-    public class ObjetivoModel
-    {
-        public int Id { get; set; }
-        public string Nombre { get; set; }
-        public int Porcentaje { get; set; } // Entre 0 y 100
-        public string Tipo { get; set; } // Estratégico, Operativo, Táctico
-    }
+    //public class ObjetivoModel
+    //{
+    //    public int Id { get; set; }
+    //    public string Nombre { get; set; }
+    //    public int Porcentaje { get; set; } // Entre 0 y 100
+    //    public string Tipo { get; set; } // Estratégico, Operativo, Táctico
+    //}
 
 }//fin space
