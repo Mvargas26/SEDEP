@@ -188,14 +188,17 @@ namespace SEDEP.Controllers
 
         public IActionResult InformativaConglomerado()
         {
-            var conglomerados = new List<ConglomeradoModel>
-        {
-            new ConglomeradoModel { IdConglomerado = 1, NombreConglomerado = "Grupo Empresarial Tico", Descripcion = "Conglomerado nacional con enfoque en retail y servicios financieros." },
-            new ConglomeradoModel { IdConglomerado = 2, NombreConglomerado = "Inversiones Globales S.A.", Descripcion = "Empresa internacional dedicada a bienes raíces y tecnología." },
-            new ConglomeradoModel { IdConglomerado = 3, NombreConglomerado = "Corporación Verde", Descripcion = "Conglomerado enfocado en energías renovables y sostenibilidad." }
-        };
-
-            return View(conglomerados);
+            try
+            {
+                // obtiene lista conglomerados
+                var conglomerados = objeto_ConglomeradosNegocios.ListarConglomerados();
+                return View(conglomerados);  // pasa los conglomerados a la vista
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al obtener los conglomerados: {ex.Message}";
+                return View(new List<ConglomeradoModel>());
+            }
         }
         #endregion
 

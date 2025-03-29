@@ -15,6 +15,32 @@ namespace Negocios
         //***************** VARIABLES *******************
         SQLServerContext_Datos objDatos = new SQLServerContext_Datos();
 
+        public string GenerarCodigoSeguridad()
+        {
+            Random random = new Random();
+            string codigo = random.Next(100000, 999999).ToString();
+            return codigo;
+        }
+
+        public void EstablecerCodigoSeguridad(string cedula, string codigoSeguridad)
+        {
+            try
+            {
+                List<SqlParameter> parametros = new()
+        {
+            new SqlParameter("@Accion", "UPDATE"),
+            new SqlParameter("@Cedula", cedula),
+            new SqlParameter("@CodigoSeguridad", codigoSeguridad)
+        };
+
+                objDatos.EjecutarSQLconSP_Void("adm.sp_CrudFuncionarios", parametros);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Fallo al establecer el código de seguridad", ex);
+            }
+        }
+
 
         public FuncionarioModel ConsultarFuncionarioID(string cedula)
         {

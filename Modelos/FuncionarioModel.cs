@@ -41,8 +41,6 @@ namespace Modelos
         public int IdEstadoFuncionario { get; set; }
 
         public string Estado { get; set; }
-
-
-
+        public string CodigoSeguridad { get; set; }
     }//public class
 }//fin space

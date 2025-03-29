@@ -1,0 +1,12 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form method="post" action="/Auth/VerificarCodigo">
+    <!-- obtiene la cedula del tempdata -->
+    <input type="hidden" name="cedula" value="@TempData["Cedula"]" />
+    <label for="codigoSeguridad">Ingrese el código de seguridad:</label>
+    <input type="text" id="codigoSeguridad" name="codigoSeguridad" required />
+    <button type="submit">Verificar</button>
+</form>
