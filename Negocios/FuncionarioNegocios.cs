@@ -70,7 +70,8 @@ namespace Negocios
                     Departamento = row["Departamento"].ToString(),
                     Rol = row["Rol"].ToString(),
                     Puesto = row["Puesto"].ToString(),
-                    Estado = row["Estado"].ToString()
+                    Estado = row["Estado"].ToString(),
+                    CodigoSeguridad = row["CodigoSeguridad"]?.ToString()
                 };
             }
             catch (Exception ex)

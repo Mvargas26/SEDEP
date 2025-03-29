@@ -116,6 +116,26 @@ namespace SEDEP.Controllers
             }
         }
 
+
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult VerificarCodigo()
+        {
+            // Verifica que la cédula esté en TempData
+            var cedula = TempData["Cedula"]?.ToString();
+            if (cedula == null)
+            {
+                return RedirectToAction("Login");  // Si no hay cédula en TempData, redirige al login
+            }
+
+            return View();
+        }
+
         [HttpPost]
         public IActionResult VerificarCodigo(string cedula, string codigoSeguridad)
         {
