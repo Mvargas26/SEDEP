@@ -9,9 +9,17 @@ namespace SEDEP.Controllers
         //***********************************************************************************************
         //Objetos de la cap Negocios
         ConglomeradosNegocios objeto_ConglomeradosNegocios = new ConglomeradosNegocios();
+        FuncionarioNegocios objeto_funcionario= new FuncionarioNegocios();
 
         //***********************************************************************************************
+        #region FUNCIONARIOS
 
+        public IActionResult FuncionariosManteni()
+        {
+            return View();
+        }
+
+        #endregion
         public IActionResult Index()
         {
             return View();
@@ -22,21 +30,19 @@ namespace SEDEP.Controllers
         {
             var objetivos = new List<ObjetivoModel>
         {
-            new ObjetivoModel { Id = 1, Nombre = "Mejorar productividad", Porcentaje = 80, Tipo = "Estratégico" },
-            new ObjetivoModel { Id = 2, Nombre = "Aumentar satisfacción del cliente", Porcentaje = 90, Tipo = "Operativo" }
         };
             return View(objetivos);
         }
 
         public IActionResult CreaObjetivo()
         {
-            return View(new ObjetivoModel());
+            return View();
         }
 
         public IActionResult EditaObjetivo(int id)
         {
-            var objetivo = new ObjetivoModel { Id = id, Nombre = "Mejorar productividad", Porcentaje = 80, Tipo = "Estratégico" };
-            return View(objetivo);
+   
+            return View();
         }
         #endregion
 
@@ -79,7 +85,26 @@ namespace SEDEP.Controllers
                 return View(new List<ConglomeradoModel>());
             }
         }//fin ManteniConglomerados
-
+         // Gestión de Funcionarios
+        public IActionResult ManteniFuncionarios()
+        {
+            try
+            {
+               
+                var funcionarios = objeto_funcionario.ListarFuncionarios();
+                return View(funcionarios);
+            }
+            catch (Exception ex)
+            {
+                // Si ocurre un error, muestra un mensaje de error
+                TempData["ErrorMessage"] = $"Error al obtener los funcionarios: {ex.Message}";
+                return View(new List<FuncionarioModel>()); // Retorna una lista vacía si ocurre un error
+            }
+        }
+        public IActionResult funcionario()
+        {
+            return View(new FuncionarioModel());
+        }
         public IActionResult CrearNuevoConglomerado()
         {
             return View(new ConglomeradoModel());
@@ -177,13 +202,7 @@ namespace SEDEP.Controllers
 
     }//fin class
 
-    // lo ideal es crearlo en modelos, pero lo puse aqui solo para probar el front
-    public class ObjetivoModel
-    {
-        public int Id { get; set; }
-        public string Nombre { get; set; }
-        public int Porcentaje { get; set; } // Entre 0 y 100
-        public string Tipo { get; set; } // Estratégico, Operativo, Táctico
-    }
+
+
 
 }//fin space
