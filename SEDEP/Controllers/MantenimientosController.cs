@@ -10,9 +10,17 @@ namespace SEDEP.Controllers
         //Objetos de la cap Negocios
         ConglomeradosNegocios objeto_ConglomeradosNegocios = new ConglomeradosNegocios();
         ObjetivoNegocios _objetivoNegocios = new ObjetivoNegocios();
+        FuncionarioNegocios objeto_funcionario= new FuncionarioNegocios();
 
         //***********************************************************************************************
+        #region FUNCIONARIOS
 
+        public IActionResult FuncionariosManteni()
+        {
+            return View();
+        }
+
+        #endregion
         public IActionResult Index()
         {
             return View();
@@ -144,7 +152,26 @@ namespace SEDEP.Controllers
                 return View(new List<ConglomeradoModel>());
             }
         }//fin ManteniConglomerados
-
+         // Gestión de Funcionarios
+        public IActionResult ManteniFuncionarios()
+        {
+            try
+            {
+               
+                var funcionarios = objeto_funcionario.ListarFuncionarios();
+                return View(funcionarios);
+            }
+            catch (Exception ex)
+            {
+                // Si ocurre un error, muestra un mensaje de error
+                TempData["ErrorMessage"] = $"Error al obtener los funcionarios: {ex.Message}";
+                return View(new List<FuncionarioModel>()); // Retorna una lista vacía si ocurre un error
+            }
+        }
+        public IActionResult funcionario()
+        {
+            return View(new FuncionarioModel());
+        }
         public IActionResult CrearNuevoConglomerado()
         {
             return View(new ConglomeradoModel());

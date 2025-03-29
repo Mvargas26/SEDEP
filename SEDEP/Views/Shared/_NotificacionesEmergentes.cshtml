@@ -1,0 +1,51 @@
+﻿@{
+    var duracionMensajeEmergente = Convert.ToInt32(TempData["DuracionMensajeEmergente"] ?? 7000);
+}
+
+
+<div aria-live="polite" aria-atomic="true" class="position-relative">
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+
+        @if (TempData["MensajeExito"] != null)
+        {
+            <div id="mensajeExito" class="toast toast-sedep exito" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body ">
+                        @TempData["MensajeExito"]
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        }
+
+        @if (TempData["MensajeError"] != null)
+        {
+            <div id="mensajeError" class="toast toast-sedep error" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        @TempData["MensajeError"]
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const duracion = @duracionMensajeEmergente;
+
+        const mostrarMensaje = (id) => {
+            const mensaje = document.getElementById(id);
+            if (mensaje) {
+                const alerta = new bootstrap.Toast(mensaje, { delay: duracion });
+                alerta.show();
+            }
+        };
+
+        mostrarMensaje("mensajeExito");
+        mostrarMensaje("mensajeError");
+    });
+</script>
