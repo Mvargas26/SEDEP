@@ -40,25 +40,19 @@
         <div class="row justify-content-center mt-4">
             @if (ViewBag.PesosConglomerados != null)
             {
-                @foreach (var item in ViewBag.PesosConglomerados)
+                foreach (var item in ViewBag.PesosConglomerados)
                 {
                     var randomColor = coloresFuertes[rnd.Next(coloresFuertes.Length)];
-
                     <div class="col-sm-3 text-center">
                         <div class="rounded-circle text-white mx-auto d-flex align-items-center justify-content-center"
                              style="width:80px; height:80px; background-color:@randomColor;">
                             @item.Porcentaje%
                         </div>
                         @{
-                            // Traemos lista de Tipos de Objetivos
                             var listaTiposObjetivos = ViewData["ListaTiposObjetivos"] as List<Modelos.TiposObjetivosModel>;
                             var nombreTipo = listaTiposObjetivos?.FirstOrDefault(t => t.IdTipoObjetivo == item.IdTipoObjetivo)?.Tipo;
-
-                            // Traemos lista de Tipos de Competencias
                             var listaTiposCompetencias = ViewData["ListaTiposCompetencias"] as List<Modelos.TiposCompetenciasModel>;
                             var nombreTipoCompet = listaTiposCompetencias?.FirstOrDefault(t => t.IdTipoCompetencia == item.IdTipoCompetencia)?.Tipo;
-
-                            // Seleccionamos el nombre correcto
                             var nombreFinal = !string.IsNullOrEmpty(nombreTipo) ? nombreTipo
                             : !string.IsNullOrEmpty(nombreTipoCompet) ? nombreTipoCompet
                             : "Desconocido";
@@ -91,128 +85,56 @@
                 </ul>
             </div>
             <div class="col-md-6">
-                <!-- Si requieres más datos, agrégalos aquí -->
+                <!-- Agrega más datos si es necesario -->
             </div>
         </div>
     </div>
 
-    <!-- Objetivos Departamento: Informática -->
+    <!-- SECCIÓN para elegir objetivos y agregarlos a la tabla -->
     <div class="mb-5">
-        <h4>Objetivos Departamento : Informática</h4>
-        <table class="table table-bordered mt-3">
-            <thead>
-                <tr>
-                    <th>Objetivo / Meta</th>
-                    <th>Tarea / Indicador</th>
-                    <th>Peso</th>
-                    <th>Meta</th>
-                    <th>Actual (Valor Base)</th>
-                    <th>Fecha Inicio</th>
-                    <th>Fecha Fin</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Ejemplo 1 -->
-                <tr>
-                    <td>Aumentar ...</td>
-                    <td>1.1 Aumentar días</td>
-                    <td>20%</td>
-                    <td>90</td>
-                    <td>20</td>
-                    <td>--/--/----</td>
-                    <td>--/--/----</td>
-                    <td>
-                        <!-- Botón Editar Peso -->
-                        <a href="/Evaluacion/ModificarPeso?tipo=Departamento
-                                  &obj=1
-                                  &objName=Aumentar%20...
-                                  &pesoActual=20"
-                           class="btn btn-sm btn-warning">
-                            Editar peso
-                        </a>
-                    </td>
-                </tr>
-                <!-- Ejemplo 2 -->
-                <tr>
-                    <td>2. Recuperación de ...</td>
-                    <td>1.2 ...</td>
-                    <td>6%</td>
-                    <td>40%</td>
-                    <td>--</td>
-                    <td>--/--/----</td>
-                    <td>--/--/----</td>
-                    <td>
-                        <a href="/Evaluacion/ModificarPeso?tipo=Departamento
-                                  &obj=2
-                                  &objName=2.%20Recuperación%20de%20...
-                                  &pesoActual=6"
-                           class="btn btn-sm btn-warning">
-                            Editar peso
-                        </a>
-                    </td>
-                </tr>
-                <!-- Agrega más filas según sea necesario -->
-            </tbody>
-        </table>
+        <h3>Elegir Objetivos:</h3>
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label for="selectObjetivo" class="col-form-label">Elija el objetivo:</label>
+            </div>
+            <div class="col-auto">
+                <!-- Combobox con datos quemados -->
+                <select id="selectObjetivo" class="form-select">
+                    <option value="ID1|Objetivo Departamento 1|Departamental">ID1 - Objetivo Departamento 1</option>
+                    <option value="ID2|Objetivo Departamento 2|Departamental">ID2 - Objetivo Departamento 2</option>
+                    <option value="ID10|Objetivo Individual 10|Individual">ID10 - Objetivo Individual 10</option>
+                    <option value="ID11|Objetivo Individual 11|Individual">ID11 - Objetivo Individual 11</option>
+                </select>
+            </div>
+
+            <div class="col-auto">
+                <label for="inputPeso" class="col-form-label">Ingrese un Peso:</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" id="inputPeso" class="form-control" placeholder="Ej: 25" />
+            </div>
+
+            <div class="col-auto">
+                <button type="button" class="btn btn-success" onclick="agregarFila()">Agregar fila</button>
+            </div>
+        </div>
     </div>
 
-    <!-- Objetivos Individuales: Juan Flores -->
+    <!-- TABLA unificada -->
     <div class="mb-5">
-        <h4>Objetivos Individuales : Juan Flores</h4>
-        <table class="table table-bordered mt-3">
+        <table id="tablaObjetivos" class="table table-bordered mt-3">
             <thead>
                 <tr>
-                    <th>Objetivo / Meta Individual</th>
-                    <th>Tarea / Indicador</th>
+                    <th>Objetivo</th>
+                    <th>Tipo</th>
                     <th>Peso</th>
                     <th>Meta</th>
                     <th>Actual</th>
-                    <th>Fecha Inicio</th>
-                    <th>Fecha Fin</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- Ejemplo 1 -->
-                <tr>
-                    <td>Mejorar servicio a clientes</td>
-                    <td>1. Disminuir errores en ...</td>
-                    <td>20%</td>
-                    <td>95%</td>
-                    <td>100%</td>
-                    <td>--/--/----</td>
-                    <td>--/--/----</td>
-                    <td>
-                        <a href="/Evaluacion/ModificarPeso?tipo=Individual
-                                  &obj=10
-                                  &objName=Mejorar%20servicio%20a%20clientes
-                                  &pesoActual=20"
-                           class="btn btn-sm btn-warning">
-                            Editar peso
-                        </a>
-                    </td>
-                </tr>
-                <!-- Ejemplo 2 -->
-                <tr>
-                    <td>2. Duración de la entrega de ...</td>
-                    <td>...</td>
-                    <td>25%</td>
-                    <td>90</td>
-                    <td>80</td>
-                    <td>--/--/----</td>
-                    <td>--/--/----</td>
-                    <td>
-                        <a href="/Evaluacion/ModificarPeso?tipo=Individual
-                                  &obj=11
-                                  &objName=2.%20Duración%20de%20la%20entrega%20de%20...
-                                  &pesoActual=25"
-                           class="btn btn-sm btn-warning">
-                            Editar peso
-                        </a>
-                    </td>
-                </tr>
-                <!-- Agrega más filas según sea necesario -->
+                <!-- La tabla inicia vacía -->
             </tbody>
         </table>
     </div>
@@ -224,8 +146,7 @@
             <span>80%</span>
         </div>
         <div class="progress">
-            <div class="progress-bar bg-success" role="progressbar" style="width: 80%;"
-                 aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar bg-success" role="progressbar" style="width: 80%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
             </div>
         </div>
     </div>
@@ -239,30 +160,22 @@
                     <tr>
                         <td><strong>Objetivos Departamento:</strong></td>
                         <td>Deseado: 30% | Calificación:</td>
-                        <td style="width: 100px;">
-                            <input type="text" class="form-control" placeholder="20%" />
-                        </td>
+                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="20%" /></td>
                     </tr>
                     <tr>
                         <td><strong>Objetivos Individuales:</strong></td>
                         <td>Deseado: 50% | Calificación:</td>
-                        <td style="width: 100px;">
-                            <input type="text" class="form-control" placeholder="10%" />
-                        </td>
+                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="10%" /></td>
                     </tr>
                     <tr>
                         <td><strong>Competencias:</strong></td>
                         <td>Deseado: 20% | Calificación:</td>
-                        <td style="width: 100px;">
-                            <input type="text" class="form-control" placeholder="15%" />
-                        </td>
+                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="15%" /></td>
                     </tr>
                     <tr>
                         <td><strong>Resultado:</strong></td>
                         <td>Deseado: 100% | Calificación:</td>
-                        <td style="width: 100px;">
-                            <input type="text" class="form-control" placeholder="45%" />
-                        </td>
+                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="45%" /></td>
                     </tr>
                 </tbody>
             </table>
@@ -294,18 +207,76 @@
 
 @section Scripts {
     <script>
-        // Ejemplo de función para mostrar modal (si la usas)
-        function confirmarEliminar(id, nombre) {
-            document.getElementById("mensajeConfirmacion").innerText =
-                `¿Desea eliminar el registro: ${nombre} (ID: ${id})?`;
-            var myModal = new bootstrap.Modal(document.getElementById("confirmacionModal"));
-            myModal.show();
+        function agregarFila() {
+            // Obtener el valor del combobox y el input de peso
+            const select = document.getElementById("selectObjetivo");
+            const inputPeso = document.getElementById("inputPeso");
 
-            // Al hacer clic en Sí
-            document.getElementById("btnEliminar").onclick = function () {
-                // Lógica para eliminar
-                // Por ejemplo: window.location.href = `/Mantenimientos/EliminaConglomerado/${id}`;
+            // Valor seleccionado: formato "ID|Nombre|Tipo"
+            const valorSeleccionado = select.value;
+            if (!valorSeleccionado) {
+                alert("Seleccione un objetivo.");
+                return;
+            }
+            const [idObj, nombreObj, tipoObj] = valorSeleccionado.split("|");
+
+            // Obtener el peso ingresado
+            const pesoIngresado = inputPeso.value;
+            if (!pesoIngresado) {
+                alert("Ingrese un peso.");
+                return;
+            }
+
+            // Crear la nueva fila
+            const tbody = document.querySelector("#tablaObjetivos tbody");
+            const nuevaFila = document.createElement("tr");
+
+            // Celda de Objetivo
+            const tdObjetivo = document.createElement("td");
+            tdObjetivo.innerText = nombreObj;
+
+            // Celda de Tipo
+            const tdTipo = document.createElement("td");
+            tdTipo.innerText = tipoObj;
+
+            // Celda de Peso
+            const tdPeso = document.createElement("td");
+            tdPeso.innerText = pesoIngresado + "%";
+
+            // Celda de Meta (fijo 100%)
+            const tdMeta = document.createElement("td");
+            tdMeta.innerText = "100%";
+
+            // Celda de Actual (fijo 0%)
+            const tdActual = document.createElement("td");
+            tdActual.innerText = "0%";
+
+            // Celda de Acciones
+            const tdAcciones = document.createElement("td");
+
+            // Solo se deja el botón "Eliminar"
+            const btnEliminar = document.createElement("button");
+            btnEliminar.classList.add("btn", "btn-sm", "btn-danger");
+            btnEliminar.innerText = "Eliminar";
+            btnEliminar.onclick = function() {
+                tbody.removeChild(nuevaFila);
             };
+
+            tdAcciones.appendChild(btnEliminar);
+
+            // Agregar celdas a la fila
+            nuevaFila.appendChild(tdObjetivo);
+            nuevaFila.appendChild(tdTipo);
+            nuevaFila.appendChild(tdPeso);
+            nuevaFila.appendChild(tdMeta);
+            nuevaFila.appendChild(tdActual);
+            nuevaFila.appendChild(tdAcciones);
+
+            // Insertar la fila en la tabla
+            tbody.appendChild(nuevaFila);
+
+            // Limpiar el input de peso
+            inputPeso.value = "";
         }
     </script>
 }
