@@ -15,6 +15,32 @@ namespace Negocios
         //***************** VARIABLES *******************
         SQLServerContext_Datos objDatos = new SQLServerContext_Datos();
 
+        public string GenerarCodigoSeguridad()
+        {
+            Random random = new Random();
+            string codigo = random.Next(100000, 999999).ToString();
+            return codigo;
+        }
+
+        public void EstablecerCodigoSeguridad(string cedula, string codigoSeguridad)
+        {
+            try
+            {
+                List<SqlParameter> parametros = new()
+        {
+            new SqlParameter("@Accion", "UPDATE"),
+            new SqlParameter("@Cedula", cedula),
+            new SqlParameter("@CodigoSeguridad", codigoSeguridad)
+        };
+
+                objDatos.EjecutarSQLconSP_Void("adm.sp_CrudFuncionarios", parametros);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Fallo al establecer el código de seguridad", ex);
+            }
+        }
+
 
         public FuncionarioModel ConsultarFuncionarioID(string cedula)
         {
@@ -77,10 +103,10 @@ namespace Negocios
                         Apellido2 = row["apellido2"].ToString(),
                         Correo = row["correo"].ToString(),
                         Password = row["password"].ToString(),
-                        IdDepartamento = Convert.ToInt32(row["idDepartamento"]),
-                        IdRol = Convert.ToInt32(row["idRol"]),
-                        IdPuesto = Convert.ToInt32(row["idPuesto"]),
-                        IdEstadoFuncionario = Convert.ToInt32(row["idEstadoFuncionario"])
+                        Departamento = row["Departamento"].ToString(),
+                        Rol = row["Rol"].ToString(),
+                        Puesto = row["Puesto"].ToString(),
+                        Estado = row["Estado"].ToString()
                     });
                 }
 
