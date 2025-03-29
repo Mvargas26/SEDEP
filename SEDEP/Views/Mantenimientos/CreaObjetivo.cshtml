@@ -1,30 +1,31 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Crear Objetivo";
 }
 
 <div class="container mt-4">
     <h2 class="mb-4">@ViewData["Title"]</h2>
-    <form>
+
+    <form method="post" asp-action="CrearObjetivo">
         <div class="mb-3">
-            <label for="nombreObjetivo" class="form-label">Nombre del Objetivo</label>
-            <input type="text" id="nombreObjetivo" class="form-control" required maxlength="255">
+            <label for="Objetivo" class="form-label">Nombre del Objetivo</label>
+            <input type="text" id="Objetivo" name="Objetivo" class="form-control" required maxlength="255">
         </div>
+
         <div class="mb-3">
             <label for="porcentaje" class="form-label">Porcentaje</label>
-            <input type="number" id="porcentaje" class="form-control" required min="0" max="100">
+            <input type="number" id="Porcentaje" name="Porcentaje" class="form-control" required min="0" max="100">
         </div>
+
         <div class="mb-3">
-            <label for="tipoObjetivo" class="form-label">Tipo de Objetivo</label>
-            <select id="tipoObjetivo" class="form-control">
-                <option value="Estratégico">Estratégico</option>
-                <option value="Operativo">Operativo</option>
-                <option value="Táctico">Táctico</option>
+            <label for="IdTipoObjetivo" class="form-label">Tipo de Objetivo</label>
+            <select id="IdTipoObjetivo" name="IdTipoObjetivo" class="form-control">
+                <option value="1">Objetivo Departamentales</option>
+                <option value="2">Objetivo Individual</option>
+                <option value="3">Objetivos y Metas del PEI y POI</option>
             </select>
         </div>
+
         <div class="d-flex justify-content-between">
             <a href="/Mantenimientos/GestionObjetivos" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Volver
