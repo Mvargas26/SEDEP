@@ -77,10 +77,10 @@ namespace Negocios
                         Apellido2 = row["apellido2"].ToString(),
                         Correo = row["correo"].ToString(),
                         Password = row["password"].ToString(),
-                        IdDepartamento = Convert.ToInt32(row["idDepartamento"]),
-                        IdRol = Convert.ToInt32(row["idRol"]),
-                        IdPuesto = Convert.ToInt32(row["idPuesto"]),
-                        IdEstadoFuncionario = Convert.ToInt32(row["idEstadoFuncionario"])
+                        Departamento = row["Departamento"].ToString(),
+                        Rol = row["Rol"].ToString(),
+                        Puesto = row["Puesto"].ToString(),
+                        Estado = row["Estado"].ToString()
                     });
                 }
 
