@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Negocios
 {
-    class MetasNegocios
+    public class MetasNegocios
     {
         //***************** VARIABLES *******************
         SQLServerContext_Datos objDatos = new SQLServerContext_Datos();
