@@ -81,7 +81,7 @@ namespace SEDEP.Controllers
             _funcionarioNegocios.EstablecerCodigoSeguridad(cedula, codigoSeguridad);
 
             // envia el correo
-            await _correoService.EnviarCodigoSeguridad(funcionario.Correo, codigoSeguridad);
+            //await _correoService.EnviarCodigoSeguridad(funcionario.Correo, codigoSeguridad);
 
             // pasa la cedula a la vista de verificar codigo
             TempData["Cedula"] = cedula;
