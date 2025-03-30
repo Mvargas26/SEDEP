@@ -8,7 +8,7 @@ namespace Modelos
 {
     public class MetaModel
     {
-        public int IdMeta { get; set; }
+        public int? IdMeta { get; set; }
         public string Meta { get; set; }
         public decimal Porcentaje { get; set; }
     }
