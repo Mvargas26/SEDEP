@@ -57,7 +57,7 @@ namespace SEDEP.Controllers
             if (funcionario == null || funcionario.Password != model.Password)
             {
                 RegistrarIntentoFallido(cedula);
-                ModelState.AddModelError("", "Datos incorrectos.");
+                ModelState.AddModelError("", "Datos incorrectos");
                 return View(model);
             }
 
@@ -176,7 +176,7 @@ namespace SEDEP.Controllers
             // Validar que exista y coincida el correo
             if (funcionario == null || string.IsNullOrEmpty(funcionario.Correo) || !funcionario.Correo.Equals(model.Correo, StringComparison.OrdinalIgnoreCase))
             {
-                ModelState.AddModelError(string.Empty, "Datos incorrectos.");
+                ModelState.AddModelError(string.Empty, "Error, Datos incorrectos");
                 return View(model);
             }
 
@@ -186,7 +186,6 @@ namespace SEDEP.Controllers
             
             // Llamar a un servicio real de correo
 
-            // Mensaje emergente
             TempData["MensajeExito"] = $"📧 Se ha enviado una contraseña temporal al correo {model.Correo}.";
             TempData["DuracionMensajeEmergente"] = 8000;
             ModelState.AddModelError(string.Empty, "Se ha enviado un correo");
