@@ -11,21 +11,122 @@ namespace SEDEP.Controllers
         ConglomeradosNegocios objeto_ConglomeradosNegocios = new ConglomeradosNegocios();
         ObjetivoNegocios _objetivoNegocios = new ObjetivoNegocios();
         FuncionarioNegocios objeto_funcionario= new FuncionarioNegocios();
+        DepartamentosNegocio objeto_departamento = new DepartamentosNegocio();
 
         //***********************************************************************************************
         #region FUNCIONARIOS
-
-        public IActionResult FuncionariosManteni()
+        // Gestión de Funcionarios
+        public IActionResult ManteniFuncionarios()
         {
-            return View();
+            try
+            {
+
+                var funcionarios = objeto_funcionario.ListarFuncionarios();
+                return View(funcionarios);
+            }
+            catch (Exception ex)
+            {
+                // Si ocurre un error, muestra un mensaje de error
+                TempData["ErrorMessage"] = $"Error al obtener los funcionarios: {ex.Message}";
+                return View(new List<FuncionarioModel>()); // Retorna una lista vacía si ocurre un error
+            }
+        }
+        [HttpGet]
+        // pantalla para nuevo funcionario{
+        public IActionResult CrearNuevoFuncionario()
+        {
+            return View(new FuncionarioModel());
+        }
+        // Crear nuevo funcionario
+        [HttpPost]
+        public IActionResult CrearNuevoFuncionario(IFormCollection collectionn)
+        {
+            try
+            {
+                FuncionarioModel newFuncionario = new FuncionarioModel
+                {
+                    Cedula = collectionn["Cedula"],
+                    Nombre = collectionn["Nombre"],
+                    Apellido1 = collectionn["Apellido1"],
+                    Apellido2 = collectionn["Apellido2"],
+                    Correo = collectionn["Correo"],
+                    Password = collectionn["Password"],
+                    IdDepartamento = Convert.ToInt32(collectionn["IdDepartamento"]),
+                    IdRol = Convert.ToInt32(collectionn["IdRol"]),
+                    IdPuesto = Convert.ToInt32(collectionn["IdPuesto"]),
+                    IdEstadoFuncionario = Convert.ToInt32(collectionn["IdEstadoFuncionario"])
+                };
+                objeto_funcionario.CrearFuncionario(newFuncionario);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al crear el funcionario: {ex.Message}";
+                return View();
+            }
+        }
+        // Editar funcionario
+        [HttpGet("Mantenimientos/EditaFuncionario/{cedula}")]
+        public IActionResult EditaFuncionario(string cedula)
+        {
+            return View(objeto_funcionario.ConsultarFuncionarioID(cedula));
+        }
+        [HttpPost]
+        public IActionResult EditaFuncionario(string cedula, IFormCollection collection)
+        {
+            try
+            {
+                FuncionarioModel funcionarioEditar = new FuncionarioModel
+                {
+                    Cedula = cedula,
+                    Nombre = collection["Nombre"],
+                    Apellido1 = collection["Apellido1"],
+                    Apellido2 = collection["Apellido2"],
+                    Correo = collection["Correo"],
+                    Password = collection["Password"],
+                    Departamento = collection["Departamento"],
+                    Rol = collection["Rol"],
+                    Puesto = collection["Puesto"],
+                    Estado = collection["EstadoFuncionario"]
+                };
+                objeto_funcionario.ModificarFuncionario(funcionarioEditar);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al editar el funcionario: {ex.Message}";
+                return View();
+            }
+        }
+        // Borrar funcionario
+        [HttpGet("Mantenimientos/BorrarFuncionario/{cedula}")]
+        public IActionResult BorrarFuncionario(string cedula)
+        {
+            return View(objeto_funcionario.ConsultarFuncionarioID(cedula));
+        }
+        [HttpPost("Mantenimientos/BorrarFuncionario/{cedula}")]
+        public IActionResult BorrarFuncionario(string cedula, IFormCollection collection)
+        {
+            try
+            {
+                objeto_funcionario.EliminarFuncionario(cedula);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al borrar el funcionario: {ex.Message}";
+                return View();
+            }
         }
 
+
         #endregion
+        #region Index
         public IActionResult Index()
         {
             return View();
         }
-
+        #endregion
         #region OBJETIVOS
         public IActionResult GestionObjetivos()
         {
@@ -117,23 +218,86 @@ namespace SEDEP.Controllers
         // Gestión de Departamentos (ya existente)
         public IActionResult ManteniDepartamentos()
         {
-            var departamentos = new List<DepartamentoModel>
-            {
-                new DepartamentoModel { IdDepartamento = 1, Departamento = "Recursos Humanos" },
-                new DepartamentoModel { IdDepartamento = 2, Departamento = "IT" }
-            };
+            try { 
+
+            var departamentos = objeto_departamento.ListarDepartamentos();
             return View(departamentos);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al obtener los departamentos: {ex.Message}";
+                return View(new List<DepartamentoModel>());
+            }
         }
+        
+        //crear departamento
 
         public IActionResult CreaDepartamento()
         {
             return View(new DepartamentoModel());
         }
-
+        [HttpPost]
+        public IActionResult CreaDepartamento(IFormCollection collection)
+        {
+            try
+            {
+                DepartamentoModel newDepartamento = new DepartamentoModel
+                {
+                    Departamento = collection["Departamento"]
+                };
+                objeto_departamento.CrearDepartamento(newDepartamento);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al crear el departamento: {ex.Message}";
+                return View();
+            }
+        }
+        //editar departamento
+        [HttpGet]
         public IActionResult EditaDepartamento(int id)
         {
-            var departamento = new DepartamentoModel { IdDepartamento = id, Departamento = "IT" };
-            return View(departamento);
+            return View(objeto_departamento.ConsultarDepartamentoID(id));
+        }
+        [HttpPost]
+        public IActionResult EditaDepartamento(int id, IFormCollection collection)
+        {
+            try
+            {
+                DepartamentoModel departamentoEditar = new DepartamentoModel
+                {
+                    IdDepartamento = id,
+                    Departamento = collection["Departamento"]
+                };
+                objeto_departamento.ModificarDepartamento(departamentoEditar);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al editar el departamento: {ex.Message}";
+                return View();
+            }
+        }
+        //borrar departamento
+        [HttpGet]
+        public IActionResult BorrarDepartamento(int id)
+        {
+            return View(objeto_departamento.ConsultarDepartamentoID(id));
+        }
+        [HttpPost]
+        public IActionResult BorrarDepartamento(int id, IFormCollection collection)
+        {
+            try
+            {
+                objeto_departamento.EliminarDepartamento(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al borrar el departamento: {ex.Message}";
+                return View();
+            }
         }
         #endregion
 
@@ -152,26 +316,6 @@ namespace SEDEP.Controllers
                 return View(new List<ConglomeradoModel>());
             }
         }//fin ManteniConglomerados
-         // Gestión de Funcionarios
-        public IActionResult ManteniFuncionarios()
-        {
-            try
-            {
-               
-                var funcionarios = objeto_funcionario.ListarFuncionarios();
-                return View(funcionarios);
-            }
-            catch (Exception ex)
-            {
-                // Si ocurre un error, muestra un mensaje de error
-                TempData["ErrorMessage"] = $"Error al obtener los funcionarios: {ex.Message}";
-                return View(new List<FuncionarioModel>()); // Retorna una lista vacía si ocurre un error
-            }
-        }
-        public IActionResult funcionario()
-        {
-            return View(new FuncionarioModel());
-        }
         public IActionResult CrearNuevoConglomerado()
         {
             return View(new ConglomeradoModel());

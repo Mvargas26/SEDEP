@@ -1,0 +1,77 @@
+﻿@model Modelos.FuncionarioModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Creación de Funcionario";
+}
+<div class="container mt-4">
+    <h2 class="mb-4">@ViewData["Title"]</h2>
+
+    <form asp-action="CrearNuevoFuncionario" method="post">
+        <input type="hidden" asp-for="Cedula" />
+        <div class="mb-3">
+            <label asp-for="Nombre" class="form-label">Nombre</label>
+            <input asp-for="Nombre" class="form-control" required maxlength="100">
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Apellido1" class="form-label">Primer Apellido</label>
+            <input asp-for="Apellido1" class="form-control" required maxlength="100">
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Apellido2" class="form-label">Segundo Apellido</label>
+            <input asp-for="Apellido2" class="form-control" required maxlength="100">
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Correo" class="form-label">Correo Electrónico</label>
+            <input asp-for="Correo" type="email" class="form-control" required maxlength="255">
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Password" class="form-label">Contraseña</label>
+            <input asp-for="Password" type="password" class="form-control" required maxlength="100">
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="IdDepartamento" class="form-label">Departamento</label>
+            <select asp-for="IdDepartamento" class="form-control" required>
+                <option value="">Seleccione un departamento</option>
+                <!-- Opciones dinámicas aquí -->
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="IdRol" class="form-label">Rol</label>
+            <select asp-for="IdRol" class="form-control" required>
+                <option value="">Seleccione un rol</option>
+                <!-- Opciones dinámicas aquí -->
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="IdPuesto" class="form-label">Puesto</label>
+            <select asp-for="IdPuesto" class="form-control" required>
+                <option value="">Seleccione un puesto</option>
+                <!-- Opciones dinámicas aquí -->
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="IdEstadoFuncionario" class="form-label">Estado del Funcionario</label>
+            <select asp-for="IdEstadoFuncionario" class="form-control" required>
+                <option value="">Seleccione un estado</option>
+                <!-- Opciones dinámicas aquí -->
+            </select>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <a href="/Mantenimientos/ManteniFuncionarios" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Guardar
+            </button>
+        </div>
+    </form>
+</div>
