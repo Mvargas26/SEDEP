@@ -269,6 +269,98 @@ namespace SEDEP.Controllers
         }
         #endregion
 
+        #region Puestos
+
+        // Datos "quemados"
+        private static List<PuestoModel> puestos = new List<PuestoModel>
+        {
+            new PuestoModel { idPuesto = 1, Puesto = "Gerente de TI" },
+            new PuestoModel { idPuesto = 2, Puesto = "Desarrollador" },
+            new PuestoModel { idPuesto = 3, Puesto = "Analista de Sistemas" }
+        };
+
+        // Vista para listar puestos
+        public IActionResult ManteniPuestos()
+        {
+            return View(puestos);
+        }
+
+        // Vista para crear un puesto
+        public IActionResult CreaPuesto()
+        {
+            return View();
+        }
+
+        // Acción para crear un puesto
+        [HttpPost]
+        public IActionResult CreaPuestos(string nombrePuesto)
+        {
+            if (!string.IsNullOrEmpty(nombrePuesto) && !puestos.Any(p => p.Puesto == nombrePuesto))
+            {
+                var nuevoPuesto = new PuestoModel
+                {
+                    idPuesto = puestos.Max(p => p.idPuesto) + 1,
+                    Puesto = nombrePuesto
+                };
+                puestos.Add(nuevoPuesto);
+                TempData["Mensaje"] = $"Puesto {nombrePuesto} creado correctamente.";
+                return RedirectToAction("GestionPuestos");
+            }
+
+            TempData["Error"] = "El nombre del puesto no puede estar vacío o duplicado.";
+            return View();
+        }
+
+        // Vista para editar un puesto
+        public IActionResult EditaPuesto(int id)
+        {
+            var puesto = puestos.FirstOrDefault(p => p.idPuesto == id);
+            if (puesto == null)
+            {
+                return NotFound();
+            }
+
+            return View(puesto);
+        }
+
+        // Acción para modificar un puesto
+        [HttpPost]
+        public IActionResult EditaPuesto(int id, string nombrePuesto)
+        {
+            var puesto = puestos.FirstOrDefault(p => p.idPuesto == id);
+            if (puesto == null)
+            {
+                return NotFound();
+            }
+
+            if (!string.IsNullOrEmpty(nombrePuesto) && !puestos.Any(p => p.Puesto == nombrePuesto))
+            {
+                puesto.Puesto = nombrePuesto;
+                TempData["Mensaje"] = $"Puesto {nombrePuesto} modificado correctamente.";
+                return RedirectToAction("GestionPuestos");
+            }
+
+            TempData["Error"] = "El nombre del puesto no puede estar vacío o duplicado.";
+            return View(puesto);
+        }
+
+        // Acción para eliminar un puesto
+        public IActionResult EliminarPuesto(int id)
+        {
+            var puesto = puestos.FirstOrDefault(p => p.idPuesto == id);
+            if (puesto == null)
+            {
+                return NotFound();
+            }
+
+            puestos.Remove(puesto);
+            TempData["Mensaje"] = $"Puesto {puesto.Puesto} eliminado correctamente.";
+            return RedirectToAction("GestionPuestos");
+        }
+
+
+        #endregion
+
 
     }//fin class
 

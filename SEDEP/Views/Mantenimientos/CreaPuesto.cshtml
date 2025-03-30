@@ -1,0 +1,19 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Crear Nuevo Puesto";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Crear Nuevo Puesto</h2>
+
+    <form method="post" action="/Mantenimientos/CrearPuesto" class="form">
+        <div class="mb-3">
+            <label for="nombrePuesto" class="form-label">Nombre del Puesto</label>
+            <input type="text" class="form-control" id="nombrePuesto" name="nombrePuesto" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="/Mantenimientos/ManteniPuestos" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
