@@ -11,6 +11,8 @@ namespace SEDEP.Controllers
         ConglomeradosNegocios objeto_ConglomeradosNegocios = new ConglomeradosNegocios();
         ObjetivoNegocios _objetivoNegocios = new ObjetivoNegocios();
         FuncionarioNegocios objeto_funcionario= new FuncionarioNegocios();
+        MetasNegocios _objetoMeta = new MetasNegocios();
+        CompetenciasNegocio _objetoCompe = new CompetenciasNegocio();
 
         //***********************************************************************************************
         #region FUNCIONARIOS
@@ -269,6 +271,180 @@ namespace SEDEP.Controllers
         }
         #endregion
 
+        #region Metas
+        public IActionResult ManteniMetas()
+        {
+            try
+            {
+                var objetivos = _objetoMeta.ListarMetas();
+                return View(objetivos);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al obtener las metas: {ex.Message}";
+                return View(new List<MetaModel>());
+            }
+        }
+
+        public IActionResult CrearNuevaMeta()
+        {
+            return View("CrearNuevaMeta", new MetaModel());
+        }
+
+        [HttpPost]
+        public IActionResult CrearMeta(MetaModel nuevaMeta)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _objetoMeta.CrearMeta(nuevaMeta);
+                    return RedirectToAction(nameof(ManteniMetas)); // Redirigir a la vista de gestión
+                }
+                else
+                {
+                    return View(nuevaMeta); // Mostrar errores de validación si los hay
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al crear el conglomerado: {ex.Message}";
+                return View();
+            }
+        }
+
+        public IActionResult EditaMeta(int id)
+        {
+            return View(_objetoMeta.ConsultarMetaID(id));
+
+        }//fin EditaConglomerado
+
+        [HttpPost]
+        public IActionResult EditarMeta(MetaModel metaEditada)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _objetoMeta.ModificarMeta(metaEditada);
+                    return RedirectToAction(nameof(ManteniMetas)); // Redirigir a la lista de objetivos
+                }
+                else
+                {
+                    return View(metaEditada); // Mostrar errores de validación
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al actualizar la meta: {ex.Message}";
+                return View(metaEditada);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult BorraMeta(int id)
+        {
+            try
+            {
+                _objetoMeta.EliminarMeta(id);
+                return RedirectToAction(nameof(ManteniMetas));
+            }
+            catch
+            {
+                TempData["mensajeError"] = "No puede borrar esta meta, verifique las relaciones.";
+                return RedirectToAction(nameof(ManteniMetas));
+            }
+        }
+        #endregion
+
+        #region Competencias
+
+        public IActionResult ManteniCompetencias() 
+        {
+            // Obtener la lista de objetivos desde la base de datos
+            try
+            {
+                var competencias = _objetoCompe.ListarCompetencias();
+                return View(competencias);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al obtener las competencias: {ex.Message}";
+                return View(new List<CompetenciasModel>());
+            }
+        }
+
+        public IActionResult CrearNuevaCompetencia()
+        {
+            return View("CrearNuevaCompetencia", new CompetenciasModel());
+        }
+
+        [HttpPost]
+        public IActionResult CrearCompetencia(CompetenciasModel nuevaCompe)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _objetoCompe.CrearCompetencia(nuevaCompe);
+                    return RedirectToAction(nameof(ManteniCompetencias)); // Redirigir a la vista de gestión
+                }
+                else
+                {
+                    return View(nuevaCompe); // Mostrar errores de validación si los hay
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al crear el conglomerado: {ex.Message}";
+                return View();
+            }
+        }
+
+        public IActionResult EditaCompetencia(int id)
+        {
+            return View(_objetoCompe.ConsultarCompetenciaID(id));
+
+        }//fin EditaConglomerado
+
+        [HttpPost]
+        public IActionResult EditarCompetencia(CompetenciasModel competenciaEdit)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _objetoCompe.ModificarCompetencia(competenciaEdit);
+                    return RedirectToAction(nameof(ManteniCompetencias)); // Redirigir a la lista de objetivos
+                }
+                else
+                {
+                    return View(competenciaEdit); // Mostrar errores de validación
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al actualizar la competencia: {ex.Message}";
+                return View(competenciaEdit);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult BorraCompetencia(int id)
+        {
+            try
+            {
+                _objetoCompe.EliminarCompetencia(id);
+                return RedirectToAction(nameof(ManteniCompetencias));
+            }
+            catch
+            {
+                TempData["mensajeError"] = "No puede borrar esta competencia, verifique las relaciones.";
+                return RedirectToAction(nameof(ManteniCompetencias));
+            }
+        }
+
+        #endregion
 
     }//fin class
 

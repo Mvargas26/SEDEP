@@ -1,0 +1,45 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Gestión de Metas";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Gestión de Metas</h2>
+
+    <p>
+        <a asp-action="CrearNuevaMeta" class="btn btn-primary">Nueva Meta <i class="fa-solid fa-square-plus fa-beat"></i></a>
+    </p>
+
+    <!-- tabla -->
+    <div class="table-responsive mt-3">
+        <table class="table table-striped table-bordered text-center">
+            <tr>
+                <th>ID</th>
+                <th>Nombre de la Meta</th>
+                <th>Porcentaje</th>
+                <th>Acciones</th>
+            </tr>
+            <tbody>
+                @foreach (var meta in Model)
+                {
+                    <tr>
+                        <td>@meta.IdMeta</td>
+                        <td>@meta.Meta</td>
+                        <td>@meta.Porcentaje</td>
+                        <td>
+                            <a href="/Mantenimientos/EditaMeta/@meta.IdMeta" class="btn btn-primary btn-sm">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            <form asp-action="BorraMeta" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@meta.IdMeta" />
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este objetivo?');">
+                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
