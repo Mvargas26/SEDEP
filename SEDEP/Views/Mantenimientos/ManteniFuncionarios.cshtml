@@ -9,7 +9,7 @@
 
     <!-- Botón para crear un nuevo funcionario -->
     <div class="d-flex justify-content-between">
-        <a href="/Mantenimientos/CreaFuncionario" class="btn btn-primary">
+        <a href="/Mantenimientos/CrearNuevoFuncionario" class="btn btn-primary">
             <i class="fas fa-plus"></i> Crear Nuevo Funcionario
         </a>
     </div>
@@ -48,9 +48,9 @@
                             <a href="/Mantenimientos/EditaFuncionario/@dt.Cedula" class="btn btn-primary btn-sm">
                                 <i class="fas fa-edit"></i> Editar
                             </a>
-                            <button class="btn btn-danger btn-sm" onclick="confirmarEliminar('@dt.Cedula', '@dt.Nombre')">
+                            <a href="/Mantenimientos/BorrarFuncionario/@dt.Cedula" class="btn btn-danger btn-sm">
                                 <i class="fas fa-trash-alt"></i> Eliminar
-                            </button>
+                            </a>
                         </td>
                     </tr>
                 }

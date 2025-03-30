@@ -1,16 +1,20 @@
-﻿
+﻿@model Modelos.DepartamentoModel
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Creación de Departamentos";
 }
-
 <div class="container mt-4">
     <h2 class="mb-4">@ViewData["Title"]</h2>
 
-    <form>
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <form asp-action="CreaDepartamento" method="post">
         <div class="mb-3">
             <label for="Departamento" class="form-label">Nombre del Departamento</label>
-            <input type="text" id="Departamento" class="form-control" value="@Model.Departamento" required maxlength="255">
+            <input type="text" id="Departamento" name="Departamento" class="form-control" value="@Model.Departamento" required maxlength="255">
         </div>
 
         <div class="d-flex justify-content-between">
