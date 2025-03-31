@@ -7,7 +7,7 @@
     <h2 class="mb-4">Gestión de Metas</h2>
 
     <p>
-        <a asp-action="CrearNuevaMeta" class="btn btn-primary">Nueva Meta <i class="fa-solid fa-square-plus fa-beat"></i></a>
+        <a asp-action="CrearNuevaMeta" class="btn btn-primary">Crear Nueva Meta <i class="fa-solid fa-square-plus fa-beat"></i></a>
     </p>
 
     <!-- tabla -->
@@ -28,12 +28,12 @@
                         <td>@meta.Porcentaje</td>
                         <td>
                             <a href="/Mantenimientos/EditaMeta/@meta.IdMeta" class="btn btn-primary btn-sm">
-                                <i class="fas fa-edit"></i> Editar
+                                <i class="fas fa-edit"></i> Modificar Meta
                             </a>
                             <form asp-action="BorraMeta" method="post" style="display:inline;">
                                 <input type="hidden" name="id" value="@meta.IdMeta" />
                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este objetivo?');">
-                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                    <i class="fas fa-trash-alt"></i> Eliminar Meta
                                 </button>
                             </form>
                         </td>

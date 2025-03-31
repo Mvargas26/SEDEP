@@ -11,7 +11,7 @@
     </div> *@
 
     <p>
-        <a asp-action="CrearNuevoConglomerado" class="btn btn-primary">Nuevo Conglomerado <i class="fa-solid fa-square-plus fa-beat"></i></a>
+        <a asp-action="CrearNuevoConglomerado" class="btn btn-primary">Crear Conglomerado <i class="fa-solid fa-square-plus fa-beat"></i></a>
     </p>
 
     <div class="table-responsive mt-3">
@@ -31,10 +31,10 @@
                         <td>@cong.Descripcion</td>
                         <td>
                             <a href="/Mantenimientos/EditaConglomerado/@cong.IdConglomerado" class="btn btn-primary btn-sm">
-                                <i class="fas fa-edit"></i> Editar
+                                <i class="fas fa-edit"></i> Modificar Conglomerado
                             </a>
                             <a href="/Mantenimientos/BorrarConglomerado/@cong.IdConglomerado" class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash-alt"></i> Eliminar
+                                <i class="fas fa-trash-alt"></i> Eliminar conglomerado
                             </a>
                             @* <button class="btn btn-danger btn-sm" onclick="confirmarEliminar(@cong.IdConglomerado, '@cong.NombreConglomerado')">
                                 <i class="fas fa-trash-alt"></i> Eliminar

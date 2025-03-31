@@ -11,7 +11,7 @@
 
     <!-- Botón para crear un nuevo objetivo -->
     <p>
-        <a asp-action="CrearNuevaCompetencia" class="btn btn-primary">Nueva Competencia <i class="fa-solid fa-square-plus fa-beat"></i></a>
+        <a asp-action="CrearNuevaCompetencia" class="btn btn-primary">Crear Nueva Competencia <i class="fa-solid fa-square-plus fa-beat"></i></a>
     </p>
 
 
@@ -37,12 +37,12 @@
                         <td>@(compe.Tipo)</td>
                         <td>
                                 <a href="/Mantenimientos/EditaCompetencia/@compe.IdCompetencia" class="btn btn-primary btn-sm">
-                                <i class="fas fa-edit"></i> Editar
+                                <i class="fas fa-edit"></i> Modificar Competencia
                             </a>
                                 <form asp-action="BorraCompetencia" method="post" style="display:inline;">
                                 <input type="hidden" name="id" value="@compe.IdCompetencia" />
                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este objetivo?');">
-                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                    <i class="fas fa-trash-alt"></i> Eliminar Competencia
                                 </button>
                             </form>
                         </td>

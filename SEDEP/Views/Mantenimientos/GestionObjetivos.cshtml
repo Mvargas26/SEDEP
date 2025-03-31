@@ -37,12 +37,12 @@
                         <td>@(objetivo.Tipo)</td>
                         <td>
                             <a href="/Mantenimientos/EditaObjetivo/@objetivo.IdObjetivo" class="btn btn-primary btn-sm">
-                                <i class="fas fa-edit"></i> Editar
+                                <i class="fas fa-edit"></i> Modificar Objetivo
                             </a>
                             <form asp-action="BorraObjetivo" method="post" style="display:inline;">
                                 <input type="hidden" name="id" value="@objetivo.IdObjetivo" />
                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este objetivo?');">
-                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                    <i class="fas fa-trash-alt"></i> Eliminar Objetivo
                                 </button>
                             </form>
                         </td>
