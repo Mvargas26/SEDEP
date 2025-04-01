@@ -1,0 +1,155 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Evaluación del Desempeño - Como Funcionario";
+}
+@functions {
+    static Random rnd = new Random();
+}
+@{
+    // Array de colores para la sección de conglomerados (se mantiene igual)
+    string[] coloresFuertes = { "#E63946", "#F4A261", "#2A9D8F", "#264653", "#8E44AD", "#D72638", "#3D348B", "#FF7F50" };
+}
+
+<div class="container mt-4 mb-5">
+    <!-- Encabezado principal -->
+    <h2 class="mb-2 text-center">Gestión Institucional de Recursos Humanos</h2>
+    <h4 class="mb-4 text-center">Evaluación del Desempeño 2025</h4>
+
+    <!-- Texto introductorio -->
+    <p>
+        Con el objetivo de dar cumplimiento a que todo trabajador debe ser evaluado por el proceso de evaluación de desempeño establecido en los “Lineamientos Metodológicos Generales para la Evaluación del Desempeño de las personas servidoras públicas”, cubiertas por la rectoría del Ministerio de Planificación Nacional y Política Económica (MIDEPLAN) dispuestas en la Directriz N°029-PLAN, anuando a la Ley de Marco de Empleo Público y a la Ley de Fortalecimiento de las Finanzas Públicas.
+    </p>
+
+    <!-- Sección "Conglomerado Cualificado" -->
+    <div class="my-5">
+        @{
+            var idConglomerado = ViewBag.IdConglomerado;
+            var listaConglomerados = ViewData["ListaConglomerados"] as List<Modelos.ConglomeradoModel>;
+            var nombreConglomerado = listaConglomerados?.FirstOrDefault(c => c.IdConglomerado == idConglomerado)?.NombreConglomerado ?? "Conglomerado ?";
+        }
+        <h4 class="text-center">@nombreConglomerado</h4>
+        <div class="row justify-content-center mt-4">
+            @if (ViewBag.PesosConglomerados != null)
+            {
+                foreach (var item in ViewBag.PesosConglomerados)
+                {
+                    var randomColor = coloresFuertes[rnd.Next(coloresFuertes.Length)];
+                    <div class="col-sm-3 text-center">
+                        <div class="rounded-circle text-white mx-auto d-flex align-items-center justify-content-center" style="width:80px; height:80px; background-color:@randomColor;">
+                            @item.Porcentaje%
+                        </div>
+                        @{
+                            var listaTiposObjetivos = ViewData["ListaTiposObjetivos"] as List<Modelos.TiposObjetivosModel>;
+                            var nombreTipo = listaTiposObjetivos?.FirstOrDefault(t => t.IdTipoObjetivo == item.IdTipoObjetivo)?.Tipo;
+                            var listaTiposCompetencias = ViewData["ListaTiposCompetencias"] as List<Modelos.TiposCompetenciasModel>;
+                            var nombreTipoCompet = listaTiposCompetencias?.FirstOrDefault(t => t.IdTipoCompetencia == item.IdTipoCompetencia)?.Tipo;
+                            var nombreFinal = !string.IsNullOrEmpty(nombreTipo) ? nombreTipo : !string.IsNullOrEmpty(nombreTipoCompet) ? nombreTipoCompet : "Desconocido";
+                        }
+                        <p class="mt-2">@nombreFinal</p>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <!-- Fase de Planificación -->
+    <div class="mb-5">
+        <h5>Fase de Planificación</h5>
+        <p>
+            La Fase de Planificación es la definición y programación de metas y objetivos por parte de la jefatura y su subalterno. Esta asignación se ejecuta en el mes de Enero de cada año; la jefatura deberá coordinar y acordar con su colaborador, considerando lineamientos, el perfil del cargo y las responsabilidades a su cargo, favoreciendo el logro de los objetivos y metas del PEI (30%) y Metas correspondientes al POI (30%) y Metas desempeño Individual (50%).
+        </p>
+        <div class="row">
+            <div class="col-md-6">
+                <ul>
+                    <li><strong>Dependencia:</strong> Informática</li>
+                    <li><strong>Funcionario:</strong> Juan Flores</li>
+                    <li><strong>Clase Puesto:</strong> Técnico II</li>
+                    <li><strong>Jefatura:</strong> Edgar Rivera</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <!-- Más datos si es necesario -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla pre-cargada con objetivos asignados -->
+    <div class="mb-5">
+        <h3>Objetivos Asignados</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Objetivo</th>
+                    <th>Tipo</th>
+                    <th>Peso</th>
+                    <th>Meta</th>
+                    <th>Actual</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Fila de ejemplo 1 -->
+                <tr>
+                    <td>Objetivo Departamento 1</td>
+                    <td>Departamental</td>
+                    <td>20%</td>
+                    <td>Cumplir 80%</td>
+                    <td>0%</td>
+                    <td>
+                        <a href="/Evaluacion/ModificarActual?tipo=Departamental&obj=ID1&objName=Objetivo%20Departamento%201&actualValue=0&metaValue=Cumplir%2080%" class="btn btn-sm btn-warning">
+                            Editar Actual
+                        </a>
+                    </td>
+                </tr>
+                <!-- Fila de ejemplo 2 -->
+                <tr>
+                    <td>Objetivo Individual 10</td>
+                    <td>Individual</td>
+                    <td>25%</td>
+                    <td>Cumplir 90%</td>
+                    <td>10%</td>
+                    <td>
+                        <a href="/Evaluacion/ModificarActual?tipo=Individual&obj=ID10&objName=Objetivo%20Individual%2010&actualValue=10&metaValue=Cumplir%2090%" class="btn btn-sm btn-warning">
+                            Editar Actual
+                        </a>
+                    </td>
+                </tr>
+                <!-- Agrega más filas según lo asignado -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Resumen Final (opcional) -->
+    <div class="d-flex justify-content-center">
+        <div class="p-4" style="background-color: #f8d7da; max-width: 600px;">
+            <h5 class="text-center">Resumen para: Juan Flores</h5>
+            <table class="table table-borderless align-middle">
+                <tbody>
+                    <tr>
+                        <td><strong>Objetivos Departamento:</strong></td>
+                        <td>Deseado: 30% | Calificación:</td>
+                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="20%" /></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Objetivos Individuales:</strong></td>
+                        <td>Deseado: 50% | Calificación:</td>
+                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="10%" /></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Competencias:</strong></td>
+                        <td>Deseado: 20% | Calificación:</td>
+                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="15%" /></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Resultado:</strong></td>
+                        <td>Deseado: 100% | Calificación:</td>
+                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="45%" /></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="text-center">
+                <button class="btn btn-success mt-3">Enviar a Revisión</button>
+            </div>
+        </div>
+    </div>
+</div>

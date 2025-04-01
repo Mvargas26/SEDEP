@@ -13,29 +13,20 @@
 <div class="container mt-4 mb-5">
     <!-- Encabezado principal -->
     <h2 class="mb-2 text-center">Gestión Institucional de Recursos Humanos</h2>
-    <h4 class="mb-4 text-center">
-        Evaluación del Desempeño 2025 <br />
-    </h4>
+    <h4 class="mb-4 text-center">Evaluación del Desempeño 2025</h4>
 
     <!-- Texto introductorio -->
     <p>
-        Con el objetivo de dar cumplimiento a que todo trabajador debe ser evaluado
-        por el proceso de evaluación de desempeño establecido en los
-        “Lineamientos Metodológicos Generales para la Evaluación del Desempeño
-        de las personas servidoras públicas”, cubiertas por la rectoría del
-        Ministerio de Planificación Nacional y Política Económica (MIDEPLAN)
-        dispuestas en la Directriz N°029-PLAN, anuando a la Ley de Marco de Empleo
-        Público y a la Ley de Fortalecimiento de las Finanzas Públicas.
+        Con el objetivo de dar cumplimiento a que todo trabajador debe ser evaluado por el proceso de evaluación de desempeño establecido en los “Lineamientos Metodológicos Generales para la Evaluación del Desempeño de las personas servidoras públicas”, cubiertas por la rectoría del Ministerio de Planificación Nacional y Política Económica (MIDEPLAN) dispuestas en la Directriz N°029-PLAN, anuando a la Ley de Marco de Empleo Público y a la Ley de Fortalecimiento de las Finanzas Públicas.
     </p>
 
-    <!-- Sección "Conglomerado Cualificado" con círculos -->
+    <!-- Sección "Conglomerado Cualificado" (se mantiene) -->
     <div class="my-5">
         @{
             var idConglomerado = ViewBag.IdConglomerado;
             var listaConglomerados = ViewData["ListaConglomerados"] as List<Modelos.ConglomeradoModel>;
             var nombreConglomerado = listaConglomerados?.FirstOrDefault(c => c.IdConglomerado == idConglomerado)?.NombreConglomerado ?? "Conglomerado ?";
         }
-
         <h4 class="text-center">@nombreConglomerado</h4>
         <div class="row justify-content-center mt-4">
             @if (ViewBag.PesosConglomerados != null)
@@ -44,8 +35,7 @@
                 {
                     var randomColor = coloresFuertes[rnd.Next(coloresFuertes.Length)];
                     <div class="col-sm-3 text-center">
-                        <div class="rounded-circle text-white mx-auto d-flex align-items-center justify-content-center"
-                             style="width:80px; height:80px; background-color:@randomColor;">
+                        <div class="rounded-circle text-white mx-auto d-flex align-items-center justify-content-center" style="width:80px; height:80px; background-color:@randomColor;">
                             @item.Porcentaje%
                         </div>
                         @{
@@ -53,9 +43,7 @@
                             var nombreTipo = listaTiposObjetivos?.FirstOrDefault(t => t.IdTipoObjetivo == item.IdTipoObjetivo)?.Tipo;
                             var listaTiposCompetencias = ViewData["ListaTiposCompetencias"] as List<Modelos.TiposCompetenciasModel>;
                             var nombreTipoCompet = listaTiposCompetencias?.FirstOrDefault(t => t.IdTipoCompetencia == item.IdTipoCompetencia)?.Tipo;
-                            var nombreFinal = !string.IsNullOrEmpty(nombreTipo) ? nombreTipo
-                            : !string.IsNullOrEmpty(nombreTipoCompet) ? nombreTipoCompet
-                            : "Desconocido";
+                            var nombreFinal = !string.IsNullOrEmpty(nombreTipo) ? nombreTipo : !string.IsNullOrEmpty(nombreTipoCompet) ? nombreTipoCompet : "Desconocido";
                         }
                         <p class="mt-2">@nombreFinal</p>
                     </div>
@@ -64,16 +52,11 @@
         </div>
     </div>
 
-    <!-- Fase de Planificación -->
+    <!-- Fase de Planificación (se mantiene) -->
     <div class="mb-5">
         <h5>Fase de Planificación</h5>
         <p>
-            La Fase de Planificación es la definición y programación de metas y objetivos
-            por parte de la jefatura y su subalterno. Esta asignación se ejecuta en el mes
-            de Enero de cada año; la jefatura deberá coordinar y acordar con su colaborador,
-            considerando lineamientos, el perfil del cargo y las responsabilidades a su
-            cargo, favoreciendo el logro de los objetivos y metas del PEI (30%) y Metas
-            correspondientes al POI (30%) y Metas desempeño Individual (50%).
+            La Fase de Planificación es la definición y programación de metas y objetivos por parte de la jefatura y su subalterno. Esta asignación se ejecuta en el mes de Enero de cada año; la jefatura deberá coordinar y acordar con su colaborador, considerando lineamientos, el perfil del cargo y las responsabilidades a su cargo, favoreciendo el logro de los objetivos y metas del PEI (30%) y Metas correspondientes al POI (30%) y Metas desempeño Individual (50%).
         </p>
         <div class="row">
             <div class="col-md-6">
@@ -106,14 +89,18 @@
                     <option value="ID11|Objetivo Individual 11|Individual">ID11 - Objetivo Individual 11</option>
                 </select>
             </div>
-
             <div class="col-auto">
                 <label for="inputPeso" class="col-form-label">Ingrese un Peso:</label>
             </div>
             <div class="col-auto">
-                <input type="text" id="inputPeso" class="form-control" placeholder="Ej: 25" />
+                <input type="text" id="inputPeso" class="form-control" />
             </div>
-
+            <div class="col-auto">
+                <label for="inputMeta" class="col-form-label">Ingrese la Meta:</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" id="inputMeta" class="form-control" />
+            </div>
             <div class="col-auto">
                 <button type="button" class="btn btn-success" onclick="agregarFila()">Agregar fila</button>
             </div>
@@ -134,21 +121,9 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- La tabla inicia vacía -->
+                <!-- Inicia vacía -->
             </tbody>
         </table>
-    </div>
-
-    <!-- Barra de progreso general (ejemplo 80%) -->
-    <div class="mb-4">
-        <div class="d-flex justify-content-between">
-            <span>Progreso General</span>
-            <span>80%</span>
-        </div>
-        <div class="progress">
-            <div class="progress-bar bg-success" role="progressbar" style="width: 80%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
-            </div>
-        </div>
     </div>
 
     <!-- Resumen Final centrado y alineado -->
@@ -180,7 +155,7 @@
                 </tbody>
             </table>
             <div class="text-center">
-                <button class="btn btn-success mt-3">Enviar a Revisión</button>
+                <button class="btn btn-success mt-3">Enviar Evaluación</button>
             </div>
         </div>
     </div>
@@ -208,11 +183,12 @@
 @section Scripts {
     <script>
         function agregarFila() {
-            // Obtener el valor del combobox y el input de peso
+            // Obtener el valor del combobox, el input de peso y el input de meta
             const select = document.getElementById("selectObjetivo");
             const inputPeso = document.getElementById("inputPeso");
+            const inputMeta = document.getElementById("inputMeta");
 
-            // Valor seleccionado: formato "ID|Nombre|Tipo"
+            // Valor del option seleccionado, ejemplo: "ID1|Objetivo Departamento 1|Departamental"
             const valorSeleccionado = select.value;
             if (!valorSeleccionado) {
                 alert("Seleccione un objetivo.");
@@ -226,6 +202,9 @@
                 alert("Ingrese un peso.");
                 return;
             }
+
+            // Obtener la meta ingresada (si está vacía, se puede dejar como "Sin meta")
+            const metaIngresada = inputMeta.value || "Sin meta";
 
             // Crear la nueva fila
             const tbody = document.querySelector("#tablaObjetivos tbody");
@@ -243,25 +222,22 @@
             const tdPeso = document.createElement("td");
             tdPeso.innerText = pesoIngresado + "%";
 
-            // Celda de Meta (fijo 100%)
+            // Celda de Meta: ahora se muestra lo ingresado en el input
             const tdMeta = document.createElement("td");
-            tdMeta.innerText = "100%";
+            tdMeta.innerText = metaIngresada;
 
-            // Celda de Actual (fijo 0%)
+            // Celda de Actual (fijo a 0%)
             const tdActual = document.createElement("td");
             tdActual.innerText = "0%";
 
-            // Celda de Acciones
+            // Celda de Acciones: solo se deja el botón "Eliminar"
             const tdAcciones = document.createElement("td");
-
-            // Solo se deja el botón "Eliminar"
             const btnEliminar = document.createElement("button");
             btnEliminar.classList.add("btn", "btn-sm", "btn-danger");
             btnEliminar.innerText = "Eliminar";
             btnEliminar.onclick = function() {
                 tbody.removeChild(nuevaFila);
             };
-
             tdAcciones.appendChild(btnEliminar);
 
             // Agregar celdas a la fila
@@ -275,8 +251,9 @@
             // Insertar la fila en la tabla
             tbody.appendChild(nuevaFila);
 
-            // Limpiar el input de peso
+            // Limpiar los inputs
             inputPeso.value = "";
+            inputMeta.value = "";
         }
     </script>
 }
