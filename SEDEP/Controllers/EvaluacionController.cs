@@ -25,7 +25,7 @@ namespace SEDEP.Controllers
         [HttpGet]
         public IActionResult SeleccionarSubalterno()
         {
-            int idDepartamento = 1; // Simulación: id de departamento harcoded
+            int idDepartamento = 1; // Harcoded para ejemplo
             var listaSubalternos = objeto_FuncionarioNegocios.ObtenerFuncionariosPorDepartamento(idDepartamento);
             return View(listaSubalternos);
         }
@@ -52,21 +52,17 @@ namespace SEDEP.Controllers
                 TempData["Error"] = "Debe seleccionar un Conglomerado para el funcionario a evaluar.";
                 return RedirectToAction("SeleccionarSubalterno");
             }
-
             if (!string.IsNullOrEmpty(cedula))
             {
                 var subalterno = objeto_FuncionarioNegocios.ConsultarFuncionarioID(cedula);
                 var PesosConglomerados = objeto_ConglomeradosNegocios.ConsultarPesosXConglomerado(idConglomerado);
-
                 ViewBag.PesosConglomerados = PesosConglomerados;
                 ViewBag.IdConglomerado = idConglomerado;
                 ViewData["ListaConglomerados"] = objeto_ConglomeradosNegocios.ListarConglomerados();
                 ViewData["ListaTiposObjetivos"] = objeto_TiposObjetivoNegocios.ListarTiposObjetivos();
                 ViewData["ListaTiposCompetencias"] = objeto_TiposCompenNegocis.ListarTiposCompetencias();
-
                 return View(subalterno);
             }
-
             return View();
         }
 
@@ -82,6 +78,46 @@ namespace SEDEP.Controllers
             {
                 return View();
             }
+        }
+
+        [HttpGet]
+        public IActionResult CrearSeguimiento()
+        {
+            // En un escenario real, aquí cargarías la lista de objetivos
+            // que el Encargado definió, y se los pasas a la vista
+            // Por ahora, simplemente retornamos la vista con datos quemados
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult ModificarActualSeguimiento(string tipo, string obj, string objName, string actualValue, string metaValue)
+        {
+            ViewBag.Tipo = tipo;
+            ViewBag.Obj = obj;
+            ViewBag.ObjName = objName;
+            ViewBag.ActualValue = actualValue;
+            ViewBag.MetaValue = metaValue;
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult RealizarEvaluacionComoFuncionario()
+        {
+            // En un escenario real, aquí cargarías la lista de objetivos
+            // que el Encargado definió, y se los pasas a la vista
+            // Por ahora, simplemente retornamos la vista con datos quemados
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult ModificarActual(string tipo, string obj, string objName, string actualValue, string metaValue)
+        {
+            ViewBag.Tipo = tipo;
+            ViewBag.Obj = obj;
+            ViewBag.ObjName = objName;
+            ViewBag.ActualValue = actualValue;
+            ViewBag.MetaValue = metaValue;
+            return View();
         }
     }
 }
