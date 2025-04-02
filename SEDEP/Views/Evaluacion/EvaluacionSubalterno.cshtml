@@ -1,4 +1,5 @@
-﻿@{
+﻿@model Modelos.FuncionarioModel
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Evaluación del Desempeño 2025";
 }
@@ -61,10 +62,13 @@
         <div class="row">
             <div class="col-md-6">
                 <ul>
-                    <li><strong>Dependencia:</strong> Informática</li>
-                    <li><strong>Funcionario:</strong> Juan Flores</li>
-                    <li><strong>Clase Puesto:</strong> Técnico II</li>
-                    <li><strong>Jefatura:</strong> Edgar Rivera</li>
+                    <li><strong>Dependencia:</strong> @Model.Departamento</li>
+                    <li>
+                        <strong>Funcionario:
+                        </strong> @Model.Nombre @Model.Apellido1 @Model.Apellido2
+                    </li>
+                    <li><strong>Clase Puesto:</strong> @Model.Puesto</li>
+@*                     <li><strong>Jefatura:</strong> Edgar Rivera</li> *@
                 </ul>
             </div>
             <div class="col-md-6">
