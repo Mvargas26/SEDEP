@@ -7,7 +7,10 @@
     <h2 class="mb-4">@ViewData["Title"]</h2>
 
     <form asp-action="CrearNuevoFuncionario" method="post">
-        <input type="hidden" asp-for="Cedula" />
+        <div class="mb-3">
+            <label asp-for="Cedula" class="form-label">Cedula</label>
+            <input asp-for="Cedula" class="form-control" required maxlength="15">
+        </div>
         <div class="mb-3">
             <label asp-for="Nombre" class="form-label">Nombre</label>
             <input asp-for="Nombre" class="form-control" required maxlength="100">
@@ -37,6 +40,12 @@
             <label asp-for="IdDepartamento" class="form-label">Departamento</label>
             <select asp-for="IdDepartamento" class="form-control" required>
                 <option value="">Seleccione un departamento</option>
+                <option value="1">Finanzas</option>
+                <option value="2">Recursos Humanos</option>
+                <option value="3">Admisiones</option>
+                <option value="4">Registro Académico</option>
+                <option value="5">Biblioteca</option>
+                <option value="6">Tecnología de la Información</option>
                 <!-- Opciones dinámicas aquí -->
             </select>
         </div>
@@ -45,7 +54,10 @@
             <label asp-for="IdRol" class="form-label">Rol</label>
             <select asp-for="IdRol" class="form-control" required>
                 <option value="">Seleccione un rol</option>
-                <!-- Opciones dinámicas aquí -->
+                <option value="1">Administrador</option>
+                <option value="2">Usuario</option>
+                <option value="3">Supervisor</option>
+                <!-- Agrega más roles según sea necesario -->
             </select>
         </div>
 
@@ -53,7 +65,18 @@
             <label asp-for="IdPuesto" class="form-label">Puesto</label>
             <select asp-for="IdPuesto" class="form-control" required>
                 <option value="">Seleccione un puesto</option>
-                <!-- Opciones dinámicas aquí -->
+                <option value="1">Finanzas</option>
+                <option value="2">Recursos Humanos</option>
+                <option value="3">Admisiones</option>
+                <option value="4">Registro Académico</option>
+                <option value="5">Biblioteca</option>
+                <option value="6">Tecnología de la Información</option>
+                <option value="7">Finanzas</option>
+                <option value="8">Recursos Humanos</option>
+                <option value="9">Admisiones</option>
+                <option value="10">Registro Académico</option>
+                <option value="11">Biblioteca</option>
+                <option value="12">Tecnología de la Información</option>
             </select>
         </div>
 
@@ -61,7 +84,8 @@
             <label asp-for="IdEstadoFuncionario" class="form-label">Estado del Funcionario</label>
             <select asp-for="IdEstadoFuncionario" class="form-control" required>
                 <option value="">Seleccione un estado</option>
-                <!-- Opciones dinámicas aquí -->
+                <option value="1">Activo</option>
+                <option value="2">Inactivo</option>
             </select>
         </div>
 
