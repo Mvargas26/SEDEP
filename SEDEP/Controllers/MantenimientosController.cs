@@ -30,7 +30,7 @@ namespace SEDEP.Controllers
             catch (Exception ex)
             {
                 // Si ocurre un error, muestra un mensaje de error
-                TempData["ErrorMessage"] = $"Error al obtener los funcionarios: {ex.Message}";
+                TempData["MensajeError"] = $"Error al obtener los funcionarios: {ex.Message}";
                 return View(new List<FuncionarioModel>()); // Retorna una lista vacía si ocurre un error
             }
         }
@@ -60,11 +60,12 @@ namespace SEDEP.Controllers
                     IdEstadoFuncionario = Convert.ToInt32(collectionn["IdEstadoFuncionario"])
                 };
                 objeto_funcionario.CrearFuncionario(newFuncionario);
+                TempData["MensajeError"] = $"Error al crear el funcionario: {ex.Message}";
                 return RedirectToAction(nameof(ManteniFuncionarios));
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al crear el funcionario: {ex.Message}";
+                TempData["MensajeError"] = $"Error al crear el funcionario: {ex.Message}";
                 return View();
             }
         }
@@ -97,7 +98,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al editar el funcionario: {ex.Message}";
+                TempData["MensajeError"] = $"Error al editar el funcionario: {ex.Message}";
                 return View();
             }
         }
@@ -117,7 +118,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al borrar el funcionario: {ex.Message}";
+                TempData["MensajeError"] = $"Error al borrar el funcionario: {ex.Message}";
                 return View();
             }
         }
@@ -141,7 +142,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al obtener los objetivos: {ex.Message}";
+                TempData["MensajeError"] = $"Error al obtener los objetivos: {ex.Message}";
                 return View(new List<ObjetivoModel>());
             }
         }
@@ -168,7 +169,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al crear el objetivo: {ex.Message}";
+                TempData["MensajeError"] = $"Error al crear el objetivo: {ex.Message}";
                 return View();
             }
         }
@@ -196,7 +197,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al actualizar el objetivo: {ex.Message}";
+                TempData["MensajeError"] = $"Error al actualizar el objetivo: {ex.Message}";
                 return View(objetivoEditado);
             }
         }
@@ -211,7 +212,7 @@ namespace SEDEP.Controllers
             }
             catch
             {
-                TempData["mensajeError"] = "No puede borrar este Conglomerado, verifique las relaciones.";
+                TempData["MensajeError"] = "No puede borrar este Conglomerado, verifique las relaciones.";
                 return RedirectToAction(nameof(GestionObjetivos));
             }
         }
@@ -228,7 +229,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al obtener los departamentos: {ex.Message}";
+                TempData["MensajeError"] = $"Error al obtener los departamentos: {ex.Message}";
                 return View(new List<DepartamentoModel>());
             }
         }
@@ -253,7 +254,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al crear el departamento: {ex.Message}";
+                TempData["MensajeError"] = $"Error al crear el departamento: {ex.Message}";
                 return View();
             }
         }
@@ -278,7 +279,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al editar el departamento: {ex.Message}";
+                TempData["MensajeError"] = $"Error al editar el departamento: {ex.Message}";
                 return View();
             }
         }
@@ -298,7 +299,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al borrar el departamento: {ex.Message}";
+                TempData["MensajeError"] = $"Error al borrar el departamento: {ex.Message}";
                 return View();
             }
         }
@@ -315,7 +316,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al obtener los conglomerados: {ex.Message}";
+                TempData["MensajeError"] = $"Error al obtener los conglomerados: {ex.Message}";
                 return View(new List<ConglomeradoModel>());
             }
         }//fin ManteniConglomerados
@@ -343,7 +344,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al crear el conglomerado: {ex.Message}";
+                TempData["MensajeError"] = $"Error al crear el conglomerado: {ex.Message}";
                 return View();
             }
         }
@@ -395,7 +396,7 @@ namespace SEDEP.Controllers
             }
             catch
             {
-                TempData["mensajeError"] = "No puede borrar este Conglomerado, verifique las relaciones.";
+                TempData["MensajeError"] = "No puede borrar este Conglomerado, verifique las relaciones.";
                 return View();
             }
         }
@@ -410,7 +411,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al obtener los conglomerados: {ex.Message}";
+                TempData["MensajeError"] = $"Error al obtener los conglomerados: {ex.Message}";
                 return View(new List<ConglomeradoModel>());
             }
         }
@@ -426,7 +427,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al obtener las metas: {ex.Message}";
+                TempData["MensajeError"] = $"Error al obtener las metas: {ex.Message}";
                 return View(new List<MetaModel>());
             }
         }
@@ -453,7 +454,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al crear el conglomerado: {ex.Message}";
+                TempData["MensajeError"] = $"Error al crear el conglomerado: {ex.Message}";
                 return View();
             }
         }
@@ -481,7 +482,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al actualizar la meta: {ex.Message}";
+                TempData["MensajeError"] = $"Error al actualizar la meta: {ex.Message}";
                 return View(metaEditada);
             }
         }
@@ -496,7 +497,7 @@ namespace SEDEP.Controllers
             }
             catch
             {
-                TempData["mensajeError"] = "No puede borrar esta meta, verifique las relaciones.";
+                TempData["MensajeError"] = "No puede borrar esta meta, verifique las relaciones.";
                 return RedirectToAction(nameof(ManteniMetas));
             }
         }
@@ -514,7 +515,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al obtener las competencias: {ex.Message}";
+                TempData["MensajeError"] = $"Error al obtener las competencias: {ex.Message}";
                 return View(new List<CompetenciasModel>());
             }
         }
@@ -541,7 +542,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al crear el conglomerado: {ex.Message}";
+                TempData["MensajeError"] = $"Error al crear el conglomerado: {ex.Message}";
                 return View();
             }
         }
@@ -569,7 +570,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al actualizar la competencia: {ex.Message}";
+                TempData["MensajeError"] = $"Error al actualizar la competencia: {ex.Message}";
                 return View(competenciaEdit);
             }
         }
@@ -584,7 +585,7 @@ namespace SEDEP.Controllers
             }
             catch
             {
-                TempData["mensajeError"] = "No puede borrar esta competencia, verifique las relaciones.";
+                TempData["MensajeError"] = "No puede borrar esta competencia, verifique las relaciones.";
                 return RedirectToAction(nameof(ManteniCompetencias));
             }
         }
@@ -604,7 +605,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al obtener los puestos: {ex.Message}";
+                TempData["MensajeError"] = $"Error al obtener los puestos: {ex.Message}";
                 return View(new List<ObjetivoModel>());
             }
         }
@@ -633,7 +634,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al crear el puesto: {ex.Message}";
+                TempData["MensajeError"] = $"Error al crear el puesto: {ex.Message}";
                 return View();
             }
         }
@@ -662,7 +663,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al actualizar el puesto: {ex.Message}";
+                TempData["MensajeError"] = $"Error al actualizar el puesto: {ex.Message}";
                 return View(puestoModificado);
             }
         }
@@ -677,7 +678,7 @@ namespace SEDEP.Controllers
             }
             catch
             {
-                TempData["mensajeError"] = "No puede borrar este puesto, verifique las relaciones.";
+                TempData["MensajeError"] = "No puede borrar este puesto, verifique las relaciones.";
                 return RedirectToAction(nameof(ManteniPuestos));
             }
         }
