@@ -23,7 +23,7 @@ namespace Negocios
         public List<PuestoModel> ObtenerPuestos()
         {
             List<PuestoModel> listaPuestos = new();
-            DataTable dt = _contexto.EjecutarSqlDirecto_DT("sp_ObtenerPuesto");
+            DataTable dt = _contexto.EjecutarSqlDirecto_DT("SELECT * FROM vw_Puesto");
 
             foreach (DataRow row in dt.Rows)
             {
