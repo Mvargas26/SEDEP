@@ -31,32 +31,16 @@
                             <a href="/Mantenimientos/EditaPuesto/@puesto.idPuesto" class="btn btn-primary btn-sm">
                                 <i class="fas fa-edit"></i> Modificar Puesto
                             </a>
-                            <button class="btn btn-danger btn-sm" onclick="confirmarEliminar(@puesto.idPuesto, '@puesto.Puesto')">
-                                <i class="fas fa-trash-alt"></i> Eliminar Puesto
-                            </button>
+                            <form asp-action="EliminarPuesto" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@puesto.idPuesto" />
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este puesto?');">
+                                    <i class="fas fa-trash-alt"></i> Eliminar Puesto
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
-    </div>
-</div>
-
-<!-- Modal para eliminar -->
-<div class="modal fade" id="confirmacionModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title">Confirmación</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body">
-                <p id="mensajeConfirmacion"></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                <button type="button" class="btn btn-danger" id="btnEliminar">Sí</button>
-            </div>
-        </div>
     </div>
 </div>

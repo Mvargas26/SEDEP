@@ -14,6 +14,7 @@ namespace SEDEP.Controllers
         MetasNegocios _objetoMeta = new MetasNegocios();
         CompetenciasNegocio _objetoCompe = new CompetenciasNegocio();
         DepartamentosNegocio objeto_departamento = new DepartamentosNegocio();
+        PuestosNegocio _objetoPuesto = new PuestosNegocio();
 
         //***********************************************************************************************
         #region FUNCIONARIOS
@@ -59,7 +60,7 @@ namespace SEDEP.Controllers
                     IdEstadoFuncionario = Convert.ToInt32(collectionn["IdEstadoFuncionario"])
                 };
                 objeto_funcionario.CrearFuncionario(newFuncionario);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(ManteniFuncionarios));
             }
             catch (Exception ex)
             {
@@ -92,7 +93,7 @@ namespace SEDEP.Controllers
                     Estado = collection["EstadoFuncionario"]
                 };
                 objeto_funcionario.ModificarFuncionario(funcionarioEditar);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(ManteniFuncionarios));
             }
             catch (Exception ex)
             {
@@ -112,7 +113,7 @@ namespace SEDEP.Controllers
             try
             {
                 objeto_funcionario.EliminarFuncionario(cedula);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(ManteniFuncionarios));
             }
             catch (Exception ex)
             {
@@ -167,7 +168,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al crear el conglomerado: {ex.Message}";
+                TempData["ErrorMessage"] = $"Error al crear el objetivo: {ex.Message}";
                 return View();
             }
         }
@@ -248,7 +249,7 @@ namespace SEDEP.Controllers
                     Departamento = collection["Departamento"]
                 };
                 objeto_departamento.CrearDepartamento(newDepartamento);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(ManteniDepartamentos));
             }
             catch (Exception ex)
             {
@@ -273,7 +274,7 @@ namespace SEDEP.Controllers
                     Departamento = collection["Departamento"]
                 };
                 objeto_departamento.ModificarDepartamento(departamentoEditar);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(ManteniDepartamentos));
             }
             catch (Exception ex)
             {
@@ -293,7 +294,7 @@ namespace SEDEP.Controllers
             try
             {
                 objeto_departamento.EliminarDepartamento(id);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(ManteniDepartamentos));
             }
             catch (Exception ex)
             {
@@ -338,7 +339,7 @@ namespace SEDEP.Controllers
 
                 objeto_ConglomeradosNegocios.CrearConglomerado(newConglomerado);
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(ManteniConglomerados));
             }
             catch (Exception ex)
             {
@@ -367,7 +368,7 @@ namespace SEDEP.Controllers
                 };
 
                 objeto_ConglomeradosNegocios.ModificarConglomerado(conglomeradoEditar);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(ManteniConglomerados));
 
             }
             catch (Exception ex)
@@ -390,7 +391,7 @@ namespace SEDEP.Controllers
             try
             {
                 objeto_ConglomeradosNegocios.EliminarConglomerado(id);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(ManteniConglomerados));
             }
             catch
             {
@@ -589,93 +590,96 @@ namespace SEDEP.Controllers
         }
 
         #endregion
-        #region Puestos
 
-        // Datos "quemados"
-        private static List<PuestoModel> puestos = new List<PuestoModel>
-        {
-            new PuestoModel { idPuesto = 1, Puesto = "Gerente de TI" },
-            new PuestoModel { idPuesto = 2, Puesto = "Desarrollador" },
-            new PuestoModel { idPuesto = 3, Puesto = "Analista de Sistemas" }
-        };
+        #region Puestos
 
         // Vista para listar puestos
         public IActionResult ManteniPuestos()
         {
-            return View(puestos);
+            // Obtener la lista de objetivos desde la base de datos
+            try
+            {
+                var puestos = _objetoPuesto.ObtenerPuestos();
+                return View(puestos);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al obtener los puestos: {ex.Message}";
+                return View(new List<ObjetivoModel>());
+            }
         }
 
         // Vista para crear un puesto
         public IActionResult CreaPuesto()
         {
-            return View();
+            return View("CreaPuesto", new PuestoModel());
         }
 
         // Acción para crear un puesto
         [HttpPost]
-        public IActionResult CreaPuestos(string nombrePuesto)
+        public IActionResult CreaPuestos(PuestoModel nuevoPuesto)
         {
-            if (!string.IsNullOrEmpty(nombrePuesto) && !puestos.Any(p => p.Puesto == nombrePuesto))
+            try
             {
-                var nuevoPuesto = new PuestoModel
+                if (ModelState.IsValid)
                 {
-                    idPuesto = puestos.Max(p => p.idPuesto) + 1,
-                    Puesto = nombrePuesto
-                };
-                puestos.Add(nuevoPuesto);
-                TempData["Mensaje"] = $"Puesto {nombrePuesto} creado correctamente.";
-                return RedirectToAction("GestionPuestos");
+                    _objetoPuesto.AgregarPuesto(nuevoPuesto);
+                    return RedirectToAction(nameof(ManteniPuestos)); // Redirigir a la vista de gestión
+                }
+                else
+                {
+                    return View(nuevoPuesto); // Mostrar errores de validación si los hay
+                }
             }
-
-            TempData["Error"] = "El nombre del puesto no puede estar vacío o duplicado.";
-            return View();
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al crear el puesto: {ex.Message}";
+                return View();
+            }
         }
 
         // Vista para editar un puesto
         public IActionResult EditaPuesto(int id)
         {
-            var puesto = puestos.FirstOrDefault(p => p.idPuesto == id);
-            if (puesto == null)
-            {
-                return NotFound();
-            }
-
-            return View(puesto);
+            return View(_objetoPuesto.ObtenerPuestoId(id));
         }
 
         // Acción para modificar un puesto
         [HttpPost]
-        public IActionResult EditaPuesto(int id, string nombrePuesto)
+        public IActionResult EditarPuesto(PuestoModel puestoModificado)
         {
-            var puesto = puestos.FirstOrDefault(p => p.idPuesto == id);
-            if (puesto == null)
+            try
             {
-                return NotFound();
+                if (ModelState.IsValid)
+                {
+                    _objetoPuesto.ActualizarPuesto(puestoModificado);
+                    return RedirectToAction(nameof(ManteniPuestos)); // Redirigir a la lista de objetivos
+                }
+                else
+                {
+                    return View(puestoModificado); // Mostrar errores de validación
+                }
             }
-
-            if (!string.IsNullOrEmpty(nombrePuesto) && !puestos.Any(p => p.Puesto == nombrePuesto))
+            catch (Exception ex)
             {
-                puesto.Puesto = nombrePuesto;
-                TempData["Mensaje"] = $"Puesto {nombrePuesto} modificado correctamente.";
-                return RedirectToAction("GestionPuestos");
+                TempData["ErrorMessage"] = $"Error al actualizar el puesto: {ex.Message}";
+                return View(puestoModificado);
             }
-
-            TempData["Error"] = "El nombre del puesto no puede estar vacío o duplicado.";
-            return View(puesto);
         }
 
         // Acción para eliminar un puesto
         public IActionResult EliminarPuesto(int id)
         {
-            var puesto = puestos.FirstOrDefault(p => p.idPuesto == id);
-            if (puesto == null)
+            try
             {
-                return NotFound();
+                _objetoPuesto.EliminarPuesto(id);
+                return RedirectToAction(nameof(ManteniPuestos));
             }
-
-            puestos.Remove(puesto);
-            TempData["Mensaje"] = $"Puesto {puesto.Puesto} eliminado correctamente.";
-            return RedirectToAction("GestionPuestos");
+            catch
+            {
+                TempData["mensajeError"] = "No puede borrar este puesto, verifique las relaciones.";
+                return RedirectToAction(nameof(ManteniPuestos));
+            }
         }
 
 
