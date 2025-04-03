@@ -60,7 +60,7 @@ namespace SEDEP.Controllers
                     IdEstadoFuncionario = Convert.ToInt32(collectionn["IdEstadoFuncionario"])
                 };
                 objeto_funcionario.CrearFuncionario(newFuncionario);
-                TempData["MensajeError"] = $"Error al crear el funcionario: {ex.Message}";
+                TempData["MensajeExito"] = $"Funcionario creado exitosamente";
                 return RedirectToAction(nameof(ManteniFuncionarios));
             }
             catch (Exception ex)
@@ -94,6 +94,7 @@ namespace SEDEP.Controllers
                     Estado = collection["EstadoFuncionario"]
                 };
                 objeto_funcionario.ModificarFuncionario(funcionarioEditar);
+                TempData["MensajeExito"] = $"Funcionario editado exitosamente";
                 return RedirectToAction(nameof(ManteniFuncionarios));
             }
             catch (Exception ex)
@@ -114,6 +115,7 @@ namespace SEDEP.Controllers
             try
             {
                 objeto_funcionario.EliminarFuncionario(cedula);
+                TempData["MensajeExito"] = $"Funcionario eliminado exitosamente";
                 return RedirectToAction(nameof(ManteniFuncionarios));
             }
             catch (Exception ex)
@@ -160,6 +162,7 @@ namespace SEDEP.Controllers
                 if (ModelState.IsValid)
                 {
                     _objetivoNegocios.CrearObjetivo(nuevoObjetivo);
+                    TempData["MensajeExito"] = $"Objetivo creado exitosamente";
                     return RedirectToAction(nameof(GestionObjetivos)); // Redirigir a la vista de gestión
                 }
                 else
@@ -188,6 +191,7 @@ namespace SEDEP.Controllers
                 if (ModelState.IsValid)
                 {
                     _objetivoNegocios.ModificarObjetivo(objetivoEditado);
+                    TempData["MensajeExito"] = $"Objetivo actualizado exitosamente";
                     return RedirectToAction(nameof(GestionObjetivos)); // Redirigir a la lista de objetivos
                 }
                 else
@@ -208,6 +212,7 @@ namespace SEDEP.Controllers
             try
             {
                 _objetivoNegocios.EliminarObjetivo(id);
+                TempData["MensajeExito"] = $"Objetivo eliminado exitosamente";
                 return RedirectToAction(nameof(GestionObjetivos));
             }
             catch
@@ -224,8 +229,8 @@ namespace SEDEP.Controllers
         {
             try { 
 
-            var departamentos = objeto_departamento.ListarDepartamentos();
-            return View(departamentos);
+                var departamentos = objeto_departamento.ListarDepartamentos();
+                return View(departamentos);
             }
             catch (Exception ex)
             {
@@ -233,7 +238,7 @@ namespace SEDEP.Controllers
                 return View(new List<DepartamentoModel>());
             }
         }
-        
+
         //crear departamento
 
         public IActionResult CreaDepartamento()
@@ -250,6 +255,7 @@ namespace SEDEP.Controllers
                     Departamento = collection["Departamento"]
                 };
                 objeto_departamento.CrearDepartamento(newDepartamento);
+                TempData["MensajeExito"] = $"Departamento creado exitosamente";
                 return RedirectToAction(nameof(ManteniDepartamentos));
             }
             catch (Exception ex)
@@ -275,6 +281,7 @@ namespace SEDEP.Controllers
                     Departamento = collection["Departamento"]
                 };
                 objeto_departamento.ModificarDepartamento(departamentoEditar);
+                TempData["MensajeExito"] = $"Departamento editado exitosamente";
                 return RedirectToAction(nameof(ManteniDepartamentos));
             }
             catch (Exception ex)
@@ -295,6 +302,7 @@ namespace SEDEP.Controllers
             try
             {
                 objeto_departamento.EliminarDepartamento(id);
+                TempData["MensajeExito"] = $"Departamento eliminado exitosamente";
                 return RedirectToAction(nameof(ManteniDepartamentos));
             }
             catch (Exception ex)
@@ -339,7 +347,7 @@ namespace SEDEP.Controllers
                 };
 
                 objeto_ConglomeradosNegocios.CrearConglomerado(newConglomerado);
-
+                TempData["MensajeExito"] = $"Conglomerado creado exitosamente";
                 return RedirectToAction(nameof(ManteniConglomerados));
             }
             catch (Exception ex)
@@ -369,6 +377,7 @@ namespace SEDEP.Controllers
                 };
 
                 objeto_ConglomeradosNegocios.ModificarConglomerado(conglomeradoEditar);
+                TempData["MensajeExito"] = $"Conglomerado editado exitosamente";
                 return RedirectToAction(nameof(ManteniConglomerados));
 
             }
@@ -392,6 +401,7 @@ namespace SEDEP.Controllers
             try
             {
                 objeto_ConglomeradosNegocios.EliminarConglomerado(id);
+                TempData["MensajeExito"] = $"Conglomerado eliminado exitosamente";
                 return RedirectToAction(nameof(ManteniConglomerados));
             }
             catch
@@ -445,6 +455,7 @@ namespace SEDEP.Controllers
                 if (ModelState.IsValid)
                 {
                     _objetoMeta.CrearMeta(nuevaMeta);
+                    TempData["MensajeExito"] = $"Meta creada exitosamente";
                     return RedirectToAction(nameof(ManteniMetas)); // Redirigir a la vista de gestión
                 }
                 else
@@ -473,6 +484,7 @@ namespace SEDEP.Controllers
                 if (ModelState.IsValid)
                 {
                     _objetoMeta.ModificarMeta(metaEditada);
+                    TempData["MensajeExito"] = $"Meta actualizada exitosamente";
                     return RedirectToAction(nameof(ManteniMetas)); // Redirigir a la lista de objetivos
                 }
                 else
@@ -493,6 +505,7 @@ namespace SEDEP.Controllers
             try
             {
                 _objetoMeta.EliminarMeta(id);
+                TempData["MensajeExito"] = $"Meta eliminada exitosamente";
                 return RedirectToAction(nameof(ManteniMetas));
             }
             catch
@@ -505,7 +518,7 @@ namespace SEDEP.Controllers
 
         #region Competencias
 
-        public IActionResult ManteniCompetencias() 
+        public IActionResult ManteniCompetencias()
         {
             // Obtener la lista de objetivos desde la base de datos
             try
@@ -533,6 +546,7 @@ namespace SEDEP.Controllers
                 if (ModelState.IsValid)
                 {
                     _objetoCompe.CrearCompetencia(nuevaCompe);
+                    TempData["MensajeExito"] = $"Competencia creada exitosamente";
                     return RedirectToAction(nameof(ManteniCompetencias)); // Redirigir a la vista de gestión
                 }
                 else
@@ -561,6 +575,7 @@ namespace SEDEP.Controllers
                 if (ModelState.IsValid)
                 {
                     _objetoCompe.ModificarCompetencia(competenciaEdit);
+                    TempData["MensajeExito"] = $"Competencia actualizada exitosamente";
                     return RedirectToAction(nameof(ManteniCompetencias)); // Redirigir a la lista de objetivos
                 }
                 else
@@ -581,6 +596,7 @@ namespace SEDEP.Controllers
             try
             {
                 _objetoCompe.EliminarCompetencia(id);
+                TempData["MensajeExito"] = $"Competencia eliminada exitosamente";
                 return RedirectToAction(nameof(ManteniCompetencias));
             }
             catch
@@ -589,6 +605,7 @@ namespace SEDEP.Controllers
                 return RedirectToAction(nameof(ManteniCompetencias));
             }
         }
+
 
         #endregion
 
@@ -625,6 +642,7 @@ namespace SEDEP.Controllers
                 if (ModelState.IsValid)
                 {
                     _objetoPuesto.AgregarPuesto(nuevoPuesto);
+                    TempData["MensajeExito"] = $"Puesto creado exitosamente";
                     return RedirectToAction(nameof(ManteniPuestos)); // Redirigir a la vista de gestión
                 }
                 else
@@ -654,6 +672,7 @@ namespace SEDEP.Controllers
                 if (ModelState.IsValid)
                 {
                     _objetoPuesto.ActualizarPuesto(puestoModificado);
+                    TempData["MensajeExito"] = $"Puesto actualizado exitosamente";
                     return RedirectToAction(nameof(ManteniPuestos)); // Redirigir a la lista de objetivos
                 }
                 else
@@ -674,6 +693,7 @@ namespace SEDEP.Controllers
             try
             {
                 _objetoPuesto.EliminarPuesto(id);
+                TempData["MensajeExito"] = $"Puesto eliminado exitosamente";
                 return RedirectToAction(nameof(ManteniPuestos));
             }
             catch
