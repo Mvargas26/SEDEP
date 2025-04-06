@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
-namespace SEDEP.Models
+namespace SEDEP.Models.AuthViewModel
 {
     public class LoginViewModel
     {
@@ -15,6 +15,9 @@ namespace SEDEP.Models
 
         public string? Rol { get; set; }
     }
+
+
+
     public class CustomCedulaValidation : ValidationAttribute
     {
         protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
