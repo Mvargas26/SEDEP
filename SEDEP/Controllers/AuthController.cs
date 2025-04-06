@@ -26,19 +26,22 @@ namespace SEDEP.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model)
+
+        //Usar async solo si se habilia await al enviar correo.
+        //public async Task<IActionResult> Login(LoginViewModel model)
+        public IActionResult Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            string cedula = model.Cedula;
+            string cedula = model.Cedula!;
 
             // Verificar si el usuario está bloqueado
             if (intentosFallidos.ContainsKey(cedula) && intentosFallidos[cedula].bloqueo.HasValue)
             {
-                DateTime tiempoBloqueo = intentosFallidos[cedula].bloqueo.Value;
+                DateTime tiempoBloqueo = intentosFallidos[cedula].bloqueo!.Value;
                 if (DateTime.Now < tiempoBloqueo)
                 {
                     TempData["DuracionMensajeEmergente"] = segundosDeEspera * 1000; // milisegundos
