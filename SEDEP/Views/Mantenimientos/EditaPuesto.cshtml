@@ -1,0 +1,22 @@
+﻿@model Modelos.PuestoModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Modificar Puesto";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Modificar Puesto</h2>
+
+    <form asp-action="EditarPuesto" method="post" class="form">
+        <input type="hidden" id="idPuesto" asp-for="idPuesto">
+        <div class="mb-3">
+            <label for="Puesto" class="form-label">Nombre del Puesto</label>
+            <input type="text" class="form-control" id="Puesto" name="Puesto" value="@Model.Puesto" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Guardar Cambios
+        </button>
+        <a href="/Mantenimientos/ManteniPuestos" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

@@ -1,5 +1,5 @@
 ﻿@{
-    var duracionMensajeEmergente = TempData["DuracionMensajeEmergente"] ?? 7000;
+    var duracionMensajeEmergente = Convert.ToInt32(TempData["DuracionMensajeEmergente"] ?? 7000);
 }
 
 
@@ -8,9 +8,9 @@
 
         @if (TempData["MensajeExito"] != null)
         {
-            <div id="mensajeExito" class="toast toast-sedep exito border-0" role="alert">
+            <div id="mensajeExito" class="toast toast-sedep exito" role="alert">
                 <div class="d-flex">
-                    <div class="toast-body texto-dorado">
+                    <div class="toast-body ">
                         @TempData["MensajeExito"]
                     </div>
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
@@ -20,7 +20,7 @@
 
         @if (TempData["MensajeError"] != null)
         {
-            <div id="mensajeError" class="toast toast-sedep error border-0" role="alert">
+            <div id="mensajeError" class="toast toast-sedep error" role="alert">
                 <div class="d-flex">
                     <div class="toast-body">
                         @TempData["MensajeError"]

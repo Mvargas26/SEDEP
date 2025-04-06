@@ -41,6 +41,15 @@
 </body>
 </html>
 
+<script>
+    function validarCedula(input) {
+        if (!input.value) {
+            input.setCustomValidity("La cédula es obligatoria.");
+        } else {
+            input.setCustomValidity("Solo se permiten letras y números. Máximo 20 caracteres.");
+        }
+    }
+</script>
 
 <script>
     function autocompletarCampos() {
@@ -51,15 +60,10 @@
 
             if (cedulaInput) cedulaInput.value = "123456789";
 
-            // Si hay campo de contraseña, es Login
-            if (passwordInput) {
-                passwordInput.value = "password123";
-            }
+            if (passwordInput) passwordInput.value = "password123";
 
-            // Si hay campo de correo, es Recuperar Contraseña
-            if (correoInput) {
-                correoInput.value = "juan.perez@universidad.com";
-            }
+            if (correoInput) correoInput.value = "juan.perez@universidad.com";
+          
         }, 100);
     }
 </script>

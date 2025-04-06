@@ -9,8 +9,12 @@ namespace SEDEP.Controllers
         //***********************************************************************************************
         //Objetos de la cap Negocios
         ConglomeradosNegocios objeto_ConglomeradosNegocios = new ConglomeradosNegocios();
+        ObjetivoNegocios _objetivoNegocios = new ObjetivoNegocios();
         FuncionarioNegocios objeto_funcionario= new FuncionarioNegocios();
+        MetasNegocios _objetoMeta = new MetasNegocios();
+        CompetenciasNegocio _objetoCompe = new CompetenciasNegocio();
         DepartamentosNegocio objeto_departamento = new DepartamentosNegocio();
+        PuestosNegocio _objetoPuesto = new PuestosNegocio();
 
         //***********************************************************************************************
         #region FUNCIONARIOS
@@ -19,23 +23,24 @@ namespace SEDEP.Controllers
         {
             try
             {
-
                 var funcionarios = objeto_funcionario.ListarFuncionarios();
                 return View(funcionarios);
             }
             catch (Exception ex)
             {
                 // Si ocurre un error, muestra un mensaje de error
-                TempData["ErrorMessage"] = $"Error al obtener los funcionarios: {ex.Message}";
+                TempData["MensajeError"] = $"Error al obtener los funcionarios: {ex.Message}";
                 return View(new List<FuncionarioModel>()); // Retorna una lista vacía si ocurre un error
             }
         }
+
         [HttpGet]
-        // pantalla para nuevo funcionario{
+        // pantalla para nuevo funcionario
         public IActionResult CrearNuevoFuncionario()
         {
             return View(new FuncionarioModel());
         }
+
         // Crear nuevo funcionario
         [HttpPost]
         public IActionResult CrearNuevoFuncionario(IFormCollection collectionn)
@@ -44,32 +49,36 @@ namespace SEDEP.Controllers
             {
                 FuncionarioModel newFuncionario = new FuncionarioModel
                 {
-                    Cedula = collectionn["Cedula"],
-                    Nombre = collectionn["Nombre"],
-                    Apellido1 = collectionn["Apellido1"],
-                    Apellido2 = collectionn["Apellido2"],
-                    Correo = collectionn["Correo"],
-                    Password = collectionn["Password"],
+                    Cedula = collectionn["Cedula"]!,
+                    Nombre = collectionn["Nombre"]!,
+                    Apellido1 = collectionn["Apellido1"]!,
+                    Apellido2 = collectionn["Apellido2"]!,
+                    Correo = collectionn["Correo"]!,
+                    Password = collectionn["Password"]!,
                     IdDepartamento = Convert.ToInt32(collectionn["IdDepartamento"]),
                     IdRol = Convert.ToInt32(collectionn["IdRol"]),
                     IdPuesto = Convert.ToInt32(collectionn["IdPuesto"]),
                     IdEstadoFuncionario = Convert.ToInt32(collectionn["IdEstadoFuncionario"])
                 };
+
                 objeto_funcionario.CrearFuncionario(newFuncionario);
-                return RedirectToAction(nameof(Index));
+                TempData["MensajeExito"] = $"Funcionario {newFuncionario.Nombre} {newFuncionario.Apellido1} {newFuncionario.Apellido2} creado correctamente.";
+                return RedirectToAction(nameof(ManteniFuncionarios));
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al crear el funcionario: {ex.Message}";
+                TempData["MensajeError"] = $"Error al crear el funcionario: {ex.Message}";
                 return View();
             }
         }
+
         // Editar funcionario
         [HttpGet("Mantenimientos/EditaFuncionario/{cedula}")]
         public IActionResult EditaFuncionario(string cedula)
         {
             return View(objeto_funcionario.ConsultarFuncionarioID(cedula));
         }
+
         [HttpPost]
         public IActionResult EditaFuncionario(string cedula, IFormCollection collection)
         {
@@ -78,6 +87,7 @@ namespace SEDEP.Controllers
                 FuncionarioModel funcionarioEditar = new FuncionarioModel
                 {
                     Cedula = cedula,
+
                     Nombre = collection["Nombre"],
                     Apellido1 = collection["Apellido1"],
                     Apellido2 = collection["Apellido2"],
@@ -87,36 +97,44 @@ namespace SEDEP.Controllers
                     IdRol = Convert.ToInt32(collection["IdRol"]),
                     IdPuesto = Convert.ToInt32(collection["IdPuesto"]),
                     IdEstadoFuncionario = Convert.ToInt32(collection["IdEstadoFuncionario"])
+
                 };
+
                 objeto_funcionario.ModificarFuncionario(funcionarioEditar);
-                return RedirectToAction(nameof(Index));
+                TempData["MensajeExito"] = $"Funcionario {funcionarioEditar.Nombre} {funcionarioEditar.Apellido1} {funcionarioEditar.Apellido2} modificado correctamente.";
+                return RedirectToAction(nameof(ManteniFuncionarios));
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al editar el funcionario: {ex.Message}";
+                TempData["MensajeError"] = $"Error al editar el funcionario: {ex.Message}";
                 return View();
             }
         }
+
         // Borrar funcionario
         [HttpGet("Mantenimientos/BorrarFuncionario/{cedula}")]
         public IActionResult BorrarFuncionario(string cedula)
         {
             return View(objeto_funcionario.ConsultarFuncionarioID(cedula));
         }
+
         [HttpPost("Mantenimientos/BorrarFuncionario/{cedula}")]
         public IActionResult BorrarFuncionario(string cedula, IFormCollection collection)
         {
             try
             {
+                var funcionario = objeto_funcionario.ConsultarFuncionarioID(cedula);
                 objeto_funcionario.EliminarFuncionario(cedula);
-                return RedirectToAction(nameof(Index));
+                TempData["MensajeExito"] = $"Funcionario {funcionario.Nombre} {funcionario.Apellido1} {funcionario.Apellido2} eliminado correctamente.";
+                return RedirectToAction(nameof(ManteniFuncionarios));
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al borrar el funcionario: {ex.Message}";
+                TempData["MensajeError"] = $"Error al borrar el funcionario: {ex.Message}";
                 return View();
             }
         }
+
 
 
         #endregion
@@ -129,21 +147,97 @@ namespace SEDEP.Controllers
         #region OBJETIVOS
         public IActionResult GestionObjetivos()
         {
-            var objetivos = new List<ObjetivoModel>
-        {
-        };
-            return View(objetivos);
+            // Obtener la lista de objetivos desde la base de datos
+            try
+            {
+                var objetivos = _objetivoNegocios.ListarObjetivos();
+                return View(objetivos);
+            }
+            catch (Exception ex)
+            {
+                TempData["MensajeError"] = $"Error al obtener los objetivos: {ex.Message}";
+                return View(new List<ObjetivoModel>());
+            }
         }
 
-        public IActionResult CreaObjetivo()
+        public IActionResult CrearNuevoObjetivo()
         {
-            return View();
+            return View("CreaObjetivo", new ObjetivoModel());
+        }
+
+        [HttpPost]
+        public IActionResult CrearObjetivo(ObjetivoModel nuevoObjetivo)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _objetivoNegocios.CrearObjetivo(nuevoObjetivo);
+                    TempData["MensajeExito"] = $"Objetivo {nuevoObjetivo.Objetivo} creado correctamente.";
+                    return RedirectToAction(nameof(GestionObjetivos)); // Redirigir a la vista de gestión
+                }
+                else
+                {
+                    return View(nuevoObjetivo); // Mostrar errores de validación si los hay
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["MensajeError"] = $"Error al crear el objetivo: {ex.Message}";
+                return View();
+            }
         }
 
         public IActionResult EditaObjetivo(int id)
         {
-   
-            return View();
+            return View(_objetivoNegocios.ConsultarObjetivoID(id));
+        } // fin EditaConglomerado
+
+        [HttpPost]
+        public IActionResult EditarObjetivo(ObjetivoModel objetivoEditado)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _objetivoNegocios.ModificarObjetivo(objetivoEditado);
+                    TempData["MensajeExito"] = $"Objetivo {objetivoEditado.Objetivo} modificado correctamente.";
+                    return RedirectToAction(nameof(GestionObjetivos)); // Redirigir a la lista de objetivos
+                }
+                else
+                {
+                    return View(objetivoEditado); // Mostrar errores de validación
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["MensajeError"] = $"Error al actualizar el objetivo: {ex.Message}";
+                return View(objetivoEditado);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult BorraObjetivo(int id)
+        {
+            try
+            {
+                var objetivo = _objetivoNegocios.ConsultarObjetivoID(id);
+                if (objetivo == null)
+                {
+                    TempData["MensajeError"] = $"El objetivo con ID {id} no fue encontrado.";
+                }
+                else
+                {
+                    _objetivoNegocios.EliminarObjetivo(id);
+                    TempData["MensajeExito"] = $"Objetivo {objetivo.Objetivo} eliminado correctamente.";
+                }
+                return RedirectToAction(nameof(GestionObjetivos));
+            }
+            catch
+            {
+                TempData["MensajeError"] = "No puede borrar este Conglomerado, verifique las relaciones.";
+                return RedirectToAction(nameof(GestionObjetivos));
+            }
         }
         #endregion
 
@@ -151,24 +245,24 @@ namespace SEDEP.Controllers
         // Gestión de Departamentos (ya existente)
         public IActionResult ManteniDepartamentos()
         {
-            try { 
-
-            var departamentos = objeto_departamento.ListarDepartamentos();
-            return View(departamentos);
+            try
+            {
+                var departamentos = objeto_departamento.ListarDepartamentos();
+                return View(departamentos);
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al obtener los departamentos: {ex.Message}";
+                TempData["MensajeError"] = $"Error al obtener los departamentos: {ex.Message}";
                 return View(new List<DepartamentoModel>());
             }
         }
-        
-        //crear departamento
 
+        // crear departamento
         public IActionResult CreaDepartamento()
         {
             return View(new DepartamentoModel());
         }
+
         [HttpPost]
         public IActionResult CreaDepartamento(IFormCollection collection)
         {
@@ -176,23 +270,26 @@ namespace SEDEP.Controllers
             {
                 DepartamentoModel newDepartamento = new DepartamentoModel
                 {
-                    Departamento = collection["Departamento"]
+                    Departamento = collection["Departamento"]!
                 };
                 objeto_departamento.CrearDepartamento(newDepartamento);
-                return RedirectToAction(nameof(Index));
+                TempData["MensajeExito"] = $"Departamento {newDepartamento.Departamento} creado correctamente.";
+                return RedirectToAction(nameof(ManteniDepartamentos));
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al crear el departamento: {ex.Message}";
+                TempData["MensajeError"] = $"Error al crear el departamento: {ex.Message}";
                 return View();
             }
         }
-        //editar departamento
+
+        // editar departamento
         [HttpGet]
         public IActionResult EditaDepartamento(int id)
         {
             return View(objeto_departamento.ConsultarDepartamentoID(id));
         }
+
         [HttpPost]
         public IActionResult EditaDepartamento(int id, IFormCollection collection)
         {
@@ -201,37 +298,52 @@ namespace SEDEP.Controllers
                 DepartamentoModel departamentoEditar = new DepartamentoModel
                 {
                     IdDepartamento = id,
-                    Departamento = collection["Departamento"]
+                    Departamento = collection["Departamento"]!
                 };
                 objeto_departamento.ModificarDepartamento(departamentoEditar);
-                return RedirectToAction(nameof(Index));
+                TempData["MensajeExito"] = $"Departamento {departamentoEditar.Departamento} modificado correctamente.";
+                return RedirectToAction(nameof(ManteniDepartamentos));
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al editar el departamento: {ex.Message}";
+                TempData["MensajeError"] = $"Error al editar el departamento: {ex.Message}";
                 return View();
             }
         }
-        //borrar departamento
+
+        // borrar departamento
         [HttpGet]
         public IActionResult BorrarDepartamento(int id)
         {
             return View(objeto_departamento.ConsultarDepartamentoID(id));
         }
+
         [HttpPost]
         public IActionResult BorrarDepartamento(int id, IFormCollection collection)
         {
             try
             {
-                objeto_departamento.EliminarDepartamento(id);
-                return RedirectToAction(nameof(Index));
+                var departamento = objeto_departamento.ConsultarDepartamentoID(id);
+
+                if (departamento == null)
+                {
+                    TempData["MensajeError"] = $"El departamento con ID {id} no fue encontrado.";
+                }
+                else
+                {
+                    objeto_departamento.EliminarDepartamento(id);
+                    TempData["MensajeExito"] = $"Departamento {departamento.Departamento} eliminado correctamente.";
+                }
+
+                return RedirectToAction(nameof(ManteniDepartamentos));
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al borrar el departamento: {ex.Message}";
+                TempData["MensajeError"] = $"Error al borrar el departamento: {ex.Message}";
                 return View();
             }
         }
+
         #endregion
 
         #region CONGLOMERADOS
@@ -245,10 +357,11 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al obtener los conglomerados: {ex.Message}";
+                TempData["MensajeError"] = $"Error al obtener los conglomerados: {ex.Message}";
                 return View(new List<ConglomeradoModel>());
             }
-        }//fin ManteniConglomerados
+        }
+
         public IActionResult CrearNuevoConglomerado()
         {
             return View(new ConglomeradoModel());
@@ -260,30 +373,27 @@ namespace SEDEP.Controllers
             try
             {
                 ConglomeradoModel newConglomerado = new ConglomeradoModel
-
                 {
-                    IdConglomerado = Convert.ToInt32(collection["IdConglomerado"]),
-                    NombreConglomerado = collection["NombreConglomerado"],
-                    Descripcion = collection["Descripcion"]
+                    IdConglomerado = Convert.ToInt32(collection["IdConglomerado"]!),
+                    NombreConglomerado = collection["NombreConglomerado"]!,
+                    Descripcion = collection["Descripcion"]!
                 };
 
                 objeto_ConglomeradosNegocios.CrearConglomerado(newConglomerado);
-
-                return RedirectToAction(nameof(Index));
+                TempData["MensajeExito"] = $"Conglomerado {newConglomerado.NombreConglomerado} creado correctamente.";
+                return RedirectToAction(nameof(ManteniConglomerados));
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al crear el conglomerado: {ex.Message}";
+                TempData["MensajeError"] = $"Error al crear el conglomerado: {ex.Message}";
                 return View();
             }
         }
 
-
         public IActionResult EditaConglomerado(int id)
         {
             return View(objeto_ConglomeradosNegocios.ConsultarConglomeradoID(id));
-
-        }//fin EditaConglomerado
+        }
 
         [HttpPost]
         public IActionResult EditaConglomerado(int id, IFormCollection collection)
@@ -293,22 +403,20 @@ namespace SEDEP.Controllers
                 ConglomeradoModel conglomeradoEditar = new()
                 {
                     IdConglomerado = id,
-                    NombreConglomerado = collection["NombreConglomerado"],
-                    Descripcion = collection["Descripcion"]
+                    NombreConglomerado = collection["NombreConglomerado"]!,
+                    Descripcion = collection["Descripcion"]!
                 };
 
                 objeto_ConglomeradosNegocios.ModificarConglomerado(conglomeradoEditar);
-                return RedirectToAction(nameof(Index));
-
+                TempData["MensajeExito"] = $"Conglomerado {conglomeradoEditar.NombreConglomerado} modificado correctamente.";
+                return RedirectToAction(nameof(ManteniConglomerados));
             }
             catch (Exception ex)
             {
-
+                TempData["MensajeError"] = $"Error al modificar el conglomerado: {ex.Message}";
                 return View();
             }
-
-
-        }//fin EditaConglomerado
+        }
 
         public ActionResult BorrarConglomerado(int id)
         {
@@ -320,33 +428,351 @@ namespace SEDEP.Controllers
         {
             try
             {
-                objeto_ConglomeradosNegocios.EliminarConglomerado(id);
-                return RedirectToAction(nameof(Index));
+                var conglomerado = objeto_ConglomeradosNegocios.ConsultarConglomeradoID(id);
+                if (conglomerado == null)
+                {
+                    TempData["MensajeError"] = $"El conglomerado con ID {id} no fue encontrado.";
+                }
+                else
+                {
+                    objeto_ConglomeradosNegocios.EliminarConglomerado(id);
+                    TempData["MensajeExito"] = $"Conglomerado {conglomerado.NombreConglomerado} eliminado correctamente.";
+                }
+
+                return RedirectToAction(nameof(ManteniConglomerados));
             }
             catch
             {
-                TempData["mensajeError"] = "No puede borrar este Conglomerado, verifique las relaciones.";
+                TempData["MensajeError"] = "No puede borrar este Conglomerado, verifique las relaciones.";
                 return View();
             }
         }
 
         public IActionResult InformativaConglomerado()
         {
-            var conglomerados = new List<ConglomeradoModel>
-        {
-            new ConglomeradoModel { IdConglomerado = 1, NombreConglomerado = "Grupo Empresarial Tico", Descripcion = "Conglomerado nacional con enfoque en retail y servicios financieros." },
-            new ConglomeradoModel { IdConglomerado = 2, NombreConglomerado = "Inversiones Globales S.A.", Descripcion = "Empresa internacional dedicada a bienes raíces y tecnología." },
-            new ConglomeradoModel { IdConglomerado = 3, NombreConglomerado = "Corporación Verde", Descripcion = "Conglomerado enfocado en energías renovables y sostenibilidad." }
-        };
-
-            return View(conglomerados);
+            try
+            {
+                var conglomerados = objeto_ConglomeradosNegocios.ListarConglomerados();
+                return View(conglomerados);
+            }
+            catch (Exception ex)
+            {
+                TempData["MensajeError"] = $"Error al obtener los conglomerados: {ex.Message}";
+                return View(new List<ConglomeradoModel>());
+            }
         }
+
         #endregion
 
+        #region Metas
+        public IActionResult ManteniMetas()
+        {
+            try
+            {
+                var objetivos = _objetoMeta.ListarMetas();
+                return View(objetivos);
+            }
+            catch (Exception ex)
+            {
+                TempData["MensajeError"] = $"Error al obtener las metas: {ex.Message}";
+                return View(new List<MetaModel>());
+            }
+        }
+
+        public IActionResult CrearNuevaMeta()
+        {
+            return View("CrearNuevaMeta", new MetaModel());
+        }
+
+        [HttpPost]
+        public IActionResult CrearMeta(MetaModel nuevaMeta)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _objetoMeta.CrearMeta(nuevaMeta);
+                    TempData["MensajeExito"] = $"Meta {nuevaMeta.Meta} creada correctamente.";
+                    return RedirectToAction(nameof(ManteniMetas)); // Redirigir a la vista de gestión
+                }
+                else
+                {
+                    return View(nuevaMeta); // Mostrar errores de validación si los hay
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["MensajeError"] = $"Error al crear la meta: {ex.Message}";
+                return View();
+            }
+        }
+
+        public IActionResult EditaMeta(int id)
+        {
+            return View(_objetoMeta.ConsultarMetaID(id));
+        }
+
+        [HttpPost]
+        public IActionResult EditarMeta(MetaModel metaEditada)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _objetoMeta.ModificarMeta(metaEditada);
+                    TempData["MensajeExito"] = $"Meta {metaEditada.Meta} modificada correctamente.";
+                    return RedirectToAction(nameof(ManteniMetas)); // Redirigir a la lista de metas
+                }
+                else
+                {
+                    return View(metaEditada); // Mostrar errores de validación
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["MensajeError"] = $"Error al actualizar la meta: {ex.Message}";
+                return View(metaEditada);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult BorraMeta(int id)
+        {
+            try
+            {
+                var meta = _objetoMeta.ConsultarMetaID(id);
+                if (meta == null)
+                {
+                    TempData["MensajeError"] = $"La meta con ID {id} no fue encontrada.";
+                }
+                else
+                {
+                    _objetoMeta.EliminarMeta(id);
+                    TempData["MensajeExito"] = $"Meta {meta.Meta} eliminada correctamente.";
+                }
+                return RedirectToAction(nameof(ManteniMetas));
+            }
+            catch
+            {
+                TempData["MensajeError"] = "No puede borrar esta meta, verifique las relaciones.";
+                return RedirectToAction(nameof(ManteniMetas));
+            }
+        }
+
+        #endregion
+
+        #region Competencias
+
+        public IActionResult ManteniCompetencias()
+        {
+            try
+            {
+                var competencias = _objetoCompe.ListarCompetencias();
+                return View(competencias);
+            }
+            catch (Exception ex)
+            {
+                TempData["MensajeError"] = $"Error al obtener las competencias: {ex.Message}";
+                return View(new List<CompetenciasModel>());
+            }
+        }
+
+        public IActionResult CrearNuevaCompetencia()
+        {
+            return View("CrearNuevaCompetencia", new CompetenciasModel());
+        }
+
+        [HttpPost]
+        public IActionResult CrearCompetencia(CompetenciasModel nuevaCompe)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _objetoCompe.CrearCompetencia(nuevaCompe);
+                    TempData["MensajeExito"] = $"Competencia {nuevaCompe.Competencia} creada correctamente.";
+                    return RedirectToAction(nameof(ManteniCompetencias));
+                }
+                else
+                {
+                    return View(nuevaCompe);
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["MensajeError"] = $"Error al crear la competencia: {ex.Message}";
+                return View();
+            }
+        }
+
+        public IActionResult EditaCompetencia(int id)
+        {
+            return View(_objetoCompe.ConsultarCompetenciaID(id));
+        }
+
+        [HttpPost]
+        public IActionResult EditarCompetencia(CompetenciasModel competenciaEdit)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _objetoCompe.ModificarCompetencia(competenciaEdit);
+                    TempData["MensajeExito"] = $"Competencia {competenciaEdit.Competencia} modificada correctamente.";
+                    return RedirectToAction(nameof(ManteniCompetencias));
+                }
+                else
+                {
+                    return View(competenciaEdit);
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["MensajeError"] = $"Error al actualizar la competencia: {ex.Message}";
+                return View(competenciaEdit);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult BorraCompetencia(int id)
+        {
+            try
+            {
+                var competencia = _objetoCompe.ConsultarCompetenciaID(id);
+                if (competencia == null)
+                {
+                    TempData["MensajeError"] = $"La competencia con ID {id} no fue encontrada.";
+                }
+                else
+                {
+                    _objetoCompe.EliminarCompetencia(id);
+                    TempData["MensajeExito"] = $"Competencia {competencia.Competencia} eliminada correctamente.";
+                }
+                return RedirectToAction(nameof(ManteniCompetencias));
+            }
+            catch
+            {
+                TempData["MensajeError"] = "No puede borrar esta competencia, verifique las relaciones.";
+                return RedirectToAction(nameof(ManteniCompetencias));
+            }
+        }
+
+
+
+        #endregion
+
+        #region Puestos
+        // Vista para listar puestos
+        public IActionResult ManteniPuestos()
+        {
+            try
+            {
+                var puestos = _objetoPuesto.ObtenerPuestos();
+                return View(puestos);
+            }
+            catch (Exception ex)
+            {
+                TempData["MensajeError"] = $"Error al obtener los puestos: {ex.Message}";
+                return View(new List<PuestoModel>());
+            }
+        }
+
+        // Vista para crear un puesto
+        public IActionResult CreaPuesto()
+        {
+            return View("CreaPuesto", new PuestoModel());
+        }
+
+        // Acción para crear un puesto
+        [HttpPost]
+        public IActionResult CreaPuestos(PuestoModel nuevoPuesto)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _objetoPuesto.AgregarPuesto(nuevoPuesto);
+                    TempData["MensajeExito"] = $"Puesto {nuevoPuesto.Puesto} creado correctamente.";
+                    return RedirectToAction(nameof(ManteniPuestos));
+                }
+                else
+                {
+                    return View(nuevoPuesto);
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["MensajeError"] = $"Error al crear el puesto: {ex.Message}";
+                return View();
+            }
+        }
+
+        // Vista para editar un puesto
+        public IActionResult EditaPuesto(int id)
+        {
+            return View(_objetoPuesto.ObtenerPuestoId(id));
+        }
+
+        // Acción para modificar un puesto
+        [HttpPost]
+        public IActionResult EditarPuesto(PuestoModel puestoModificado)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _objetoPuesto.ActualizarPuesto(puestoModificado);
+                    TempData["MensajeExito"] = $"Puesto {puestoModificado.Puesto} modificado correctamente.";
+                    return RedirectToAction(nameof(ManteniPuestos));
+                }
+                else
+                {
+                    return View(puestoModificado);
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["MensajeError"] = $"Error al actualizar el puesto: {ex.Message}";
+                return View(puestoModificado);
+            }
+        }
+
+        // Acción para eliminar un puesto
+        public IActionResult EliminarPuesto(int id)
+        {
+            try
+            {
+                var puesto = _objetoPuesto.ObtenerPuestoId(id);
+                if (puesto == null)
+                {
+                    TempData["MensajeError"] = $"El puesto con ID {id} no fue encontrado.";
+                }
+                else
+                {
+                    _objetoPuesto.EliminarPuesto(id);
+                    TempData["MensajeExito"] = $"Puesto {puesto.Puesto} eliminado correctamente.";
+                }
+                return RedirectToAction(nameof(ManteniPuestos));
+            }
+            catch
+            {
+                TempData["MensajeError"] = "No puede borrar este puesto, verifique las relaciones.";
+                return RedirectToAction(nameof(ManteniPuestos));
+            }
+        }
+
+
+        #endregion
 
     }//fin class
 
-
-
+    // lo ideal es crearlo en modelos, pero lo puse aqui solo para probar el front
+    //public class ObjetivoModel
+    //{
+    //    public int Id { get; set; }
+    //    public string Nombre { get; set; }
+    //    public int Porcentaje { get; set; } // Entre 0 y 100
+    //    public string Tipo { get; set; } // Estratégico, Operativo, Táctico
+    //}
 
 }//fin space

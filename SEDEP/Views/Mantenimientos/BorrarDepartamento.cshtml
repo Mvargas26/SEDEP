@@ -11,7 +11,7 @@
         <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
     }
 
-    <form asp-action="BorrarDepartamento" method="post">
+    <form id="formEliminarDepartamento" asp-action="BorrarDepartamento" method="post">
         <input type="hidden" name="IdDepartamento" value="@Model.IdDepartamento" />
 
         <div class="mb-3">
@@ -28,9 +28,31 @@
             <a href="/Mantenimientos/ManteniDepartamentos" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Volver
             </a>
-            <button type="submit" class="btn btn-danger btn-sm">
+            <!-- Botón que abre el modal -->
+            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmarEliminacion">
                 <i class="fas fa-trash-alt"></i> Eliminar
             </button>
         </div>
     </form>
+</div>
+
+<!-- Modal de confirmación -->
+<div class="modal fade" id="confirmarEliminacion" tabindex="-1" aria-labelledby="confirmarEliminacionLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmarEliminacionLabel">Confirmar eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                ¿Realmente desea eliminar el departamento <strong>@Model.Departamento</strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                <button type="button" class="btn btn-danger" onclick="document.getElementById('formEliminarDepartamento').submit();">
+                    Sí
+                </button>
+            </div>
+        </div>
+    </div>
 </div>

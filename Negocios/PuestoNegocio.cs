@@ -22,76 +22,122 @@ namespace Negocios
         //Obtener todos
         public List<PuestoModel> ObtenerPuestos()
         {
-            List<PuestoModel> listaPuestos = new();
-            DataTable dt = _contexto.EjecutarSqlDirecto_DT("SELECT * FROM vw_Puesto");
+            List<PuestoModel> lista = new();
 
-            foreach (DataRow row in dt.Rows)
+            try
             {
-                listaPuestos.Add(new PuestoModel
+                List<SqlParameter> parametros = new()
                 {
-                    idPuesto = Convert.ToInt32(row["idPuesto"]),
-                    Puesto = row["Puesto"].ToString()
-                });
+                    new SqlParameter("@Accion", "SELECT"),
+                    new SqlParameter("@idPuesto", DBNull.Value)
+                };
+
+                DataTable dt = _contexto.EjecutarSQLconSP_DT("adm.sp_CrudPuesto", parametros);
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    lista.Add(new PuestoModel
+                    {
+                        idPuesto = Convert.ToInt32(row["idPuesto"]),
+                        Puesto = row["Puesto"].ToString()
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al listar los puestos: " + ex.Message);
             }
 
-            return listaPuestos;
+            return lista;
+
         }
 
         // Obtener por ID
         public PuestoModel ObtenerPuestoId(int id)
         {
-            List<SqlParameter> parametros = new()
+            try
             {
-                new SqlParameter("@idPuesto", id)
-            };
+                List<SqlParameter> parametros = new()
+                {
+                    new SqlParameter("@Accion", "SELECT"),
+                    new SqlParameter("@idPuesto", id)
+                };
 
-            DataTable dt = _contexto.EjecutarSQLconSP_DT("sp_ObtenerPuesto", parametros);
+                DataTable dt = _contexto.EjecutarSQLconSP_DT("adm.sp_CrudPuesto", parametros);
 
-            if (dt.Rows.Count > 0)
-            {
+                if (dt.Rows.Count == 0)
+                    return null;
+
+                DataRow row = dt.Rows[0];
+
                 return new PuestoModel
                 {
-                    idPuesto = Convert.ToInt32(dt.Rows[0]["idPuesto"]),
-                    Puesto = dt.Rows[0]["Puesto"].ToString()
+                    idPuesto = Convert.ToInt32(row["idPuesto"]),
+                    Puesto = row["Puesto"].ToString()
                 };
             }
-
-            return null;
+            catch (Exception ex)
+            {
+                throw new Exception("Error al consultar el puesto por ID: " + ex.Message);
+            }
         }
 
         // Agregar
         public void AgregarPuesto(PuestoModel puesto)
         {
-            List<SqlParameter> parametros = new()
+            try
             {
-                new SqlParameter("@Puesto", puesto.Puesto)
-            };
+                List<SqlParameter> parametros = new()
+                {
+                    new SqlParameter("@Accion", "INSERT"),
+                    new SqlParameter("@Puesto", puesto.Puesto)
+                };
 
-            _contexto.EjecutarSQLconSP_Void("sp_InsertarPuesto", parametros);
+                _contexto.EjecutarSQLconSP_Void("adm.sp_CrudPuesto", parametros);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al crear el objetivo: " + ex.Message);
+            }
         }
 
         // Actualizar
         public void ActualizarPuesto(PuestoModel puesto)
         {
-            List<SqlParameter> parametros = new()
+            try
             {
-                new SqlParameter("@idPuesto", puesto.idPuesto),
-                new SqlParameter("@Puesto", puesto.Puesto)
-            };
+                List<SqlParameter> parametros = new()
+                {
+                   new SqlParameter("@Accion", "UPDATE"),
+                   new SqlParameter("@idPuesto", puesto.idPuesto),
+                   new SqlParameter("@Puesto", puesto.Puesto)
+                };
 
-            _contexto.EjecutarSQLconSP_Void("sp_ActualizarPuesto", parametros);
+                _contexto.EjecutarSQLconSP_Void("adm.sp_CrudPuesto", parametros);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al modificar el puesto: " + ex.Message);
+            }
         }
 
         // Eliminar
         public void EliminarPuesto(int id)
         {
-            List<SqlParameter> parametros = new()
+            try
             {
-                new SqlParameter("@idPuesto", id)
-            };
+                List<SqlParameter> parametros = new()
+                {
+                    new SqlParameter("@Accion", "DELETE"),
+                    new SqlParameter("@idPuesto", id)
+                };
 
-            _contexto.EjecutarSQLconSP_Void("sp_EliminarPuesto", parametros);
+                _contexto.EjecutarSQLconSP_Void("adm.sp_CrudPuesto", parametros);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al eliminar el puesto: " + ex.Message);
+            }
         }
     }
-
 }

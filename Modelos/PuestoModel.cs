@@ -8,15 +8,9 @@ using System.Threading.Tasks;
 
 namespace Modelos
 {
-    [Table("Puesto")]
     public class PuestoModel
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int idPuesto { get; set; }
-
-        [Required]
-        [StringLength(100)]
+        public int? idPuesto { get; set; }
         public string Puesto { get; set; }
     }
 }

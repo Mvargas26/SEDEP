@@ -8,13 +8,12 @@ using System.Threading.Tasks;
 
 namespace Modelos
 {
-    public class ObjetivoModel
+    public class CompetenciasModel
     {
-        public int IdObjetivo { get; set; }
-        public string Objetivo { get; set; }
-        public decimal Porcentaje { get; set; }
+        public int IdCompetencia { get; set; }
+        public string Competencia { get; set; }
+        public decimal Calificacion { get; set; }
         public string? Tipo { get; set; }
-        public int? IdTipoObjetivo { get; set; }
-
-    }//fin class
-}//fin space
+        public int? IdTipoCompetencia { get; set; }
+    }
+}

@@ -12,7 +12,7 @@
 }
 
     .logo-container img {
-        width: 150px; /* Ajuste de tamaño según sea necesario */
+        width: 150px;
         border-radius: 10px;
         box-shadow: 0px 4px 10px rgba(255, 215, 0, 0.4);
     }
@@ -63,8 +63,8 @@
         margin: 10px 0;
     }
 
-.text-decoration-none {
-    color: #ceb16b;
+.link {
+    color: #202859;
 }
 
 .login-container .btn-login {
