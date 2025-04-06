@@ -83,10 +83,10 @@ namespace SEDEP.Controllers
                     Apellido2 = collection["Apellido2"],
                     Correo = collection["Correo"],
                     Password = collection["Password"],
-                    Departamento = collection["Departamento"],
-                    Rol = collection["Rol"],
-                    Puesto = collection["Puesto"],
-                    Estado = collection["EstadoFuncionario"]
+                    IdDepartamento = Convert.ToInt32(collection["IdDepartamento"]),
+                    IdRol = Convert.ToInt32(collection["IdRol"]),
+                    IdPuesto = Convert.ToInt32(collection["IdPuesto"]),
+                    IdEstadoFuncionario = Convert.ToInt32(collection["IdEstadoFuncionario"])
                 };
                 objeto_funcionario.ModificarFuncionario(funcionarioEditar);
                 return RedirectToAction(nameof(Index));
