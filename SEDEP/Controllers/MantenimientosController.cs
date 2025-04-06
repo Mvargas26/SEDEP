@@ -35,7 +35,7 @@ namespace SEDEP.Controllers
         }
 
         [HttpGet]
-        // pantalla para nuevo funcionario{
+        // pantalla para nuevo funcionario
         public IActionResult CrearNuevoFuncionario()
         {
             return View(new FuncionarioModel());
@@ -50,7 +50,7 @@ namespace SEDEP.Controllers
                 FuncionarioModel newFuncionario = new FuncionarioModel
                 {
                     Cedula = collectionn["Cedula"]!,
-                    Nombre = collectionn["Nombre"]!, 
+                    Nombre = collectionn["Nombre"]!,
                     Apellido1 = collectionn["Apellido1"]!,
                     Apellido2 = collectionn["Apellido2"]!,
                     Correo = collectionn["Correo"]!,
@@ -60,8 +60,9 @@ namespace SEDEP.Controllers
                     IdPuesto = Convert.ToInt32(collectionn["IdPuesto"]),
                     IdEstadoFuncionario = Convert.ToInt32(collectionn["IdEstadoFuncionario"])
                 };
+
                 objeto_funcionario.CrearFuncionario(newFuncionario);
-                TempData["MensajeExito"] = $"Funcionario {newFuncionario.Nombre} creado correctamente.";
+                TempData["MensajeExito"] = $"Funcionario {newFuncionario.Nombre} {newFuncionario.Apellido1} {newFuncionario.Apellido2} creado correctamente.";
                 return RedirectToAction(nameof(ManteniFuncionarios));
             }
             catch (Exception ex)
@@ -96,8 +97,9 @@ namespace SEDEP.Controllers
                     Puesto = collection["Puesto"]!,
                     Estado = collection["EstadoFuncionario"]!
                 };
+
                 objeto_funcionario.ModificarFuncionario(funcionarioEditar);
-                TempData["MensajeExito"] = $"Funcionario {funcionarioEditar.Nombre} modificado correctamente.";
+                TempData["MensajeExito"] = $"Funcionario {funcionarioEditar.Nombre} {funcionarioEditar.Apellido1} {funcionarioEditar.Apellido2} modificado correctamente.";
                 return RedirectToAction(nameof(ManteniFuncionarios));
             }
             catch (Exception ex)
@@ -121,7 +123,7 @@ namespace SEDEP.Controllers
             {
                 var funcionario = objeto_funcionario.ConsultarFuncionarioID(cedula);
                 objeto_funcionario.EliminarFuncionario(cedula);
-                TempData["MensajeExito"] = $"Funcionario {funcionario.Nombre} eliminado correctamente.";
+                TempData["MensajeExito"] = $"Funcionario {funcionario.Nombre} {funcionario.Apellido1} {funcionario.Apellido2} eliminado correctamente.";
                 return RedirectToAction(nameof(ManteniFuncionarios));
             }
             catch (Exception ex)
