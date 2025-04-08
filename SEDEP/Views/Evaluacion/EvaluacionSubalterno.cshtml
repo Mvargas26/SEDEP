@@ -85,14 +85,54 @@
                 <label for="selectObjetivo" class="col-form-label">Elija el objetivo:</label>
             </div>
             <div class="col-auto">
-                <!-- Combobox con datos quemados -->
+                <!-- Combobox con datos dinámicos -->
                 <select id="selectObjetivo" class="form-select">
-                    <option value="ID1|Objetivo Departamento 1|Departamental">ID1 - Objetivo Departamento 1</option>
-                    <option value="ID2|Objetivo Departamento 2|Departamental">ID2 - Objetivo Departamento 2</option>
-                    <option value="ID10|Objetivo Individual 10|Individual">ID10 - Objetivo Individual 10</option>
-                    <option value="ID11|Objetivo Individual 11|Individual">ID11 - Objetivo Individual 11</option>
+                    @foreach (var objetivo in ViewBag.ListaObjetivos as List<Modelos.ObjetivoModel>)
+                    {
+                        <option value="@objetivo.IdObjetivo|@objetivo.Objetivo|@objetivo.Tipo">
+                            @objetivo.IdObjetivo - @objetivo.Objetivo
+                        </option>
+                    }
                 </select>
             </div>
+            <div class="col-auto">
+                <label for="inputPeso" class="col-form-label">Ingrese un Peso:</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" id="inputPeso" class="form-control" />
+            </div>
+            <div class="col-auto">
+                <label for="inputMeta" class="col-form-label">Ingrese la Meta:</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" id="inputMeta" class="form-control" />
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-success" onclick="agregarFila()">Agregar fila</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- SECCIÓN para elegir Competencias y agregarlos a la tabla -->
+    <div class="mb-5">
+        <h3>Elegir Competencias:</h3>
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label for="selectObjetivo" class="col-form-label">Elija la Competencia:</label>
+            </div>
+            <div class="col-auto">
+                <!-- Combobox con datos dinámicos para las competencias -->
+                <select id="selectCompetencia" class="form-select">
+                    @foreach (var competencia in ViewBag.ListaCompetencias as List<Modelos.CompetenciasModel>)
+                    {
+                        <option value="@competencia.IdCompetencia|@competencia.Competencia|@competencia.Tipo">
+                            @competencia.IdCompetencia - @competencia.Competencia
+                        </option>
+                    }
+                </select>
+            </div>
+
             <div class="col-auto">
                 <label for="inputPeso" class="col-form-label">Ingrese un Peso:</label>
             </div>

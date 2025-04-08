@@ -13,7 +13,7 @@ namespace SEDEP.Controllers
         FuncionarioNegocios objeto_FuncionarioNegocios = new();
         TiposObjetivosNegocios objeto_TiposObjetivoNegocios = new();
         TiposCompetenciasNegocios objeto_TiposCompenNegocis = new();
-
+        EvaluacionesNegocio objeto_Evaluaciones = new();
         public IActionResult Index()
         {
             return View();
@@ -56,6 +56,12 @@ namespace SEDEP.Controllers
             {
                 var subalterno = objeto_FuncionarioNegocios.ConsultarFuncionarioID(cedula);
                 var PesosConglomerados = objeto_ConglomeradosNegocios.ConsultarPesosXConglomerado(idConglomerado);
+
+                //Traemos la listas de obj y comp relacionadas a este conglomerado
+                var (listaObjetivos, listaCompetencias) = objeto_Evaluaciones.ListarObjYCompetenciasXConglomerado(idConglomerado);
+                ViewBag.ListaObjetivos = listaObjetivos;
+                ViewBag.ListaCompetencias = listaCompetencias;
+
                 ViewBag.PesosConglomerados = PesosConglomerados;
                 ViewBag.IdConglomerado = idConglomerado;
                 ViewData["ListaConglomerados"] = objeto_ConglomeradosNegocios.ListarConglomerados();
