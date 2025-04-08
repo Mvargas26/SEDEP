@@ -76,10 +76,23 @@ namespace SEDEP.Controllers
         [HttpGet("Mantenimientos/EditaFuncionario/{cedula}")]
         public IActionResult EditaFuncionario(string cedula)
         {
-            return View(objeto_funcionario.ConsultarFuncionarioID(cedula));
+            // Consulta el funcionario por cédula
+            var funcionario = objeto_funcionario.ConsultarFuncionarioID(cedula);
+
+            // Obtiene la lista de puestos de la capa de negocios
+            var puestos = _objetoPuesto.ObtenerPuestos(); 
+
+            // Crea el ViewModel
+            FuncionarioViewModel viewModel = new FuncionarioViewModel
+            {
+                Funcionario = funcionario,
+                Puestos = puestos
+            };
+
+            return View(viewModel);
         }
 
-        [HttpPost]
+        [HttpPost("Mantenimientos/EditaFuncionario/{cedula}")]
         public IActionResult EditaFuncionario(string cedula, IFormCollection collection)
         {
             try
@@ -88,15 +101,15 @@ namespace SEDEP.Controllers
                 {
                     Cedula = cedula,
 
-                    Nombre = collection["Nombre"],
-                    Apellido1 = collection["Apellido1"],
-                    Apellido2 = collection["Apellido2"],
-                    Correo = collection["Correo"],
-                    Password = collection["Password"],
-                    IdDepartamento = Convert.ToInt32(collection["IdDepartamento"]),
-                    IdRol = Convert.ToInt32(collection["IdRol"]),
-                    IdPuesto = Convert.ToInt32(collection["IdPuesto"]),
-                    IdEstadoFuncionario = Convert.ToInt32(collection["IdEstadoFuncionario"])
+                    Nombre = collection["Funcionario.Nombre"],
+                    Apellido1 = collection["Funcionario.Apellido1"],
+                    Apellido2 = collection["Funcionario.Apellido2"],
+                    Correo = collection["Funcionario.Correo"],
+                    Password = collection["Funcionario.Password"],
+                    IdDepartamento = Convert.ToInt32(collection["Funcionario.IdDepartamento"]),
+                    IdRol = Convert.ToInt32(collection["Funcionario.IdRol"]),
+                    IdPuesto = Convert.ToInt32(collection["Funcionario.IdPuesto"]),
+                    IdEstadoFuncionario = Convert.ToInt32(collection["Funcionario.IdEstadoFuncionario"])
 
                 };
 
