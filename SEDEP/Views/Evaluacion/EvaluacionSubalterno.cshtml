@@ -1,4 +1,6 @@
 ﻿@model Modelos.FuncionarioModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Evaluación del Desempeño 2025";
@@ -9,6 +11,11 @@
 
 @{
     string[] coloresFuertes = { "#E63946", "#F4A261", "#2A9D8F", "#264653", "#8E44AD", "#D72638", "#3D348B", "#FF7F50" };
+}
+
+@{
+    var listaTiposObjetivos = ViewData["ListaTiposObjetivos"] as List<Modelos.TiposObjetivosModel>;
+    var listaTiposCompetencias = ViewData["ListaTiposCompetencias"] as List<Modelos.TiposCompetenciasModel>;
 }
 
 <div class="container mt-4 mb-5">
@@ -26,7 +33,6 @@
 
     <!-- Sección "Conglomerado Cualificado" (se mantiene) -->
     <div class="my-5">
-        @* Ejemplo de uso de ViewBag para conglomerados, si no tienes datos, se muestran por defecto *@
         @{
             var idConglomerado = ViewBag.IdConglomerado;
             var listaConglomerados = ViewData["ListaConglomerados"] as List<Modelos.ConglomeradoModel>;
@@ -42,13 +48,13 @@
                     <div class="col-sm-3 text-center">
                         <div class="rounded-circle text-white mx-auto d-flex align-items-center justify-content-center"
                              style="width:80px; height:80px; background-color:@randomColor;">
-                            @item.Porcentaje%
+                            @item.Porcentaje.ToString("0")%
                         </div>
                         @{
-                            var listaTiposObjetivos = ViewData["ListaTiposObjetivos"] as List<Modelos.TiposObjetivosModel>;
+                             listaTiposObjetivos = ViewData["ListaTiposObjetivos"] as List<Modelos.TiposObjetivosModel>;
                             var nombreTipo = listaTiposObjetivos?.FirstOrDefault(t => t.IdTipoObjetivo == item.IdTipoObjetivo)?.Tipo;
 
-                            var listaTiposCompetencias = ViewData["ListaTiposCompetencias"] as List<Modelos.TiposCompetenciasModel>;
+                             listaTiposCompetencias = ViewData["ListaTiposCompetencias"] as List<Modelos.TiposCompetenciasModel>;
                             var nombreTipoCompet = listaTiposCompetencias?.FirstOrDefault(t => t.IdTipoCompetencia == item.IdTipoCompetencia)?.Tipo;
 
                             var nombreFinal = !string.IsNullOrEmpty(nombreTipo)
@@ -87,36 +93,39 @@
             </div>
         </div>
     </div>
-
+    <hr />
     <!-- SECCIÓN para elegir Objetivos y agregarlos a la tabla de Objetivos -->
     <div class="mb-5">
         <h3>Elegir Objetivos:</h3>
         <div class="row g-3 align-items-center">
             <div class="col-auto">
-                <label for="selectObjetivo" class="col-form-label">Elija el Objetivo:</label>
+                <label for="selectObjetivo" class="col-form-label">Elija 1 Objetivo:</label>
             </div>
             <div class="col-auto">
                 <!-- Combobox con datos dinámicos para objetivos -->
                 <select id="selectObjetivo" class="form-select">
                     @foreach (var objetivo in ViewBag.ListaObjetivos as List<Modelos.ObjetivoModel>)
                     {
-                        <option value="@objetivo.IdObjetivo|@objetivo.Objetivo|@objetivo.Tipo">
+                        <option value="@objetivo.IdObjetivo|@objetivo.Objetivo|@objetivo.Tipo|@objetivo.IdTipoObjetivo">
                             @objetivo.IdObjetivo - @objetivo.Objetivo
                         </option>
                     }
                 </select>
             </div>
+        </div>
+        <br />
+        <div class="row g-3 align-items-center">
             <div class="col-auto">
-                <label for="inputPesoObj" class="col-form-label">Ingrese un Peso:</label>
-            </div>
-            <div class="col-auto">
-                <input type="text" id="inputPesoObj" class="form-control" />
-            </div>
-            <div class="col-auto">
-                <label for="inputMetaObj" class="col-form-label">Ingrese la Meta:</label>
+                <label for="inputMetaObj" class="col-form-label">Meta del Objetivo:</label>
             </div>
             <div class="col-auto">
                 <input type="text" id="inputMetaObj" class="form-control" />
+            </div>
+            <div class="col-auto">
+                <label for="inputPesoObj" class="col-form-label">Peso de la meta:</label>
+            </div>
+            <div class="col-auto">
+                <input type="number" id="inputPesoObj" class="form-control" />
             </div>
             <div class="col-auto">
                 <button type="button" class="btn btn-success" onclick="agregarFilaObjetivos()">Agregar fila</button>
@@ -142,36 +151,41 @@
             </tbody>
         </table>
     </div>
+    <hr />
 
     <!-- SECCIÓN para elegir Competencias y agregarlas a su propia tabla -->
     <div class="mb-5">
         <h3>Elegir Competencias:</h3>
         <div class="row g-3 align-items-center">
             <div class="col-auto">
-                <label for="selectCompetencia" class="col-form-label">Elija la Competencia:</label>
+                <label for="selectCompetencia" class="col-form-label">Elija 1 Competencia:</label>
             </div>
             <div class="col-auto">
                 <!-- Combobox con datos dinámicos para competencias -->
                 <select id="selectCompetencia" class="form-select">
                     @foreach (var competencia in ViewBag.ListaCompetencias as List<Modelos.CompetenciasModel>)
                     {
-                        <option value="@competencia.IdCompetencia|@competencia.Competencia|@competencia.Tipo">
+                        <option value="@competencia.IdCompetencia|@competencia.Competencia|@competencia.Tipo| @competencia.IdTipoCompetencia">
                             @competencia.IdCompetencia - @competencia.Competencia
                         </option>
                     }
                 </select>
             </div>
+        </div>
+        <br />
+        <div class="row g-3 align-items-center">
+
             <div class="col-auto">
-                <label for="inputPesoComp" class="col-form-label">Ingrese un Peso:</label>
-            </div>
-            <div class="col-auto">
-                <input type="text" id="inputPesoComp" class="form-control" />
-            </div>
-            <div class="col-auto">
-                <label for="inputMetaComp" class="col-form-label">Ingrese la Meta:</label>
+                <label for="inputMetaComp" class="col-form-label">Meta de la Competencia:</label>
             </div>
             <div class="col-auto">
                 <input type="text" id="inputMetaComp" class="form-control" />
+            </div>
+            <div class="col-auto">
+                <label for="inputPesoComp" class="col-form-label">Peso de la meta:</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" id="inputPesoComp" class="form-control" />
             </div>
             <div class="col-auto">
                 <button type="button" class="btn btn-success" onclick="agregarFilaCompetencias()">Agregar fila</button>
@@ -204,27 +218,27 @@
             <h5 class="text-center">Resumen para: @Model.Nombre @Model.Apellido1</h5>
             <table class="table table-borderless align-middle">
                 <tbody>
-                    <tr>
-                        <td><strong>Objetivos Departamento:</strong></td>
-                        <td>Deseado: 30% | Calificación:</td>
-                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="20%" /></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Objetivos Individuales:</strong></td>
-                        <td>Deseado: 50% | Calificación:</td>
-                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="10%" /></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Competencias:</strong></td>
-                        <td>Deseado: 20% | Calificación:</td>
-                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="15%" /></td>
-                    </tr>
+                    @foreach (var item in ViewBag.PesosConglomerados)
+                    {
+                        var nombreTipo = listaTiposObjetivos?.FirstOrDefault(t => t.IdTipoObjetivo == item.IdTipoObjetivo)?.Tipo;
+                        var nombreTipoCompet = listaTiposCompetencias?.FirstOrDefault(t => t.IdTipoCompetencia == item.IdTipoCompetencia)?.Tipo;
+                        var nombreFinal = nombreTipo ?? nombreTipoCompet ?? "Desconocido";
+
+                        <tr>
+                            <td><strong>@nombreFinal</strong></td>
+                            <td>Deseado: <strong>@item.Porcentaje.ToString("0")% </strong> </td>
+                            <td style="width: 100px;"><input type="number" class="form-control input-calificacion" placeholder="@item.Porcentaje.ToString("0")%" /></td>
+                        </tr>
+                    }
+
                     <tr>
                         <td><strong>Resultado:</strong></td>
-                        <td>Deseado: 100% | Calificación:</td>
-                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="45%" /></td>
-                    </tr>
-                </tbody>
+                        <td>Deseado:<strong> 100% </strong></td>
+                        <td style="width: 100px;">
+                            <input type="number" class="form-control" id="resultado-total" readonly />
+                        </td>
+
+                 </tbody>
             </table>
             <div class="text-center">
                 <button class="btn btn-success mt-3">Enviar Evaluación</button>
@@ -253,141 +267,8 @@
 </div>
 
 @section Scripts {
-    <script>
-        // Función para agregar filas a la tabla de Objetivos
-        function agregarFilaObjetivos() {
-            const selectObj = document.getElementById("selectObjetivo");
-            const inputPesoObj = document.getElementById("inputPesoObj");
-            const inputMetaObj = document.getElementById("inputMetaObj");
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/vista_EvaluacionSubalterno/tablas_planificarEva.js" asp-append-version="true"></script>
+    <script src="~/js/vista_EvaluacionSubalterno/sumaCalificaciones.js" asp-append-version="true"></script>
 
-            // Valor del option seleccionado, ejemplo: "ID1|Objetivo Departamento 1|Departamental"
-            const valorSeleccionado = selectObj.value;
-            if (!valorSeleccionado) {
-                alert("Seleccione un objetivo.");
-                return;
-            }
-            const [idObj, nombreObj, tipoObj] = valorSeleccionado.split("|");
-
-            // Obtener el peso
-            const pesoIngresado = inputPesoObj.value;
-            if (!pesoIngresado) {
-                alert("Ingrese un peso para el objetivo.");
-                return;
-            }
-
-            // Obtener la meta
-            const metaIngresada = inputMetaObj.value || "Sin meta";
-
-            // Crear la nueva fila en tablaObjetivos
-            const tbody = document.querySelector("#tablaObjetivos tbody");
-            const nuevaFila = document.createElement("tr");
-
-            // Celda de Objetivo
-            const tdObjetivo = document.createElement("td");
-            tdObjetivo.innerText = nombreObj;
-
-            // Celda de Tipo
-            const tdTipo = document.createElement("td");
-            tdTipo.innerText = tipoObj;
-
-            // Celda de Peso
-            const tdPeso = document.createElement("td");
-            tdPeso.innerText = pesoIngresado + "%";
-
-            // Celda de Meta
-            const tdMeta = document.createElement("td");
-            tdMeta.innerText = metaIngresada;
-
-            // Actual fijo a "0%"
-            const tdActual = document.createElement("td");
-            tdActual.innerText = "0%";
-
-            // Celda de Acciones
-            const tdAcciones = document.createElement("td");
-            const btnEliminar = document.createElement("button");
-            btnEliminar.classList.add("btn", "btn-sm", "btn-danger");
-            btnEliminar.innerText = "Eliminar";
-            btnEliminar.onclick = function() {
-                tbody.removeChild(nuevaFila);
-            };
-            tdAcciones.appendChild(btnEliminar);
-
-            // Agregar celdas a la fila
-            nuevaFila.appendChild(tdObjetivo);
-            nuevaFila.appendChild(tdTipo);
-            nuevaFila.appendChild(tdPeso);
-            nuevaFila.appendChild(tdMeta);
-            nuevaFila.appendChild(tdActual);
-            nuevaFila.appendChild(tdAcciones);
-
-            // Insertar la fila en la tabla
-            tbody.appendChild(nuevaFila);
-
-            // Limpiar los inputs
-            inputPesoObj.value = "";
-            inputMetaObj.value = "";
-        }
-
-        // Función para agregar filas a la tabla de Competencias
-        function agregarFilaCompetencias() {
-            const selectComp = document.getElementById("selectCompetencia");
-            const inputPesoComp = document.getElementById("inputPesoComp");
-            const inputMetaComp = document.getElementById("inputMetaComp");
-
-            const valorSeleccionado = selectComp.value;
-            if (!valorSeleccionado) {
-                alert("Seleccione una competencia.");
-                return;
-            }
-            const [idComp, nombreComp, tipoComp] = valorSeleccionado.split("|");
-
-            const pesoIngresado = inputPesoComp.value;
-            if (!pesoIngresado) {
-                alert("Ingrese un peso para la competencia.");
-                return;
-            }
-
-            const metaIngresada = inputMetaComp.value || "Sin meta";
-
-            const tbodyComp = document.querySelector("#tablaCompetencias tbody");
-            const nuevaFila = document.createElement("tr");
-
-            // Celdas
-            const tdCompetencia = document.createElement("td");
-            tdCompetencia.innerText = nombreComp;
-
-            const tdTipo = document.createElement("td");
-            tdTipo.innerText = tipoComp;
-
-            const tdPeso = document.createElement("td");
-            tdPeso.innerText = pesoIngresado + "%";
-
-            const tdMeta = document.createElement("td");
-            tdMeta.innerText = metaIngresada;
-
-            const tdActual = document.createElement("td");
-            tdActual.innerText = "0%";
-
-            const tdAcciones = document.createElement("td");
-            const btnEliminar = document.createElement("button");
-            btnEliminar.classList.add("btn", "btn-sm", "btn-danger");
-            btnEliminar.innerText = "Eliminar";
-            btnEliminar.onclick = function() {
-                tbodyComp.removeChild(nuevaFila);
-            };
-            tdAcciones.appendChild(btnEliminar);
-
-            nuevaFila.appendChild(tdCompetencia);
-            nuevaFila.appendChild(tdTipo);
-            nuevaFila.appendChild(tdPeso);
-            nuevaFila.appendChild(tdMeta);
-            nuevaFila.appendChild(tdActual);
-            nuevaFila.appendChild(tdAcciones);
-
-            tbodyComp.appendChild(nuevaFila);
-
-            inputPesoComp.value = "";
-            inputMetaComp.value = "";
-        }
-    </script>
 }
