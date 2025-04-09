@@ -1,0 +1,25 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Crear Nuevo Período";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Crear Nuevo Período</h2>
+
+    <form method="post" asp-action="CreaPeriodo" class="form">
+        <div class="mb-3">
+            <label for="Anio" class="form-label">Año</label>
+            <input type="number" class="form-control" id="Anio" name="Anio" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="FechaMaxima" class="form-label">Fecha Máxima</label>
+            <input type="date" class="form-control" id="FechaMaxima" name="FechaMaxima" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Guardar
+        </button>
+        <a href="/Mantenimientos/ManteniPeriodo" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

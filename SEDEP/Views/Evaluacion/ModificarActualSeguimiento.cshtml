@@ -1,17 +1,35 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = "Modificar Valor Actual";
+    ViewData["Title"] = "Modificar Valor Actual - Revisión";
 }
 
 <div class="container mt-4 mb-5">
     <h2 class="mb-3">Modificar valor actual</h2>
 
     <div class="alert alert-info">
-        <strong>Objetivo seleccionado:</strong> @ViewBag.ObjName <br />
+        @if (((string)ViewBag.Tipo)?.ToLower() == "competencia")
+        {
+            <strong>Competencia seleccionada:</strong>
+        }
+        else
+        {
+            <strong>Objetivo seleccionado:</strong>
+        }
+        @ViewBag.ObjName <br />
         <strong>Meta:</strong> @ViewBag.MetaValue
     </div>
 
-    <p>Ingrese el valor actual de este objetivo.</p>
+    <p>
+        Ingrese el nuevo valor para este
+        @if (((string)ViewBag.Tipo)?.ToLower() == "competencia")
+        {
+            @:registro de competencia.
+        }
+        else
+        {
+            @:registro de objetivo.
+        }
+    </p>
 
     <form method="get" action="/Evaluacion/CrearSeguimiento">
         <div class="mb-3">

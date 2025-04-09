@@ -73,7 +73,7 @@
         </div>
     </div>
 
-    <!-- Tabla pre-cargada con objetivos asignados -->
+    <!-- SECCIÓN para Objetivos Asignados -->
     <div class="mb-5">
         <h3>Objetivos Asignados</h3>
         <table class="table table-bordered">
@@ -96,7 +96,8 @@
                     <td>Cumplir 80%</td>
                     <td>0%</td>
                     <td>
-                        <a href="/Evaluacion/ModificarActualSeguimiento?tipo=Departamental&obj=ID1&objName=Objetivo%20Departamento%201&actualValue=0&metaValue=Cumplir%2080%" class="btn btn-sm btn-warning">
+                        <a href="/Evaluacion/ModificarActualSeguimiento?tipo=Departamental&obj=ID1&objName=Objetivo%20Departamento%201&actualValue=0&metaValue=Cumplir%2080%"
+                           class="btn btn-sm btn-warning">
                             Editar Actual
                         </a>
                     </td>
@@ -109,12 +110,61 @@
                     <td>Cumplir 90%</td>
                     <td>10%</td>
                     <td>
-                        <a href="/Evaluacion/ModificarActualSeguimiento?tipo=Individual&obj=ID10&objName=Objetivo%20Individual%2010&actualValue=10&metaValue=Cumplir%2090%" class="btn btn-sm btn-warning">
+                        <a href="/Evaluacion/ModificarActualSeguimiento?tipo=Individual&obj=ID10&objName=Objetivo%20Individual%2010&actualValue=10&metaValue=Cumplir%2090%"
+                           class="btn btn-sm btn-warning">
                             Editar Actual
                         </a>
                     </td>
                 </tr>
-                <!-- Agrega más filas según lo asignado -->
+                <!-- Agrega más filas según tus datos reales -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- SECCIÓN para Competencias Asignadas -->
+    <div class="mb-5">
+        <h3>Competencias Asignadas</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Competencia</th>
+                    <th>Tipo</th>
+                    <th>Peso</th>
+                    <th>Meta</th>
+                    <th>Actual</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Fila de ejemplo 1 -->
+                <tr>
+                    <td>Competencia 1</td>
+                    <td>Genérica</td>
+                    <td>15%</td>
+                    <td>Dominar ABC</td>
+                    <td>5%</td>
+                    <td>
+                        <a href="/Evaluacion/ModificarActualSeguimiento?tipo=Competencia&obj=IDComp1&objName=Competencia%201&actualValue=5&metaValue=Dominar%20ABC"
+                           class="btn btn-sm btn-warning">
+                            Editar Actual
+                        </a>
+                    </td>
+                </tr>
+                <!-- Fila de ejemplo 2 -->
+                <tr>
+                    <td>Competencia 2</td>
+                    <td>Específica</td>
+                    <td>10%</td>
+                    <td>Mejorar XYZ</td>
+                    <td>0%</td>
+                    <td>
+                        <a href="/Evaluacion/ModificarActualSeguimiento?tipo=Competencia&obj=IDComp2&objName=Competencia%202&actualValue=0&metaValue=Mejorar%20XYZ"
+                           class="btn btn-sm btn-warning">
+                            Editar Actual
+                        </a>
+                    </td>
+                </tr>
+                <!-- Agrega más filas según tus datos reales -->
             </tbody>
         </table>
     </div>
