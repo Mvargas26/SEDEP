@@ -819,14 +819,14 @@ namespace SEDEP.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("Mantenimientos/EditaPeriodo/{anio}")]
         public IActionResult EditaPeriodo(int anio)
         {
             return View(_objetoPeriodo.ConsultarPeriodoPorAnio(anio));
         }
 
         [HttpPost]
-        public IActionResult EditaPeriodo(PeriodoEvaluacionModel periodo)
+        public IActionResult EditarPeriodo(PeriodoEvaluacionModel periodo)
         {
             try
             {
@@ -836,7 +836,10 @@ namespace SEDEP.Controllers
                     TempData["MensajeExito"] = "Período modificado correctamente.";
                     return RedirectToAction(nameof(ManteniPeriodo));
                 }
-                return View(periodo);
+                else
+                {
+                    return View(periodo);
+                }
             }
             catch (Exception ex)
             {
@@ -845,16 +848,30 @@ namespace SEDEP.Controllers
             }
         }
 
+        public IActionResult EliminarPeriodo(int anio)
+        {
+            try
+            {
+                var periodo = _objetoPeriodo.ConsultarPeriodoPorAnio(anio);
+                if (periodo == null)
+                {
+                    TempData["MensajeError"] = $"El puesto con ID {anio} no fue encontrado.";
+                }
+                else
+                {
+                    _objetoPeriodo.EliminarPeriodo(anio);
+                    TempData["MensajeExito"] = $"Puesto {periodo.Anio} eliminado correctamente.";
+                }
+                return RedirectToAction(nameof(ManteniPeriodo));
+            }
+            catch
+            {
+                TempData["MensajeError"] = "No puede borrar este puesto, verifique las relaciones.";
+                return RedirectToAction(nameof(ManteniPeriodo));
+            }
+        }
+
         #endregion
     }//fin class
-
-    // lo ideal es crearlo en modelos, pero lo puse aqui solo para probar el front
-    //public class ObjetivoModel
-    //{
-    //    public int Id { get; set; }
-    //    public string Nombre { get; set; }
-    //    public int Porcentaje { get; set; } // Entre 0 y 100
-    //    public string Tipo { get; set; } // Estratégico, Operativo, Táctico
-    //}
 
 }//fin space

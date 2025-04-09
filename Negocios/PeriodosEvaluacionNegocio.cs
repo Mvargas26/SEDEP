@@ -25,7 +25,7 @@ namespace Negocios
                     new SqlParameter("@Accion", "SELECT")
                 };
 
-                DataTable dt = objDatos.EjecutarSQLconSP_DT("[adm].[sp_CrudPeriodosEvaluacion]", parametros);
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("[adm].[sp_CrudPeriodo]", parametros);
 
                 foreach (DataRow row in dt.Rows)
                 {
@@ -51,11 +51,11 @@ namespace Negocios
                 List<SqlParameter> parametros = new()
                 {
                     new SqlParameter("@Accion", "INSERT"),
-                    new SqlParameter("@Anio", nuevo.Anio),
-                    new SqlParameter("@FechaMaxima", nuevo.FechaMaxima)
+                    new SqlParameter("@ANNO", nuevo.Anio),
+                    new SqlParameter("@FechaM", nuevo.FechaMaxima)
                 };
 
-                objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudPeriodosEvaluacion]", parametros);
+                objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudPeriodo]", parametros);
             }
             catch (Exception ex)
             {
@@ -70,11 +70,11 @@ namespace Negocios
                 List<SqlParameter> parametros = new()
                 {
                     new SqlParameter("@Accion", "UPDATE"),
-                    new SqlParameter("@Anio", periodo.Anio),
-                    new SqlParameter("@FechaMaxima", periodo.FechaMaxima)
+                    new SqlParameter("@ANNO", periodo.Anio),
+                    new SqlParameter("@FechaM", periodo.FechaMaxima)
                 };
 
-                objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudPeriodosEvaluacion]", parametros);
+                objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudPeriodo]", parametros);
             }
             catch (Exception ex)
             {
@@ -89,10 +89,10 @@ namespace Negocios
                 List<SqlParameter> parametros = new()
                 {
                     new SqlParameter("@Accion", "DELETE"),
-                    new SqlParameter("@Anio", anio)
+                    new SqlParameter("@ANNO", anio)
                 };
 
-                objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudPeriodosEvaluacion]", parametros);
+                objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudPeriodo]", parametros);
             }
             catch (Exception ex)
             {
@@ -106,10 +106,11 @@ namespace Negocios
             {
                 List<SqlParameter> parametros = new()
                 {
-                    new SqlParameter("@Anio", anio)
+                    new SqlParameter("@Accion", "SELECT"), 
+                    new SqlParameter("@ANNO", anio)
                 };
 
-                DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_ConsultarPeriodoEvaluacion", parametros);
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("[adm].[sp_CrudPeriodo]", parametros);
 
                 if (dt.Rows.Count == 0)
                     return null;

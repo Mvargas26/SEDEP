@@ -27,15 +27,15 @@
                 @foreach (var periodo in Model)
                 {
                     <tr>
-                        <td>@periodo.Año</td>
+                        <td>@periodo.Anio</td>
                         <td>@periodo.FechaMaxima.ToString("dd/MM/yyyy")</td>
                         <td>
-                            <a href="/Mantenimientos/EditarPeriodo/@periodo.Año" class="btn btn-primary btn-sm">
+                            <a href="/Mantenimientos/EditaPeriodo/@periodo.Anio" class="btn btn-primary btn-sm">
                                 <i class="fas fa-edit"></i> Modificar
                             </a>
 
                             <!-- Botón para mostrar modal de eliminación -->
-                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalEliminarPeriodo-@periodo.Año">
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalEliminarPeriodo-@periodo.Anio">
                                 <i class="fas fa-trash-alt"></i> Eliminar
                             </button>
                         </td>
@@ -49,20 +49,20 @@
 <!-- Modales de confirmación para cada período -->
 @foreach (var periodo in Model)
 {
-    <div class="modal fade" id="modalEliminarPeriodo-@periodo.Año" tabindex="-1" aria-labelledby="modalEliminarPeriodoLabel-@periodo.Año" aria-hidden="true">
+    <div class="modal fade" id="modalEliminarPeriodo-@periodo.Anio" tabindex="-1" aria-labelledby="modalEliminarPeriodoLabel-@periodo.Anio" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalEliminarPeriodoLabel-@periodo.Año">Confirmar eliminación</h5>
+                    <h5 class="modal-title" id="modalEliminarPeriodoLabel-@periodo.Anio">Confirmar eliminación</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
-                    ¿Realmente desea eliminar el período <strong>@periodo.Año - @periodo.FechaMaxima.ToString("dd/MM/yyyy")</strong>?
+                    ¿Realmente desea eliminar el período <strong>@periodo.Anio - @periodo.FechaMaxima.ToString("dd/MM/yyyy")</strong>?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
                     <form asp-action="EliminarPeriodo" method="post">
-                        <input type="hidden" name="año" value="@periodo.Año" />
+                        <input type="hidden" name="anio" value="@periodo.Anio" />
                         <button type="submit" class="btn btn-danger">Sí</button>
                     </form>
                 </div>
