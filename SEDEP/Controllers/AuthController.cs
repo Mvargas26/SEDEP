@@ -74,7 +74,6 @@ namespace SEDEP.Controllers
                 return RedirectToAction("Login");
             }
 
-            TempData["MensajeExito"] = $"✅ Inicio de sesión exitoso. Bienvenido, {funcionario.Rol}.";
             HttpContext.Session.SetString("UserRole", funcionario.Rol);
 
             // genera y guarda el code de seguridad
@@ -155,6 +154,7 @@ namespace SEDEP.Controllers
                 }
                 else
                 {
+                    TempData["MensajeExito"] = "Login exitoso";
                     return RedirectToAction("Index", "Home");
                 }
             }
