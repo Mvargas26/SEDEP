@@ -855,18 +855,18 @@ namespace SEDEP.Controllers
                 var periodo = _objetoPeriodo.ConsultarPeriodoPorAnio(anio);
                 if (periodo == null)
                 {
-                    TempData["MensajeError"] = $"El puesto con ID {anio} no fue encontrado.";
+                    TempData["MensajeError"] = $"El período con ID {anio} no fue encontrado.";
                 }
                 else
                 {
                     _objetoPeriodo.EliminarPeriodo(anio);
-                    TempData["MensajeExito"] = $"Puesto {periodo.Anio} eliminado correctamente.";
+                    TempData["MensajeExito"] = $"Período {periodo.Anio} eliminado correctamente.";
                 }
                 return RedirectToAction(nameof(ManteniPeriodo));
             }
             catch
             {
-                TempData["MensajeError"] = "No puede borrar este puesto, verifique las relaciones.";
+                TempData["MensajeError"] = "No puede borrar este período, verifique las relaciones.";
                 return RedirectToAction(nameof(ManteniPeriodo));
             }
         }
