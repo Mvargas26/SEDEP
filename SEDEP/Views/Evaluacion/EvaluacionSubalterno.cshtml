@@ -125,7 +125,7 @@
                 <label for="inputPesoObj" class="col-form-label">Peso de la meta:</label>
             </div>
             <div class="col-auto">
-                <input type="number" id="inputPesoObj" class="form-control" />
+                <input type="number" id="inputPesoObj" class="form-control" min="1" step="1" required />
             </div>
             <div class="col-auto">
                 <button type="button" class="btn btn-success" onclick="agregarFilaObjetivos()">Agregar fila</button>
@@ -138,6 +138,7 @@
         <table id="tablaObjetivos" class="table table-bordered mt-3">
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Objetivo</th>
                     <th>Tipo</th>
                     <th>Peso</th>
@@ -185,7 +186,7 @@
                 <label for="inputPesoComp" class="col-form-label">Peso de la meta:</label>
             </div>
             <div class="col-auto">
-                <input type="text" id="inputPesoComp" class="form-control" />
+                <input type="number" id="inputPesoComp" class="form-control" min="1" step="1" required />
             </div>
             <div class="col-auto">
                 <button type="button" class="btn btn-success" onclick="agregarFilaCompetencias()">Agregar fila</button>
@@ -198,6 +199,7 @@
         <table id="tablaCompetencias" class="table table-bordered mt-3">
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Competencia</th>
                     <th>Tipo</th>
                     <th>Peso</th>
@@ -216,32 +218,52 @@
     <div class="d-flex justify-content-center">
         <div class="p-4" style="background-color: #f8d7da; max-width: 600px;">
             <h5 class="text-center">Resumen para: @Model.Nombre @Model.Apellido1</h5>
-            <table class="table table-borderless align-middle">
+            <table id="tablaResultados" class="table table-borderless align-middle">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Porcentaje</th>
+                        <th style="width: 100px;">Valor</th>
+                        <th class="d-none">id tipo</th>
+                    </tr>
+                </thead>
                 <tbody>
                     @foreach (var item in ViewBag.PesosConglomerados)
                     {
-                        var nombreTipo = listaTiposObjetivos?.FirstOrDefault(t => t.IdTipoObjetivo == item.IdTipoObjetivo)?.Tipo;
-                        var nombreTipoCompet = listaTiposCompetencias?.FirstOrDefault(t => t.IdTipoCompetencia == item.IdTipoCompetencia)?.Tipo;
+                        var nombreTipo = listaTiposObjetivos?.FirstOrDefault(t => t.IdTipoObjetivo == item?.IdTipoObjetivo)?.Tipo;
+                        var nombreTipoCompet = listaTiposCompetencias?.FirstOrDefault(t => t.IdTipoCompetencia == item?.IdTipoCompetencia)?.Tipo;
                         var nombreFinal = nombreTipo ?? nombreTipoCompet ?? "Desconocido";
+
+                        var idTipoObjetivo = item?.IdTipoObjetivo ?? 0;
+                        var idTipoCompetencia = item?.IdTipoCompetencia ?? 0;
+                        var idTipo = idTipoObjetivo != 0 ? idTipoObjetivo : idTipoCompetencia;
+                        var tipo = idTipoObjetivo != 0 ? "Objetivo" : "Competencia";
 
                         <tr>
                             <td><strong>@nombreFinal</strong></td>
-                            <td>Deseado: <strong>@item.Porcentaje.ToString("0")% </strong> </td>
-                            <td style="width: 100px;"><input type="number" class="form-control input-calificacion" placeholder="@item.Porcentaje.ToString("0")%" /></td>
+                            <td>Deseado: <strong>@(item?.Porcentaje.ToString("0") ?? "0")%</strong></td>
+                            <td style="width: 100px;">
+                                <input type="number" class="form-control input-calificacion"
+                                       placeholder="@(item?.Porcentaje.ToString("0") ?? "0")%"  readonly/>
+                            </td>
+                            <td class="d-none" data-tipo-id="@idTipo" data-tipo-categoria="@tipo">
+                                @idTipo
+                            </td>
                         </tr>
                     }
 
                     <tr>
                         <td><strong>Resultado:</strong></td>
-                        <td>Deseado:<strong> 100% </strong></td>
+                        <td>Deseado:<strong> 100%</strong></td>
                         <td style="width: 100px;">
                             <input type="number" class="form-control" id="resultado-total" readonly />
                         </td>
-
-                 </tbody>
+                        <td>-</td>
+                    </tr>
+                </tbody>
             </table>
             <div class="text-center">
-                <button class="btn btn-success mt-3">Enviar Evaluación</button>
+                <button id="btnEnviarEvaluacion" class="btn btn-success mt-3">Enviar Evaluación</button>
             </div>
         </div>
     </div>
@@ -269,6 +291,6 @@
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/js/vista_EvaluacionSubalterno/tablas_planificarEva.js" asp-append-version="true"></script>
-    <script src="~/js/vista_EvaluacionSubalterno/sumaCalificaciones.js" asp-append-version="true"></script>
+    <script src="~/js/vista_EvaluacionSubalterno/enviarTablas.js" asp-append-version="true"></script>
 
 }

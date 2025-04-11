@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Gestión de Funcionarios";
 }
@@ -7,14 +6,12 @@
 <div class="container mt-4">
     <h2 class="mb-4">Gestión de Funcionarios</h2>
 
-    <!-- Botón para crear un nuevo funcionario -->
     <div class="d-flex justify-content-between">
         <a href="/Mantenimientos/CrearNuevoFuncionario" class="btn btn-primary">
             <i class="fas fa-plus"></i> Crear nuevo Funcionario
         </a>
     </div>
 
-    <!-- Tabla de funcionarios -->
     <div class="table-responsive mt-3">
         <table class="table table-striped table-bordered text-center">
             <thead>
@@ -48,9 +45,12 @@
                             <a href="/Mantenimientos/EditaFuncionario/@dt.Cedula" class="btn btn-primary btn-sm">
                                 <i class="fas fa-edit"></i> Modificar Funcionario
                             </a>
-                            <a href="/Mantenimientos/BorrarFuncionario/@dt.Cedula" class="btn btn-danger btn-sm">
+                            <!-- Botón que abre el modal para eliminar -->
+                            <button type="button" class="btn btn-danger btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalEliminarFuncionario-@dt.Cedula">
                                 <i class="fas fa-trash-alt"></i> Eliminar Funcionario
-                            </a>
+                            </button>
                         </td>
                     </tr>
                 }
@@ -59,21 +59,33 @@
     </div>
 </div>
 
-<!-- Modal de confirmación para eliminar -->
-<div class="modal fade" id="confirmacionModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title">Confirmación</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body">
-                <p id="mensajeConfirmacion"></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                <button type="button" class="btn btn-danger" id="btnEliminar">Sí</button>
+<!-- Modales de confirmación -->
+@foreach (var dt in Model)
+{
+    <div class="modal fade" id="modalEliminarFuncionario-@dt.Cedula" tabindex="-1"
+         aria-labelledby="modalEliminarFuncionarioLabel-@dt.Cedula" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalEliminarFuncionarioLabel-@dt.Cedula">
+                        Confirmar eliminación
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Realmente desea eliminar al funcionario <strong>@dt.Nombre @dt.Apellido1</strong>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <!-- FORMULARIO que coincide con la ruta del controlador -->
+                    <form asp-controller="Mantenimientos"
+                          asp-action="BorrarFuncionario"
+                          asp-route-cedula="@dt.Cedula"
+                          method="post">
+                        <button type="submit" class="btn btn-danger">Sí</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+}

@@ -3,6 +3,7 @@ using Negocios;
 using Modelos;
 using System.Linq;
 using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 
 namespace SEDEP.Controllers
 {
@@ -70,6 +71,34 @@ namespace SEDEP.Controllers
                 return View(subalterno);
             }
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult EvaluacionSubalterno([FromBody] dynamic evaluacionData)
+        {
+            try
+            {
+                // Convertir a JObject para manipular más fácilmente
+                var jsonData = JObject.Parse(evaluacionData.ToString());
+
+                // Acceder a los arrays
+                var objetivos = jsonData["objetivos"];
+                var competencias = jsonData["competencias"];
+
+                // Procesar los datos
+                foreach (var objetivo in objetivos)
+                {
+                    string nombre = objetivo["nombre"];
+                    string peso = objetivo["peso"];
+
+                }
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, error = ex.Message });
+            }
         }
 
         [HttpGet]

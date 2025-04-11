@@ -1,35 +1,22 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model Modelos.EvaluacionModel
+
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = "Reportes Personal";
+    ViewData["Title"] = "Reporte Personal";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4">@ViewData["Title"]</h2>
-    <div class="table-responsive mt-4">
-        <table class="table table-striped table-bordered text-center">
-            <thead>
-                <tr>
-                    <th>Objetivo Evaluado</th>
-                    <th>Observaciones</th>
-                    <th>Nota Final</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Gestión de Tiempo</td>
-                    <td>Finaliza tareas antes de la fecha límite</td>
-                    <td>92</td>
-                </tr>
-                <tr>
-                    <td>Iniciativa</td>
-                    <td>Propone mejoras continuamente</td>
-                    <td>89</td>
-                </tr>
-            </tbody>
-        </table>
+<div class="container mt-5">
+
+    <div class="card shadow-sm p-4 mb-4">
+        <h4 class="text-primary">Evaluación Finalizada</h4>
+        <p><strong>Funcionario:</strong> @Model.Funcionario.Nombre @Model.Funcionario.Apellido1 @Model.Funcionario.Apellido2</p>
+        <p><strong>Departamento:</strong> @Model.Funcionario.Departamento</p>
+        <p><strong>Fecha de Creación:</strong> @Model.FechaCreacion.ToString("dd/MM/yyyy")</p>
+        <p><strong>Estado:</strong> @Model.EstadoEvaluacion</p>
+        <p><strong>Observaciones:</strong> @Model.Observaciones</p>
     </div>
-    <button class="btn btn-danger">Descargar Reporte en PDF</button>
+
+    <a href="/Reporte/ReportePersonalPDF" class="btn btn-primary" target="_blank">
+        <i class="fas fa-file-download"></i> Descargar PDF
+    </a>
 </div>
