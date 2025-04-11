@@ -1,0 +1,30 @@
+﻿@model Modelos.PeriodoEvaluacionModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Modificar Período";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Modificar Período</h2>
+
+    <form asp-action="EditarPeriodo" method="post" class="form">
+        <!-- El año es clave primaria y no se modifica -->
+        <input type="hidden" asp-for="Anio" />
+        <div class="mb-3">
+            <label for="Anio" class="form-label">Año</label>
+            <input type="number" class="form-control" id="Anio" name="Anio" value="@Model.Anio" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label for="FechaMaxima" class="form-label">Fecha Máxima</label>
+            <input type="date" class="form-control" id="FechaMaxima" name="FechaMaxima"
+                   value="@Model.FechaMaxima.ToString("dd/MM/yyyy")" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Guardar Cambios
+        </button>
+        <a href="/Mantenimientos/ManteniPeriodo" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

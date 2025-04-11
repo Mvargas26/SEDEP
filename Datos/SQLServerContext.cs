@@ -176,6 +176,39 @@ namespace Datos
             }
         }
 
+        //Devuelve un Data Set
+        public DataSet EjecutarSQLconSP_DS(string NombreSP, List<SqlParameter> listaParametro)
+        {
+            try
+            {
+                SqlCommand cmd = new()
+                {
+                    CommandType = CommandType.StoredProcedure,
+                    CommandText = NombreSP,
+                    Connection = this.sqlConn,
+                };
+
+                foreach (SqlParameter sqlParam in listaParametro)
+                    cmd.Parameters.Add(sqlParam);
+
+                if (this.sqlConn.State != ConnectionState.Open)
+                    this.sqlConn.Open();
+
+                SqlDataAdapter da = new(cmd);
+                DataSet ds = new();
+                da.Fill(ds);
+
+                this.sqlConn.Close();
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                if (this.sqlConn.State == ConnectionState.Open)
+                    this.sqlConn.Close();
+
+                throw new Exception("Se ha producido un error al ejecutar el procedimiento almacenado", ex);
+            }
+        }//fin EjecutarSQLconSP_DS
 
 
     }//fn class

@@ -1,6 +1,6 @@
 ﻿
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
 }
 
 <form method="post" action="/Auth/VerificarCodigo">
@@ -8,5 +8,5 @@
     <input type="hidden" name="cedula" value="@TempData["Cedula"]" />
     <label class="form-label" for="codigoSeguridad">Ingrese el código de seguridad:</label>
     <input type="text" class="form-control" id="codigoSeguridad" name="codigoSeguridad" required />
-    <button type="submit">Verificar</button>
+    <button type="submit" class="btn-login btn btn-primary w-100 mt-3">Verificar</button>
 </form>

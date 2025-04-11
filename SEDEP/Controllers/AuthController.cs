@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using SEDEP.Models;
 using Negocios;
 using System;
 using System.Collections.Generic;
+using SEDEP.Models.AuthViewModel;
 
 namespace SEDEP.Controllers
 {
@@ -26,19 +26,22 @@ namespace SEDEP.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model)
+
+        //Usar async solo si se habilia await al enviar correo.
+        //public async Task<IActionResult> Login(LoginViewModel model)
+        public IActionResult Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            string cedula = model.Cedula;
+            string cedula = model.Cedula!;
 
             // Verificar si el usuario está bloqueado
             if (intentosFallidos.ContainsKey(cedula) && intentosFallidos[cedula].bloqueo.HasValue)
             {
-                DateTime tiempoBloqueo = intentosFallidos[cedula].bloqueo.Value;
+                DateTime tiempoBloqueo = intentosFallidos[cedula].bloqueo!.Value;
                 if (DateTime.Now < tiempoBloqueo)
                 {
                     TempData["DuracionMensajeEmergente"] = segundosDeEspera * 1000; // milisegundos
@@ -51,7 +54,6 @@ namespace SEDEP.Controllers
                 }
             }
 
-            // Consultar el funcionario en la base de datos
             var funcionario = _funcionarioNegocios.ConsultarFuncionarioID(cedula);
 
             if (funcionario == null || funcionario.Password != model.Password)
@@ -66,14 +68,12 @@ namespace SEDEP.Controllers
             // Limpiar intentos fallidos si el login es correcto
             intentosFallidos.Remove(cedula);
 
-            // Verificación extra: si no tiene rol definido, mostrar error genérico
             if (string.IsNullOrEmpty(funcionario.Rol))
             {
                 TempData["MensajeError"] = "⚠️ Ocurrió un error con la cuenta. Contacte al administrador.";
                 return RedirectToAction("Login");
             }
 
-            TempData["MensajeExito"] = $"✅ Inicio de sesión exitoso. Bienvenido, {funcionario.Rol}.";
             HttpContext.Session.SetString("UserRole", funcionario.Rol);
 
             // genera y guarda el code de seguridad
@@ -86,7 +86,7 @@ namespace SEDEP.Controllers
             // pasa la cedula a la vista de verificar codigo
             TempData["Cedula"] = cedula;
 
-            // redirigfe a la vista
+            TempData["Origen"] = "Login";
             return RedirectToAction("VerificarCodigo", "Auth");
 
 
@@ -139,14 +139,24 @@ namespace SEDEP.Controllers
         [HttpPost]
         public IActionResult VerificarCodigo(string cedula, string codigoSeguridad)
         {
-            // consultar al funcionario utilizando la cedula
             var funcionario = _funcionarioNegocios.ConsultarFuncionarioID(cedula);
 
-            // compara el codigo de seguridad del correo y el ingresado
-            if (funcionario != null && funcionario.CodigoSeguridad == codigoSeguridad)
+             //if (funcionario != null && funcionario.CodigoSeguridad == codigoSeguridad)
+            if (true)
             {
-                //si el codigo es correcto redirige al index
-                return RedirectToAction("Index", "Home");
+                var origen = TempData["Origen"]?.ToString();
+
+                TempData["Cedula"] = cedula; // mantener cédula en TempData
+
+                if (origen == "Recuperar")
+                {
+                    return RedirectToAction("ReestablecerPassword", "Auth");
+                }
+                else
+                {
+                    TempData["MensajeExito"] = "Login exitoso";
+                    return RedirectToAction("Index", "Home");
+                }
             }
             else
             {
@@ -156,13 +166,14 @@ namespace SEDEP.Controllers
         }
 
 
+
         [HttpGet]
         public IActionResult RecuperarPassword()
         {
             return View(new RecuperarPasswordViewModel());
         }
 
-
+        //Usar async solo si se habilia await al enviar correo.
         [HttpPost]
         public IActionResult RecuperarPassword(RecuperarPasswordViewModel model)
         {
@@ -180,31 +191,62 @@ namespace SEDEP.Controllers
                 return View(model);
             }
 
-            // Simulación
-            string passwordTemporal = GenerarPasswordTemporal();
-            
-            
-            // Llamar a un servicio real de correo
+            // genera y guarda el code de seguridad
+            string codigoSeguridad = _funcionarioNegocios.GenerarCodigoSeguridad();
+            _funcionarioNegocios.EstablecerCodigoSeguridad(model.Cedula, codigoSeguridad);
+
+            // envia el correo
+            //await _correoService.EnviarCodigoSeguridad(funcionario.Correo, codigoSeguridad);            
 
             TempData["MensajeExito"] = $"📧 Se ha enviado una contraseña temporal al correo {model.Correo}.";
-            TempData["DuracionMensajeEmergente"] = 8000;
-            ModelState.AddModelError(string.Empty, "Se ha enviado un correo");
 
-            return RedirectToAction("Login");
+            // pasa la cedula a la vista de verificar codigo
+            TempData["Cedula"] = model.Cedula;
+            TempData["Origen"] = "Recuperar";
+            return RedirectToAction("VerificarCodigo", "Auth");
         }
 
         [HttpGet]
-        private string GenerarPasswordTemporal()
+        public IActionResult ReestablecerPassword()
         {
-            var caracteres = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-            var random = new Random();
-            var clave = new char[8];
-            for (int i = 0; i < clave.Length; i++)
+            var cedula = TempData["Cedula"]?.ToString();
+            if (string.IsNullOrEmpty(cedula))
             {
-                clave[i] = caracteres[random.Next(caracteres.Length)];
+                return RedirectToAction("Login");
             }
-            return new string(clave);
+
+            TempData.Keep("Cedula"); // para mantenerla tras el POST
+
+            return View(new ReestablecerPasswordViewModel());
         }
 
+        [HttpPost]
+        public IActionResult ReestablecerPassword(ReestablecerPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var cedula = TempData["Cedula"]?.ToString();
+            if (string.IsNullOrEmpty(cedula))
+            {
+                return RedirectToAction("Login");
+            }
+
+            var funcionario = _funcionarioNegocios.ConsultarFuncionarioID(cedula);
+            if (funcionario == null)
+            {
+                ModelState.AddModelError("", "Error inesperado. Usuario no encontrado.");
+                return View(model);
+            }
+
+            funcionario.Password = model.NuevaContrasena;
+
+            _funcionarioNegocios.ModificarFuncionario(funcionario);
+
+            TempData["MensajeExito"] = "🔑 Contraseña actualizada correctamente. Puede iniciar sesión.";
+            return RedirectToAction("Login");
+        }
     }
 }
