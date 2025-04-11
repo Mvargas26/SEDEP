@@ -59,7 +59,7 @@ namespace SEDEP.Controllers
             if (funcionario == null || funcionario.Password != model.Password)
             {
                 RegistrarIntentoFallido(cedula);
-                ModelState.AddModelError("", "Error, Datos incorrectos");
+                ModelState.AddModelError("", "Datos incorrectos");
                 return View(model);
             }
 
