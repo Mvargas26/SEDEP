@@ -24,6 +24,9 @@ function agregarFilaObjetivos() {
     const tbody = document.querySelector("#tablaObjetivos tbody");
     const nuevaFila = document.createElement("tr");
 
+    // Celda de id
+    const tdID = document.createElement("td");
+    tdID.innerText = idObj;
     // Celda de Objetivo
     const tdObjetivo = document.createElement("td");
     tdObjetivo.innerText = nombreObj;
@@ -55,6 +58,7 @@ function agregarFilaObjetivos() {
     tdAcciones.appendChild(btnEliminar);
 
     // Agregar celdas a la fila
+    nuevaFila.appendChild(tdID);
     nuevaFila.appendChild(tdObjetivo);
     nuevaFila.appendChild(tdTipo); // Se mostrará el IdTipoObjetivo
     nuevaFila.appendChild(tdPeso);
@@ -96,6 +100,10 @@ function agregarFilaCompetencias() {
     const tbody = document.querySelector("#tablaCompetencias tbody");
     const nuevaFila = document.createElement("tr");
 
+    // Celda de id
+    const tdID = document.createElement("td");
+    tdID.innerText = idComp;
+
     // Celda de Competencia
     const tdCompetencia = document.createElement("td");
     tdCompetencia.innerText = nombreComp;
@@ -127,6 +135,7 @@ function agregarFilaCompetencias() {
     tdAcciones.appendChild(btnEliminar);
 
     // Agregar celdas a la fila
+    nuevaFila.appendChild(tdID);
     nuevaFila.appendChild(tdCompetencia);
     nuevaFila.appendChild(tdTipo); // Se mostrará el IdTipoCompetencia
     nuevaFila.appendChild(tdPeso);
