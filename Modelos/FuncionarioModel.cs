@@ -37,7 +37,10 @@ namespace Modelos
        
         public int IdPuesto { get; set; }
         public string Puesto { get; set; }
-       
+
+        public int IdConglomerado { get; set; }
+        public string NombreConglomerado { get; set; }
+
         public int IdEstadoFuncionario { get; set; }
 
         public string Estado { get; set; }
