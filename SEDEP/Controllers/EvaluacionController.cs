@@ -84,6 +84,9 @@ namespace SEDEP.Controllers
                 // Acceder a los arrays
                 var objetivos = jsonData["objetivos"];
                 var competencias = jsonData["competencias"];
+                string observaciones = (string)jsonData["observaciones"] ?? string.Empty;
+                string cedulaFuncionario = (string)jsonData["cedFuncionario"] ?? string.Empty;
+                int idConglo = ((JObject)jsonData)["idConglo"]?.Value<int>() ?? 0;
 
                 // Procesar los datos
                 foreach (var objetivo in objetivos)
@@ -92,6 +95,17 @@ namespace SEDEP.Controllers
                     string peso = objetivo["peso"];
 
                 }
+
+                //cargamos la data a un objeto nuevo
+                EvaluacionModel newEvaluacion = new() { 
+                IdFuncionario = cedulaFuncionario,
+                EstadoEvaluacion = 1, //1 = estado planificacion
+                FechaCreacion = DateTime.UtcNow.Date
+                };
+
+
+
+
 
                 return Json(new { success = true });
             }

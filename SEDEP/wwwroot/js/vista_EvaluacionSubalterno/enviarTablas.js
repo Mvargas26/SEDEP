@@ -6,6 +6,11 @@ function enviarEvaluacion() {
     const objetivos = obtenerDatosTabla('#tablaObjetivos tbody tr');
     const competencias = obtenerDatosTabla('#tablaCompetencias tbody tr');
 
+    //Recolectar otraso datos
+    const observaciones = document.getElementById('txtObservaciones').value;
+    const cedFuncionario = document.getElementById('ceduFuncionario').innerText;
+    const idConglo = document.getElementById('idConglo').innerText;
+
     // Valida que ambas tablas tengan datos ****************************
     if (objetivos.length === 0 && competencias.length === 0) {
         alert('Ambas tablas están vacías. Por favor agregue al menos un objetivo y una competencia.');
@@ -65,8 +70,11 @@ function enviarEvaluacion() {
     // Crear objeto con todos los datos
     const evaluacionData = {
         objetivos: objetivos,
-        competencias: competencias
-        // Puedes agregar más datos aquí si necesitas
+        competencias: competencias,
+        observaciones: observaciones,
+        cedFuncionario: cedFuncionario,
+        idConglo: idConglo
+
     };
 
     // Enviar al servidor
