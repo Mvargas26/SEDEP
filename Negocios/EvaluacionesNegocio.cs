@@ -49,20 +49,36 @@ namespace Negocios
             return lista;
         }
 
-        public void CrearEvaluacion(EvaluacionModel nueva)
+        public EvaluacionModel CrearEvaluacion(EvaluacionModel nueva)
         {
             try
             {
+                string fechaTratada = nueva.FechaCreacion.ToString("yyyy-MM-dd");
                 List<SqlParameter> parametros = new()
                 {
-                    new SqlParameter("@Accion", "INSERT"),
+                    new SqlParameter("@Operacion", "C"),
                     new SqlParameter("@IdFuncionario", nueva.IdFuncionario),
                     new SqlParameter("@Observaciones", (object)nueva.Observaciones ?? DBNull.Value),
-                    new SqlParameter("@FechaCreacion", nueva.FechaCreacion),
+                    new SqlParameter("@FechaCreacion", fechaTratada),
                     new SqlParameter("@EstadoEvaluacion", nueva.EstadoEvaluacion)
                 };
 
-                objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudEvaluaciones]", parametros);
+                // Ejecutar el procedimiento almacenado
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("[sp_Evaluacion_CRUD]", parametros);
+
+                if (dt.Rows.Count == 0)
+                    return null;
+
+                DataRow row = dt.Rows[0];
+
+                return new EvaluacionModel
+                {
+                    IdEvaluacion = Convert.ToInt32(row["idEvaluacion"]),
+                    IdFuncionario = row["idFuncionario"].ToString(),
+                    Observaciones = row["Observaciones"]?.ToString(),
+                    FechaCreacion = Convert.ToDateTime(row["fechaCreacion"]),
+                    EstadoEvaluacion = Convert.ToInt32(row["estadoEvaluacion"])
+                };
             }
             catch (Exception ex)
             {

@@ -96,14 +96,22 @@ namespace SEDEP.Controllers
 
                 }
 
+                // Obtener la zona horaria de Costa Rica
+                TimeZoneInfo costaRicaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central America Standard Time");
+
+                // Convertir UTC a hora de Costa Rica y obtener solo la fecha
+                DateTime fechaCR = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, costaRicaTimeZone).Date;
+
                 //cargamos la data a un objeto nuevo
                 EvaluacionModel newEvaluacion = new() { 
                 IdFuncionario = cedulaFuncionario,
                 EstadoEvaluacion = 1, //1 = estado planificacion
-                FechaCreacion = DateTime.UtcNow.Date
+                FechaCreacion = fechaCR,
+                Observaciones = observaciones
                 };
 
-
+                //Guardamos y obtenemos el nuevo registro para sacar el id
+                EvaluacionModel evaluacionGuardada = objeto_Evaluaciones.CrearEvaluacion(newEvaluacion);
 
 
 
