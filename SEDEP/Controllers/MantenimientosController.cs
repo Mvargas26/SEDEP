@@ -16,6 +16,9 @@ namespace SEDEP.Controllers
         DepartamentosNegocio objeto_departamento = new DepartamentosNegocio();
         PuestosNegocio _objetoPuesto = new PuestosNegocio();
         FuncionarioXConglomeradoNegocios objeto_funcionarioXConglomerado = new FuncionarioXConglomeradoNegocios();
+        PeriodosEvaluacionNegocio _objetoPeriodo = new PeriodosEvaluacionNegocio();
+
+
         //***********************************************************************************************
         #region FUNCIONARIOS
         // Gestión de Funcionarios
@@ -813,15 +816,100 @@ namespace SEDEP.Controllers
 
         #endregion
 
-    }//fin class
+        #region Periodos
 
-    // lo ideal es crearlo en modelos, pero lo puse aqui solo para probar el front
-    //public class ObjetivoModel
-    //{
-    //    public int Id { get; set; }
-    //    public string Nombre { get; set; }
-    //    public int Porcentaje { get; set; } // Entre 0 y 100
-    //    public string Tipo { get; set; } // Estratégico, Operativo, Táctico
-    //}
+        public IActionResult ManteniPeriodo()
+        {
+            try
+            {
+                var periodos = _objetoPeriodo.ListarPeriodos();
+                return View(periodos);
+            }
+            catch (Exception ex)
+            {
+                TempData["MensajeError"] = $"Error al obtener los períodos: {ex.Message}";
+                return View(new List<PeriodoEvaluacionModel>());
+            }
+        }
+
+        public IActionResult CreaPeriodo()
+        {
+            return View(new PeriodoEvaluacionModel());
+        }
+
+        [HttpPost]
+        public IActionResult CreaPeriodo(PeriodoEvaluacionModel nuevoPeriodo)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _objetoPeriodo.CrearPeriodo(nuevoPeriodo);
+                    TempData["MensajeExito"] = "Período creado correctamente.";
+                    return RedirectToAction(nameof(ManteniPeriodo));
+                }
+                return View(nuevoPeriodo);
+            }
+            catch (Exception ex)
+            {
+                TempData["MensajeError"] = $"Error al crear el período: {ex.Message}";
+                return View(nuevoPeriodo);
+            }
+        }
+
+        [HttpGet("Mantenimientos/EditaPeriodo/{anio}")]
+        public IActionResult EditaPeriodo(int anio)
+        {
+            return View(_objetoPeriodo.ConsultarPeriodoPorAnio(anio));
+        }
+
+        [HttpPost]
+        public IActionResult EditarPeriodo(PeriodoEvaluacionModel periodo)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _objetoPeriodo.ModificarPeriodo(periodo);
+                    TempData["MensajeExito"] = "Período modificado correctamente.";
+                    return RedirectToAction(nameof(ManteniPeriodo));
+                }
+                else
+                {
+                    return View(periodo);
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["MensajeError"] = $"Error al modificar el período: {ex.Message}";
+                return View(periodo);
+            }
+        }
+
+        public IActionResult EliminarPeriodo(int anio)
+        {
+            try
+            {
+                var periodo = _objetoPeriodo.ConsultarPeriodoPorAnio(anio);
+                if (periodo == null)
+                {
+                    TempData["MensajeError"] = $"El período con ID {anio} no fue encontrado.";
+                }
+                else
+                {
+                    _objetoPeriodo.EliminarPeriodo(anio);
+                    TempData["MensajeExito"] = $"Período {periodo.Anio} eliminado correctamente.";
+                }
+                return RedirectToAction(nameof(ManteniPeriodo));
+            }
+            catch
+            {
+                TempData["MensajeError"] = "No puede borrar este período, verifique las relaciones.";
+                return RedirectToAction(nameof(ManteniPeriodo));
+            }
+        }
+
+        #endregion
+    }//fin class
 
 }//fin space

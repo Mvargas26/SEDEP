@@ -1,12 +1,16 @@
-﻿@{
+﻿@model Modelos.FuncionarioModel
+
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Evaluación del Desempeño - Como Funcionario";
 }
+
 @functions {
     static Random rnd = new Random();
 }
+
 @{
-    // Array de colores para la sección de conglomerados (se mantiene igual)
+    // Array de colores para la sección de conglomerados (lo mantienes si te hace falta)
     string[] coloresFuertes = { "#E63946", "#F4A261", "#2A9D8F", "#264653", "#8E44AD", "#D72638", "#3D348B", "#FF7F50" };
 }
 
@@ -17,15 +21,20 @@
 
     <!-- Texto introductorio -->
     <p>
-        Con el objetivo de dar cumplimiento a que todo trabajador debe ser evaluado por el proceso de evaluación de desempeño establecido en los “Lineamientos Metodológicos Generales para la Evaluación del Desempeño de las personas servidoras públicas”, cubiertas por la rectoría del Ministerio de Planificación Nacional y Política Económica (MIDEPLAN) dispuestas en la Directriz N°029-PLAN, anuando a la Ley de Marco de Empleo Público y a la Ley de Fortalecimiento de las Finanzas Públicas.
+        Con el objetivo de dar cumplimiento a que todo trabajador debe ser evaluado por el proceso de evaluación de desempeño
+        establecido en los “Lineamientos Metodológicos Generales para la Evaluación del Desempeño de las personas servidoras públicas”,
+        cubiertas por la rectoría del Ministerio de Planificación Nacional y Política Económica (MIDEPLAN) dispuestas en la
+        Directriz N°029-PLAN, anuando a la Ley de Marco de Empleo Público y a la Ley de Fortalecimiento de las Finanzas Públicas.
     </p>
 
-    <!-- Sección "Conglomerado Cualificado" -->
+    <!-- Sección "Conglomerado" -->
     <div class="my-5">
+        @* Si tienes datos de conglomerado en ViewBag, los usas; sino, se muestra un texto por defecto *@
         @{
             var idConglomerado = ViewBag.IdConglomerado;
             var listaConglomerados = ViewData["ListaConglomerados"] as List<Modelos.ConglomeradoModel>;
-            var nombreConglomerado = listaConglomerados?.FirstOrDefault(c => c.IdConglomerado == idConglomerado)?.NombreConglomerado ?? "Conglomerado ?";
+            var nombreConglomerado = listaConglomerados?.FirstOrDefault(c => c.IdConglomerado == idConglomerado)?.NombreConglomerado
+            ?? "Conglomerado ?";
         }
         <h4 class="text-center">@nombreConglomerado</h4>
         <div class="row justify-content-center mt-4">
@@ -35,15 +44,20 @@
                 {
                     var randomColor = coloresFuertes[rnd.Next(coloresFuertes.Length)];
                     <div class="col-sm-3 text-center">
-                        <div class="rounded-circle text-white mx-auto d-flex align-items-center justify-content-center" style="width:80px; height:80px; background-color:@randomColor;">
+                        <div class="rounded-circle text-white mx-auto d-flex align-items-center justify-content-center"
+                             style="width:80px; height:80px; background-color:@randomColor;">
                             @item.Porcentaje%
                         </div>
                         @{
                             var listaTiposObjetivos = ViewData["ListaTiposObjetivos"] as List<Modelos.TiposObjetivosModel>;
                             var nombreTipo = listaTiposObjetivos?.FirstOrDefault(t => t.IdTipoObjetivo == item.IdTipoObjetivo)?.Tipo;
+
                             var listaTiposCompetencias = ViewData["ListaTiposCompetencias"] as List<Modelos.TiposCompetenciasModel>;
                             var nombreTipoCompet = listaTiposCompetencias?.FirstOrDefault(t => t.IdTipoCompetencia == item.IdTipoCompetencia)?.Tipo;
-                            var nombreFinal = !string.IsNullOrEmpty(nombreTipo) ? nombreTipo : !string.IsNullOrEmpty(nombreTipoCompet) ? nombreTipoCompet : "Desconocido";
+
+                            var nombreFinal = !string.IsNullOrEmpty(nombreTipo)
+                            ? nombreTipo
+                            : !string.IsNullOrEmpty(nombreTipoCompet) ? nombreTipoCompet : "Desconocido";
                         }
                         <p class="mt-2">@nombreFinal</p>
                     </div>
@@ -56,7 +70,10 @@
     <div class="mb-5">
         <h5>Fase de Planificación</h5>
         <p>
-            La Fase de Planificación es la definición y programación de metas y objetivos por parte de la jefatura y su subalterno. Esta asignación se ejecuta en el mes de Enero de cada año; la jefatura deberá coordinar y acordar con su colaborador, considerando lineamientos, el perfil del cargo y las responsabilidades a su cargo, favoreciendo el logro de los objetivos y metas del PEI (30%) y Metas correspondientes al POI (30%) y Metas desempeño Individual (50%).
+            La Fase de Planificación es la definición y programación de metas y objetivos por parte de la jefatura y su subalterno.
+            Esta asignación se ejecuta en el mes de Enero de cada año; la jefatura deberá coordinar y acordar con su colaborador,
+            considerando lineamientos, el perfil del cargo y las responsabilidades a su cargo, favoreciendo el logro de los objetivos
+            y metas del PEI (30%) y Metas correspondientes al POI (30%) y Metas desempeño Individual (50%).
         </p>
         <div class="row">
             <div class="col-md-6">
@@ -68,12 +85,12 @@
                 </ul>
             </div>
             <div class="col-md-6">
-                <!-- Más datos si es necesario -->
+                <!-- Otros datos si los requieres -->
             </div>
         </div>
     </div>
 
-    <!-- Tabla pre-cargada con objetivos asignados -->
+    <!-- SECCIÓN para Objetivos Asignados -->
     <div class="mb-5">
         <h3>Objetivos Asignados</h3>
         <table class="table table-bordered">
@@ -96,7 +113,8 @@
                     <td>Cumplir 80%</td>
                     <td>0%</td>
                     <td>
-                        <a href="/Evaluacion/ModificarActual?tipo=Departamental&obj=ID1&objName=Objetivo%20Departamento%201&actualValue=0&metaValue=Cumplir%2080%" class="btn btn-sm btn-warning">
+                        <a href="/Evaluacion/ModificarActual?tipo=Departamental&obj=ID1&objName=Objetivo%20Departamento%201&actualValue=0&metaValue=Cumplir%2080%"
+                           class="btn btn-sm btn-warning">
                             Editar Actual
                         </a>
                     </td>
@@ -109,12 +127,61 @@
                     <td>Cumplir 90%</td>
                     <td>10%</td>
                     <td>
-                        <a href="/Evaluacion/ModificarActual?tipo=Individual&obj=ID10&objName=Objetivo%20Individual%2010&actualValue=10&metaValue=Cumplir%2090%" class="btn btn-sm btn-warning">
+                        <a href="/Evaluacion/ModificarActual?tipo=Individual&obj=ID10&objName=Objetivo%20Individual%2010&actualValue=10&metaValue=Cumplir%2090%"
+                           class="btn btn-sm btn-warning">
                             Editar Actual
                         </a>
                     </td>
                 </tr>
-                <!-- Agrega más filas según lo asignado -->
+                <!-- Agrega más filas según tus datos reales -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- SECCIÓN para Competencias Asignadas -->
+    <div class="mb-5">
+        <h3>Competencias Asignadas</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Competencia</th>
+                    <th>Tipo</th>
+                    <th>Peso</th>
+                    <th>Meta</th>
+                    <th>Actual</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Fila de ejemplo 1 -->
+                <tr>
+                    <td>Competencia 1</td>
+                    <td>Genérica</td>
+                    <td>15%</td>
+                    <td>Dominar ABC</td>
+                    <td>5%</td>
+                    <td>
+                        <a href="/Evaluacion/ModificarActual?tipo=Competencia&obj=IDComp1&objName=Competencia%201&actualValue=5&metaValue=Dominar%20ABC"
+                           class="btn btn-sm btn-warning">
+                            Editar Actual
+                        </a>
+                    </td>
+                </tr>
+                <!-- Fila de ejemplo 2 -->
+                <tr>
+                    <td>Competencia 2</td>
+                    <td>Específica</td>
+                    <td>10%</td>
+                    <td>Mejorar XYZ</td>
+                    <td>0%</td>
+                    <td>
+                        <a href="/Evaluacion/ModificarActual?tipo=Competencia&obj=IDComp2&objName=Competencia%202&actualValue=0&metaValue=Mejorar%20XYZ"
+                           class="btn btn-sm btn-warning">
+                            Editar Actual
+                        </a>
+                    </td>
+                </tr>
+                <!-- Agrega más filas según tus datos reales -->
             </tbody>
         </table>
     </div>
@@ -148,7 +215,7 @@
                 </tbody>
             </table>
             <div class="text-center">
-                <button class="btn btn-success mt-3">Enviar a Revisión</button>
+                <button class="btn btn-success mt-3">Enviar Evaluación</button>
             </div>
         </div>
     </div>

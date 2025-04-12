@@ -1,4 +1,6 @@
 ﻿@model Modelos.FuncionarioModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Evaluación del Desempeño 2025";
@@ -11,6 +13,11 @@
     string[] coloresFuertes = { "#E63946", "#F4A261", "#2A9D8F", "#264653", "#8E44AD", "#D72638", "#3D348B", "#FF7F50" };
 }
 
+@{
+    var listaTiposObjetivos = ViewData["ListaTiposObjetivos"] as List<Modelos.TiposObjetivosModel>;
+    var listaTiposCompetencias = ViewData["ListaTiposCompetencias"] as List<Modelos.TiposCompetenciasModel>;
+}
+
 <div class="container mt-4 mb-5">
     <!-- Encabezado principal -->
     <h2 class="mb-2 text-center">Gestión Institucional de Recursos Humanos</h2>
@@ -18,7 +25,10 @@
 
     <!-- Texto introductorio -->
     <p>
-        Con el objetivo de dar cumplimiento a que todo trabajador debe ser evaluado por el proceso de evaluación de desempeño establecido en los “Lineamientos Metodológicos Generales para la Evaluación del Desempeño de las personas servidoras públicas”, cubiertas por la rectoría del Ministerio de Planificación Nacional y Política Económica (MIDEPLAN) dispuestas en la Directriz N°029-PLAN, anuando a la Ley de Marco de Empleo Público y a la Ley de Fortalecimiento de las Finanzas Públicas.
+        Con el objetivo de dar cumplimiento a que todo trabajador debe ser evaluado por el proceso de evaluación de desempeño
+        establecido en los “Lineamientos Metodológicos Generales para la Evaluación del Desempeño de las personas servidoras públicas”,
+        cubiertas por la rectoría del Ministerio de Planificación Nacional y Política Económica (MIDEPLAN) dispuestas en la
+        Directriz N°029-PLAN, anuando a la Ley de Marco de Empleo Público y a la Ley de Fortalecimiento de las Finanzas Públicas.
     </p>
 
     <!-- Sección "Conglomerado Cualificado" (se mantiene) -->
@@ -36,15 +46,20 @@
                 {
                     var randomColor = coloresFuertes[rnd.Next(coloresFuertes.Length)];
                     <div class="col-sm-3 text-center">
-                        <div class="rounded-circle text-white mx-auto d-flex align-items-center justify-content-center" style="width:80px; height:80px; background-color:@randomColor;">
-                            @item.Porcentaje%
+                        <div class="rounded-circle text-white mx-auto d-flex align-items-center justify-content-center"
+                             style="width:80px; height:80px; background-color:@randomColor;">
+                            @item.Porcentaje.ToString("0")%
                         </div>
                         @{
-                            var listaTiposObjetivos = ViewData["ListaTiposObjetivos"] as List<Modelos.TiposObjetivosModel>;
+                             listaTiposObjetivos = ViewData["ListaTiposObjetivos"] as List<Modelos.TiposObjetivosModel>;
                             var nombreTipo = listaTiposObjetivos?.FirstOrDefault(t => t.IdTipoObjetivo == item.IdTipoObjetivo)?.Tipo;
-                            var listaTiposCompetencias = ViewData["ListaTiposCompetencias"] as List<Modelos.TiposCompetenciasModel>;
+
+                             listaTiposCompetencias = ViewData["ListaTiposCompetencias"] as List<Modelos.TiposCompetenciasModel>;
                             var nombreTipoCompet = listaTiposCompetencias?.FirstOrDefault(t => t.IdTipoCompetencia == item.IdTipoCompetencia)?.Tipo;
-                            var nombreFinal = !string.IsNullOrEmpty(nombreTipo) ? nombreTipo : !string.IsNullOrEmpty(nombreTipoCompet) ? nombreTipoCompet : "Desconocido";
+
+                            var nombreFinal = !string.IsNullOrEmpty(nombreTipo)
+                            ? nombreTipo
+                            : !string.IsNullOrEmpty(nombreTipoCompet) ? nombreTipoCompet : "Desconocido";
                         }
                         <p class="mt-2">@nombreFinal</p>
                     </div>
@@ -57,65 +72,76 @@
     <div class="mb-5">
         <h5>Fase de Planificación</h5>
         <p>
-            La Fase de Planificación es la definición y programación de metas y objetivos por parte de la jefatura y su subalterno. Esta asignación se ejecuta en el mes de Enero de cada año; la jefatura deberá coordinar y acordar con su colaborador, considerando lineamientos, el perfil del cargo y las responsabilidades a su cargo, favoreciendo el logro de los objetivos y metas del PEI (30%) y Metas correspondientes al POI (30%) y Metas desempeño Individual (50%).
+            La Fase de Planificación es la definición y programación de metas y objetivos por parte de la jefatura y su subalterno.
+            Esta asignación se ejecuta en el mes de Enero de cada año; la jefatura deberá coordinar y acordar con su colaborador,
+            considerando lineamientos, el perfil del cargo y las responsabilidades a su cargo, favoreciendo el logro de los objetivos
+            y metas del PEI (30%) y Metas correspondientes al POI (30%) y Metas desempeño Individual (50%).
         </p>
         <div class="row">
             <div class="col-md-6">
                 <ul>
                     <li><strong>Dependencia:</strong> @Model.Departamento</li>
+                    <li><strong>Cedula:</strong> @Model.Cedula</li>
+                    <li id="ceduFuncionario" hidden>@Model.Cedula</li>
+                    <li id="idConglo" hidden>@idConglomerado</li>
                     <li>
-                        <strong>Funcionario:
-                        </strong> @Model.Nombre @Model.Apellido1 @Model.Apellido2
+                        <strong>Funcionario:</strong> @Model.Nombre @Model.Apellido1 @Model.Apellido2
                     </li>
                     <li><strong>Clase Puesto:</strong> @Model.Puesto</li>
-@*                     <li><strong>Jefatura:</strong> Edgar Rivera</li> *@
+                    @* <li><strong>Jefatura:</strong> Edgar Rivera</li> *@
                 </ul>
             </div>
             <div class="col-md-6">
-                <!-- Agrega más datos si es necesario -->
+                <!-- Más datos si es necesario -->
             </div>
         </div>
     </div>
-
-    <!-- SECCIÓN para elegir objetivos y agregarlos a la tabla -->
+    <hr />
+    <!-- SECCIÓN para elegir Objetivos y agregarlos a la tabla de Objetivos -->
     <div class="mb-5">
         <h3>Elegir Objetivos:</h3>
         <div class="row g-3 align-items-center">
             <div class="col-auto">
-                <label for="selectObjetivo" class="col-form-label">Elija el objetivo:</label>
+                <label for="selectObjetivo" class="col-form-label">Elija 1 Objetivo:</label>
             </div>
             <div class="col-auto">
-                <!-- Combobox con datos quemados -->
+                <!-- Combobox con datos dinámicos para objetivos -->
                 <select id="selectObjetivo" class="form-select">
-                    <option value="ID1|Objetivo Departamento 1|Departamental">ID1 - Objetivo Departamento 1</option>
-                    <option value="ID2|Objetivo Departamento 2|Departamental">ID2 - Objetivo Departamento 2</option>
-                    <option value="ID10|Objetivo Individual 10|Individual">ID10 - Objetivo Individual 10</option>
-                    <option value="ID11|Objetivo Individual 11|Individual">ID11 - Objetivo Individual 11</option>
+                    @foreach (var objetivo in ViewBag.ListaObjetivos as List<Modelos.ObjetivoModel>)
+                    {
+                        <option value="@objetivo.IdObjetivo|@objetivo.Objetivo|@objetivo.Tipo|@objetivo.IdTipoObjetivo">
+                            @objetivo.IdObjetivo - @objetivo.Objetivo
+                        </option>
+                    }
                 </select>
             </div>
+        </div>
+        <br />
+        <div class="row g-3 align-items-center">
             <div class="col-auto">
-                <label for="inputPeso" class="col-form-label">Ingrese un Peso:</label>
+                <label for="inputMetaObj" class="col-form-label">Meta del Objetivo:</label>
             </div>
             <div class="col-auto">
-                <input type="text" id="inputPeso" class="form-control" />
+                <input type="text" id="inputMetaObj" class="form-control" required />
             </div>
             <div class="col-auto">
-                <label for="inputMeta" class="col-form-label">Ingrese la Meta:</label>
+                <label for="inputPesoObj" class="col-form-label">Peso de la meta:</label>
             </div>
             <div class="col-auto">
-                <input type="text" id="inputMeta" class="form-control" />
+                <input type="number" id="inputPesoObj" class="form-control" min="1" step="1" required />
             </div>
             <div class="col-auto">
-                <button type="button" class="btn btn-success" onclick="agregarFila()">Agregar fila</button>
+                <button type="button" class="btn btn-success" onclick="agregarFilaObjetivos()">Agregar fila</button>
             </div>
         </div>
     </div>
 
-    <!-- TABLA unificada -->
+    <!-- Tabla específica para Objetivos -->
     <div class="mb-5">
         <table id="tablaObjetivos" class="table table-bordered mt-3">
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Objetivo</th>
                     <th>Tipo</th>
                     <th>Peso</th>
@@ -129,37 +155,129 @@
             </tbody>
         </table>
     </div>
+    <hr />
+
+    <!-- SECCIÓN para elegir Competencias y agregarlas a su propia tabla -->
+    <div class="mb-5">
+        <h3>Elegir Competencias:</h3>
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label for="selectCompetencia" class="col-form-label">Elija 1 Competencia:</label>
+            </div>
+            <div class="col-auto">
+                <!-- Combobox con datos dinámicos para competencias -->
+                <select id="selectCompetencia" class="form-select">
+                    @foreach (var competencia in ViewBag.ListaCompetencias as List<Modelos.CompetenciasModel>)
+                    {
+                        <option value="@competencia.IdCompetencia|@competencia.Competencia|@competencia.Tipo| @competencia.IdTipoCompetencia">
+                            @competencia.IdCompetencia - @competencia.Competencia
+                        </option>
+                    }
+                </select>
+            </div>
+        </div>
+        <br />
+        <div class="row g-3 align-items-center">
+
+            <div class="col-auto">
+                <label for="inputMetaComp" class="col-form-label">Meta de la Competencia:</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" id="inputMetaComp" class="form-control" required/>
+            </div>
+            <div class="col-auto">
+                <label for="inputPesoComp" class="col-form-label">Peso de la meta:</label>
+            </div>
+            <div class="col-auto">
+                <input type="number" id="inputPesoComp" class="form-control" min="1" step="1" required />
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-success" onclick="agregarFilaCompetencias()">Agregar fila</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla específica para Competencias -->
+    <div class="mb-5">
+        <table id="tablaCompetencias" class="table table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Competencia</th>
+                    <th>Tipo</th>
+                    <th>Peso</th>
+                    <th>Meta</th>
+                    <th>Actual</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Inicia vacía -->
+            </tbody>
+        </table>
+    </div>
+    <hr />
+@*      input Observaciones *@
+    <div class="mb-5">
+        <h3>Observaciones:</h3>
+        <div class="col-auto">
+            <input type="text" id="txtObservaciones" class="form-control"
+                   placeholder="Ingrese sus observaciones aqui." 
+                   value="Sin Observaciones." />
+        </div>
+    </div>
+    <hr />
 
     <!-- Resumen Final centrado y alineado -->
     <div class="d-flex justify-content-center">
         <div class="p-4" style="background-color: #f8d7da; max-width: 600px;">
-            <h5 class="text-center">Resumen para: Juan Flores</h5>
-            <table class="table table-borderless align-middle">
+            <h5 class="text-center">Resumen para: @Model.Nombre @Model.Apellido1</h5>
+            <table id="tablaResultados" class="table table-borderless align-middle">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Porcentaje</th>
+                        <th style="width: 100px;">Valor</th>
+                        <th class="d-none">id tipo</th>
+                    </tr>
+                </thead>
                 <tbody>
-                    <tr>
-                        <td><strong>Objetivos Departamento:</strong></td>
-                        <td>Deseado: 30% | Calificación:</td>
-                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="20%" /></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Objetivos Individuales:</strong></td>
-                        <td>Deseado: 50% | Calificación:</td>
-                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="10%" /></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Competencias:</strong></td>
-                        <td>Deseado: 20% | Calificación:</td>
-                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="15%" /></td>
-                    </tr>
+                    @foreach (var item in ViewBag.PesosConglomerados)
+                    {
+                        var nombreTipo = listaTiposObjetivos?.FirstOrDefault(t => t.IdTipoObjetivo == item?.IdTipoObjetivo)?.Tipo;
+                        var nombreTipoCompet = listaTiposCompetencias?.FirstOrDefault(t => t.IdTipoCompetencia == item?.IdTipoCompetencia)?.Tipo;
+                        var nombreFinal = nombreTipo ?? nombreTipoCompet ?? "Desconocido";
+
+                        var idTipoObjetivo = item?.IdTipoObjetivo ?? 0;
+                        var idTipoCompetencia = item?.IdTipoCompetencia ?? 0;
+                        var idTipo = idTipoObjetivo != 0 ? idTipoObjetivo : idTipoCompetencia;
+                        var tipo = idTipoObjetivo != 0 ? "Objetivo" : "Competencia";
+
+                        <tr>
+                            <td><strong>@nombreFinal</strong></td>
+                            <td>Deseado: <strong>@(item?.Porcentaje.ToString("0") ?? "0")%</strong></td>
+                            <td style="width: 100px;">
+                                <input type="number" class="form-control input-calificacion"
+                                       placeholder="@(item?.Porcentaje.ToString("0") ?? "0")%"  readonly/>
+                            </td>
+                            <td class="d-none" data-tipo-id="@idTipo" data-tipo-categoria="@tipo">
+                                @idTipo
+                            </td>
+                        </tr>
+                    }
+
                     <tr>
                         <td><strong>Resultado:</strong></td>
-                        <td>Deseado: 100% | Calificación:</td>
-                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="45%" /></td>
+                        <td>Deseado:<strong> 100%</strong></td>
+                        <td style="width: 100px;">
+                            <input type="number" class="form-control" id="resultado-total" readonly />
+                        </td>
+                        <td>-</td>
                     </tr>
                 </tbody>
             </table>
             <div class="text-center">
-                <button class="btn btn-success mt-3">Enviar Evaluación</button>
+                <button id="btnEnviarEvaluacion" class="btn btn-success mt-3">Enviar Evaluación</button>
             </div>
         </div>
     </div>
@@ -185,79 +303,8 @@
 </div>
 
 @section Scripts {
-    <script>
-        function agregarFila() {
-            // Obtener el valor del combobox, el input de peso y el input de meta
-            const select = document.getElementById("selectObjetivo");
-            const inputPeso = document.getElementById("inputPeso");
-            const inputMeta = document.getElementById("inputMeta");
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/vista_EvaluacionSubalterno/tablas_planificarEva.js" asp-append-version="true"></script>
+    <script src="~/js/vista_EvaluacionSubalterno/enviarTablas.js" asp-append-version="true"></script>
 
-            // Valor del option seleccionado, ejemplo: "ID1|Objetivo Departamento 1|Departamental"
-            const valorSeleccionado = select.value;
-            if (!valorSeleccionado) {
-                alert("Seleccione un objetivo.");
-                return;
-            }
-            const [idObj, nombreObj, tipoObj] = valorSeleccionado.split("|");
-
-            // Obtener el peso ingresado
-            const pesoIngresado = inputPeso.value;
-            if (!pesoIngresado) {
-                alert("Ingrese un peso.");
-                return;
-            }
-
-            // Obtener la meta ingresada (si está vacía, se puede dejar como "Sin meta")
-            const metaIngresada = inputMeta.value || "Sin meta";
-
-            // Crear la nueva fila
-            const tbody = document.querySelector("#tablaObjetivos tbody");
-            const nuevaFila = document.createElement("tr");
-
-            // Celda de Objetivo
-            const tdObjetivo = document.createElement("td");
-            tdObjetivo.innerText = nombreObj;
-
-            // Celda de Tipo
-            const tdTipo = document.createElement("td");
-            tdTipo.innerText = tipoObj;
-
-            // Celda de Peso
-            const tdPeso = document.createElement("td");
-            tdPeso.innerText = pesoIngresado + "%";
-
-            // Celda de Meta: ahora se muestra lo ingresado en el input
-            const tdMeta = document.createElement("td");
-            tdMeta.innerText = metaIngresada;
-
-            // Celda de Actual (fijo a 0%)
-            const tdActual = document.createElement("td");
-            tdActual.innerText = "0%";
-
-            // Celda de Acciones: solo se deja el botón "Eliminar"
-            const tdAcciones = document.createElement("td");
-            const btnEliminar = document.createElement("button");
-            btnEliminar.classList.add("btn", "btn-sm", "btn-danger");
-            btnEliminar.innerText = "Eliminar";
-            btnEliminar.onclick = function() {
-                tbody.removeChild(nuevaFila);
-            };
-            tdAcciones.appendChild(btnEliminar);
-
-            // Agregar celdas a la fila
-            nuevaFila.appendChild(tdObjetivo);
-            nuevaFila.appendChild(tdTipo);
-            nuevaFila.appendChild(tdPeso);
-            nuevaFila.appendChild(tdMeta);
-            nuevaFila.appendChild(tdActual);
-            nuevaFila.appendChild(tdAcciones);
-
-            // Insertar la fila en la tabla
-            tbody.appendChild(nuevaFila);
-
-            // Limpiar los inputs
-            inputPeso.value = "";
-            inputMeta.value = "";
-        }
-    </script>
 }

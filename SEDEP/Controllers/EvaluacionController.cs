@@ -3,6 +3,7 @@ using Negocios;
 using Modelos;
 using System.Linq;
 using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 
 namespace SEDEP.Controllers
 {
@@ -13,7 +14,7 @@ namespace SEDEP.Controllers
         FuncionarioNegocios objeto_FuncionarioNegocios = new();
         TiposObjetivosNegocios objeto_TiposObjetivoNegocios = new();
         TiposCompetenciasNegocios objeto_TiposCompenNegocis = new();
-
+        EvaluacionesNegocio objeto_Evaluaciones = new();
         public IActionResult Index()
         {
             return View();
@@ -56,6 +57,12 @@ namespace SEDEP.Controllers
             {
                 var subalterno = objeto_FuncionarioNegocios.ConsultarFuncionarioID(cedula);
                 var PesosConglomerados = objeto_ConglomeradosNegocios.ConsultarPesosXConglomerado(idConglomerado);
+
+                //Traemos la listas de obj y comp relacionadas a este conglomerado
+                var (listaObjetivos, listaCompetencias) = objeto_Evaluaciones.ListarObjYCompetenciasXConglomerado(idConglomerado);
+                ViewBag.ListaObjetivos = listaObjetivos;
+                ViewBag.ListaCompetencias = listaCompetencias;
+
                 ViewBag.PesosConglomerados = PesosConglomerados;
                 ViewBag.IdConglomerado = idConglomerado;
                 ViewData["ListaConglomerados"] = objeto_ConglomeradosNegocios.ListarConglomerados();
@@ -64,6 +71,56 @@ namespace SEDEP.Controllers
                 return View(subalterno);
             }
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult EvaluacionSubalterno([FromBody] dynamic evaluacionData)
+        {
+            try
+            {
+                // Convertir a JObject para manipular más fácilmente
+                var jsonData = JObject.Parse(evaluacionData.ToString());
+
+                // Acceder a los arrays
+                var objetivos = jsonData["objetivos"];
+                var competencias = jsonData["competencias"];
+                string observaciones = (string)jsonData["observaciones"] ?? string.Empty;
+                string cedulaFuncionario = (string)jsonData["cedFuncionario"] ?? string.Empty;
+                int idConglo = ((JObject)jsonData)["idConglo"]?.Value<int>() ?? 0;
+
+                // Procesar los datos
+                foreach (var objetivo in objetivos)
+                {
+                    string nombre = objetivo["nombre"];
+                    string peso = objetivo["peso"];
+
+                }
+
+                // Obtener la zona horaria de Costa Rica
+                TimeZoneInfo costaRicaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central America Standard Time");
+
+                // Convertir UTC a hora de Costa Rica y obtener solo la fecha
+                DateTime fechaCR = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, costaRicaTimeZone).Date;
+
+                //cargamos la data a un objeto nuevo
+                EvaluacionModel newEvaluacion = new() { 
+                IdFuncionario = cedulaFuncionario,
+                EstadoEvaluacion = 1, //1 = estado planificacion
+                FechaCreacion = fechaCR,
+                Observaciones = observaciones
+                };
+
+                //Guardamos y obtenemos el nuevo registro para sacar el id
+                EvaluacionModel evaluacionGuardada = objeto_Evaluaciones.CrearEvaluacion(newEvaluacion);
+
+
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, error = ex.Message });
+            }
         }
 
         [HttpGet]

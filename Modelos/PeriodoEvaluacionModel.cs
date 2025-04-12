@@ -9,12 +9,8 @@ namespace Modelos
 {
     public class PeriodoEvaluacionModel
     {
-        [Key]
-        [Display(Name = "Año de Evaluación")]
         public int Anio { get; set; }
 
-        [Required]
-        [Display(Name = "Fecha Máxima para el Período")]
         public DateTime FechaMaxima { get; set; }
 
 
