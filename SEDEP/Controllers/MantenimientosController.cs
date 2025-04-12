@@ -15,7 +15,9 @@ namespace SEDEP.Controllers
         CompetenciasNegocio _objetoCompe = new CompetenciasNegocio();
         DepartamentosNegocio objeto_departamento = new DepartamentosNegocio();
         PuestosNegocio _objetoPuesto = new PuestosNegocio();
+        FuncionarioXConglomeradoNegocios objeto_funcionarioXConglomerado = new FuncionarioXConglomeradoNegocios();
         PeriodosEvaluacionNegocio _objetoPeriodo = new PeriodosEvaluacionNegocio();
+
 
         //***********************************************************************************************
         #region FUNCIONARIOS
@@ -36,10 +38,19 @@ namespace SEDEP.Controllers
         }
 
         [HttpGet]
-        // pantalla para nuevo funcionario
         public IActionResult CrearNuevoFuncionario()
         {
-            return View(new FuncionarioModel());
+            var puestos = _objetoPuesto.ObtenerPuestos();
+            var conglomerados = objeto_ConglomeradosNegocios.ListarConglomerados();
+            var funcionario = new FuncionarioModel(); // Inicializa un nuevo objeto FuncionarioModel
+            FuncionarioViewModel viewModel = new FuncionarioViewModel
+            {
+                Funcionario = funcionario, 
+                Puestos = puestos,
+                Conglomerados = conglomerados
+            };
+
+            return View(viewModel);
         }
 
         // Crear nuevo funcionario
@@ -50,26 +61,53 @@ namespace SEDEP.Controllers
             {
                 FuncionarioModel newFuncionario = new FuncionarioModel
                 {
-                    Cedula = collectionn["Cedula"]!,
-                    Nombre = collectionn["Nombre"]!,
-                    Apellido1 = collectionn["Apellido1"]!,
-                    Apellido2 = collectionn["Apellido2"]!,
-                    Correo = collectionn["Correo"]!,
-                    Password = collectionn["Password"]!,
-                    IdDepartamento = Convert.ToInt32(collectionn["IdDepartamento"]),
-                    IdRol = Convert.ToInt32(collectionn["IdRol"]),
-                    IdPuesto = Convert.ToInt32(collectionn["IdPuesto"]),
-                    IdEstadoFuncionario = Convert.ToInt32(collectionn["IdEstadoFuncionario"])
+                    Cedula = collectionn["Funcionario.Cedula"]!,
+                    Nombre = collectionn["Funcionario.Nombre"]!,
+                    Apellido1 = collectionn["Funcionario.Apellido1"]!,
+                    Apellido2 = collectionn["Funcionario.Apellido2"]!,
+                    Correo = collectionn["Funcionario.Correo"]!,
+                    Password = collectionn["Funcionario.Password"]!,
+                    IdDepartamento = Convert.ToInt32(collectionn["Funcionario.IdDepartamento"]),
+                    IdRol = Convert.ToInt32(collectionn["Funcionario.IdRol"]),
+                    IdPuesto = Convert.ToInt32(collectionn["Funcionario.IdPuesto"]),
+                    IdEstadoFuncionario = Convert.ToInt32(collectionn["Funcionario.IdEstadoFuncionario"])
                 };
 
                 objeto_funcionario.CrearFuncionario(newFuncionario);
+                // Se obtine el ID del funcionario (cédula)
+                string idFuncionario = newFuncionario.Cedula;
+
+                // IdConglomerado
+                int idConglomerado = Convert.ToInt32(collectionn["Funcionario.IdConglomerado"]);
+
+                // relación en tabla FuncionarioXConglomerado
+                FuncionarioXConglomeradoModel relacion = new FuncionarioXConglomeradoModel
+                {
+                    IdFuncionario = idFuncionario,
+                    IdConglomerado = idConglomerado
+                };
+
+               objeto_funcionarioXConglomerado.CrearFuncionarioXConglomerado(relacion); 
+
                 TempData["MensajeExito"] = $"Funcionario {newFuncionario.Nombre} {newFuncionario.Apellido1} {newFuncionario.Apellido2} creado correctamente.";
                 return RedirectToAction(nameof(ManteniFuncionarios));
             }
             catch (Exception ex)
             {
                 TempData["MensajeError"] = $"Error al crear el funcionario: {ex.Message}";
-                return View();
+
+                // Recargar listas
+                var puestos = _objetoPuesto.ObtenerPuestos();
+                var conglomerados = objeto_ConglomeradosNegocios.ListarConglomerados();
+
+                FuncionarioViewModel viewModel = new FuncionarioViewModel
+                {
+                    Funcionario = new FuncionarioModel(), 
+                    Puestos = puestos,
+                    Conglomerados = conglomerados
+                };
+
+                return View(viewModel); 
             }
         }
 

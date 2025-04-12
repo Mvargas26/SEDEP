@@ -113,20 +113,19 @@ namespace Negocios
             try
             {
                 List<SqlParameter> parametros = new()
-                {
-                    new SqlParameter("@Accion", "INSERT"),
-                    new SqlParameter("@IdFuncionario", nuevoFuncionarioXConglo.IdFuncionario),
-                    new SqlParameter("@IdConglomerado", nuevoFuncionarioXConglo.IdConglomerado)
-                };
+        {
+            new SqlParameter("@Operacion", "INSERT"),
+            new SqlParameter("@idFuncionario", nuevoFuncionarioXConglo.IdFuncionario),
+            new SqlParameter("@idConglomerado", nuevoFuncionarioXConglo.IdConglomerado)
+        };
 
-                objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudFuncionarioXConglomerado]", parametros);
+                objDatos.EjecutarSQLconSP_Void("sp_FuncionarioXConglomerado_CRUD", parametros);
             }
             catch (Exception ex)
             {
                 throw new Exception("Fallo en FuncionarioXConglomerado Negocios " + ex.Message);
             }
-        }//fin CrearFuncionarioXConglomerado
-
+        }
         public void ModificarFuncionarioXConglomerado(FuncionarioXConglomeradoModel funcionarioXConglo)
         {
             try
