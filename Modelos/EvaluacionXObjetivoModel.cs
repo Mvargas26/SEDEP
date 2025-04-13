@@ -29,7 +29,11 @@ namespace Modelos
 
         [Required]
         [Display(Name = "Valor Obtenido")]
-        public decimal ValorObtenido { get; set; } // Decimal(5,2)
+        public decimal ValorObtenido { get; set; } 
+        public decimal peso { get; set; }
+        public string meta { get; set; }
+
+
 
     }//Fin Clase 
 } // Fin Space 

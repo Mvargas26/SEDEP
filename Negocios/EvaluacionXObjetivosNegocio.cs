@@ -23,10 +23,10 @@ namespace Negocios
             {
                 List<SqlParameter> parametros = new()
                 {
-                    new SqlParameter("@Accion", "SELECT")
+                    new SqlParameter("@Operacion", "R") 
                 };
 
-                DataTable dt = objDatos.EjecutarSQLconSP_DT("[adm].[sp_CrudEvaluacionXObjetivo]", parametros);
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("[adm].[sp_EvaluacionPorObjetivo_CRUD]", parametros);
 
                 foreach (DataRow row in dt.Rows)
                 {
@@ -35,37 +35,42 @@ namespace Negocios
                         IdEvaxObj = Convert.ToInt32(row["idEvaxObj"]),
                         IdEvaluacion = Convert.ToInt32(row["idEvaluacion"]),
                         IdObjetivo = Convert.ToInt32(row["idObjetivo"]),
-                        ValorObtenido = Convert.ToDecimal(row["ValorObtenido"])
+                        ValorObtenido = row["ValorObtenido"] != DBNull.Value ? Convert.ToDecimal(row["ValorObtenido"]) : 0,
+                        peso = row["peso"] != DBNull.Value ? Convert.ToDecimal(row["peso"]) : 0,
+                        meta = row["meta"] != DBNull.Value ? Convert.ToString(row["meta"]) : string.Empty
                     });
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("Fallo en EvaluacionXObjetivosNegocio " + ex.Message);
+                // Manejo de errores (opcional)
+                Console.WriteLine($"Error al listar evaluaciones por objetivo: {ex.Message}");
+                throw; // Re-lanzar la excepción para manejo superior
             }
 
             return lista;
         }
-
         public void CrearEvaluacionXObjetivo(EvaluacionXObjetivoModel nueva)
         {
             try
             {
                 List<SqlParameter> parametros = new()
                 {
-                    new SqlParameter("@Accion", "INSERT"),
-                    new SqlParameter("@IdEvaluacion", nueva.IdEvaluacion),
-                    new SqlParameter("@IdObjetivo", nueva.IdObjetivo),
-                    new SqlParameter("@ValorObtenido", nueva.ValorObtenido)
+                    new SqlParameter("@Operacion", "C"),
+                    new SqlParameter("@idEvaluacion", nueva.IdEvaluacion),
+                    new SqlParameter("@idObjetivo", nueva.IdObjetivo),
+                    new SqlParameter("@ValorObtenido", nueva.ValorObtenido),
+                    new SqlParameter("@peso", nueva.peso),
+                    new SqlParameter("@meta", nueva.meta ?? string.Empty)
                 };
 
-                objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudEvaluacionXObjetivo]", parametros);
+                objDatos.EjecutarSQLconSP_Void("[adm].[sp_EvaluacionPorObjetivo_CRUD]", parametros);
             }
             catch (Exception ex)
             {
                 throw new Exception("Fallo al crear Evaluación x Objetivo: " + ex.Message);
             }
-        }
+        }//fin CrearEvaluacionXObjetivo
 
         public void ModificarEvaluacionXObjetivo(EvaluacionXObjetivoModel evaluacion)
         {
@@ -73,14 +78,16 @@ namespace Negocios
             {
                 List<SqlParameter> parametros = new()
                 {
-                    new SqlParameter("@Accion", "UPDATE"),
-                    new SqlParameter("@IdEvaxObj", evaluacion.IdEvaxObj),
-                    new SqlParameter("@IdEvaluacion", evaluacion.IdEvaluacion),
-                    new SqlParameter("@IdObjetivo", evaluacion.IdObjetivo),
-                    new SqlParameter("@ValorObtenido", evaluacion.ValorObtenido)
+                    new SqlParameter("@Operacion", "U"),
+                    new SqlParameter("@idEvaxObj", evaluacion.IdEvaxObj),
+                    new SqlParameter("@idEvaluacion", evaluacion.IdEvaluacion),
+                    new SqlParameter("@idObjetivo", evaluacion.IdObjetivo),
+                    new SqlParameter("@ValorObtenido", evaluacion.ValorObtenido),
+                    new SqlParameter("@peso", evaluacion.peso),
+                    new SqlParameter("@meta", evaluacion.meta ?? string.Empty)
                 };
 
-                objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudEvaluacionXObjetivo]", parametros);
+                objDatos.EjecutarSQLconSP_Void("[adm].[sp_EvaluacionPorObjetivo_CRUD]", parametros);
             }
             catch (Exception ex)
             {
@@ -94,28 +101,29 @@ namespace Negocios
             {
                 List<SqlParameter> parametros = new()
                 {
-                    new SqlParameter("@Accion", "DELETE"),
-                    new SqlParameter("@IdEvaxObj", idEvaxObj)
+                    new SqlParameter("@Operacion", "D"),
+                    new SqlParameter("@idEvaxObj", idEvaxObj)
                 };
 
-                objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudEvaluacionXObjetivo]", parametros);
+                objDatos.EjecutarSQLconSP_Void("[adm].[sp_EvaluacionPorObjetivo_CRUD]", parametros);
             }
             catch (Exception ex)
             {
                 throw new Exception("Fallo al eliminar Evaluación x Objetivo: " + ex.Message);
             }
-        }
+        }//fin
 
         public EvaluacionXObjetivoModel ConsultarEvaluacionXObjetivoPorID(int idEvaxObj)
         {
             try
             {
                 List<SqlParameter> parametros = new()
-                {
-                    new SqlParameter("@IdEvaxObj", idEvaxObj)
-                };
+        {
+            new SqlParameter("@Operacion", "R"),
+            new SqlParameter("@idEvaxObj", idEvaxObj)
+        };
 
-                DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_ConsultarEvaluacionXObjetivoPorID", parametros);
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("[adm].[sp_EvaluacionPorObjetivo_CRUD]", parametros);
 
                 if (dt.Rows.Count == 0)
                     return null;
@@ -127,7 +135,9 @@ namespace Negocios
                     IdEvaxObj = Convert.ToInt32(row["idEvaxObj"]),
                     IdEvaluacion = Convert.ToInt32(row["idEvaluacion"]),
                     IdObjetivo = Convert.ToInt32(row["idObjetivo"]),
-                    ValorObtenido = Convert.ToDecimal(row["ValorObtenido"])
+                    ValorObtenido = row["ValorObtenido"] != DBNull.Value ? Convert.ToDecimal(row["ValorObtenido"]) : 0,
+                    peso = row["peso"] != DBNull.Value ? Convert.ToDecimal(row["peso"]) : 0,
+                    meta = row["meta"] != DBNull.Value ? Convert.ToString(row["meta"]) : string.Empty
                 };
             }
             catch (Exception ex)
@@ -135,6 +145,7 @@ namespace Negocios
                 throw new Exception("Error al consultar Evaluación x Objetivo por ID: " + ex.Message);
             }
         }
+
 
     } //Fin Clase 
 

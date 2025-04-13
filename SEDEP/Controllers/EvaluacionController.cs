@@ -15,6 +15,7 @@ namespace SEDEP.Controllers
         TiposObjetivosNegocios objeto_TiposObjetivoNegocios = new();
         TiposCompetenciasNegocios objeto_TiposCompenNegocis = new();
         EvaluacionesNegocio objeto_Evaluaciones = new();
+        EvaluacionXObjetivosNegocio objeto_EvaXObjetivo = new();
         public IActionResult Index()
         {
             return View();
@@ -88,13 +89,6 @@ namespace SEDEP.Controllers
                 string cedulaFuncionario = (string)jsonData["cedFuncionario"] ?? string.Empty;
                 int idConglo = ((JObject)jsonData)["idConglo"]?.Value<int>() ?? 0;
 
-                // Procesar los datos
-                foreach (var objetivo in objetivos)
-                {
-                    string nombre = objetivo["nombre"];
-                    string peso = objetivo["peso"];
-
-                }
 
                 // Obtener la zona horaria de Costa Rica
                 TimeZoneInfo costaRicaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central America Standard Time");
@@ -112,6 +106,29 @@ namespace SEDEP.Controllers
 
                 //Guardamos y obtenemos el nuevo registro para sacar el id
                 EvaluacionModel evaluacionGuardada = objeto_Evaluaciones.CrearEvaluacion(newEvaluacion);
+
+                // con el idEvaluacion Cargamos los objetivos
+                List<EvaluacionXObjetivoModel> listaObjetivos = new List<EvaluacionXObjetivoModel>();
+
+                foreach (var objetivo in objetivos)
+                {
+                    listaObjetivos.Add(new EvaluacionXObjetivoModel
+                    {
+                        IdEvaluacion = evaluacionGuardada.IdEvaluacion,
+                        IdObjetivo = Convert.ToInt32( objetivo["id"]),
+                        ValorObtenido = Convert.ToDecimal(objetivo["actual"]),
+                        peso = Convert.ToDecimal(objetivo["peso"]),
+                        meta = objetivo["meta"].ToString()
+
+                    });
+                }
+
+                //Guardamos los objetivos de la tabla
+                foreach (EvaluacionXObjetivoModel new_EvaXObj in listaObjetivos)
+                {
+                    objeto_EvaXObjetivo.CrearEvaluacionXObjetivo(new_EvaXObj);
+                }
+
 
 
 
