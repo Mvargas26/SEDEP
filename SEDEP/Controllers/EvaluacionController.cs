@@ -16,6 +16,7 @@ namespace SEDEP.Controllers
         TiposCompetenciasNegocios objeto_TiposCompenNegocis = new();
         EvaluacionesNegocio objeto_Evaluaciones = new();
         EvaluacionXObjetivosNegocio objeto_EvaXObjetivo = new();
+        EvaluacionXcompetenciaNegocios objeto_EvaXcompetencia = new();
         public IActionResult Index()
         {
             return View();
@@ -129,10 +130,29 @@ namespace SEDEP.Controllers
                     objeto_EvaXObjetivo.CrearEvaluacionXObjetivo(new_EvaXObj);
                 }
 
+                //Despues las competencias
+                List<EvaluacionXcompetenciaModel> listaCompetencias = new List<EvaluacionXcompetenciaModel>();
 
+                foreach (var competencia in competencias)
+                {
+                    listaCompetencias.Add(new EvaluacionXcompetenciaModel
+                    {
+                        IdEvaluacion = evaluacionGuardada.IdEvaluacion,
+                        IdCompetencia = Convert.ToInt32(competencia["id"]),
+                        ValorObtenido = Convert.ToDecimal(competencia["actual"]),
+                        Peso = Convert.ToDecimal(competencia["peso"]),
+                        Meta = competencia["meta"].ToString()
 
+                    });
+                }
 
-                return Json(new { success = true });
+                //Guardamos las competencias de la tabla
+                foreach (EvaluacionXcompetenciaModel new_EvaXCompe in listaCompetencias)
+                {
+                    objeto_EvaXcompetencia.CrearEvaluacionXCompetencia(new_EvaXCompe);
+                }
+
+                return Json(new { success = true, redirectUrl = Url.Action("Index", "Evaluacion") });
             }
             catch (Exception ex)
             {

@@ -15,6 +15,8 @@ namespace Modelos
         public int IdEvaluacion { get; set; }
         public int IdCompetencia { get; set; }
         public decimal ValorObtenido { get; set; }
+        public decimal Peso { get; set; }
+        public string Meta { get; set; }
 
     }//fn class
 }//fin space
