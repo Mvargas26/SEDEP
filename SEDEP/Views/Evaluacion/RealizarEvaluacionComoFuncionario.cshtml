@@ -89,7 +89,6 @@
                 </ul>
             </div>
             <div class="col-md-6">
-                <!-- Otros datos si los requieres -->
             </div>
         </div>
     </div>
@@ -97,7 +96,7 @@
     <!-- SECCIÓN para Objetivos Asignados -->
     <div class="mb-5">
         <h3>Objetivos Asignados</h3>
-        <table class="table table-bordered">
+        <table id="tbObjetivosAsignados" class="table table-bordered">
             <thead>
                 <tr>
                     <th>Tipo</th>
@@ -118,10 +117,16 @@
                         <td>@objetivo.Meta</td>
                         <td>@objetivo.ValorObtenido%</td>
                         <td>
-                            <a href="/Evaluacion/ModificarActual?tipo=@Uri.EscapeDataString(objetivo.TipoObjetivo)&obj=@objetivo.IdObjetivo&objName=@Uri.EscapeDataString(objetivo.NombreObjetivo)&actualValue=@objetivo.ValorObtenido&metaValue=@Uri.EscapeDataString(objetivo.Meta)"
-                               class="btn btn-sm btn-warning">
+                            <button type="button"
+                                    class="btn btn-sm btn-warning btn-editar-actual"
+                                    data-id="@objetivo.IdObjetivo"
+                                    data-tipo="@objetivo.TipoObjetivo"
+                                    data-nombre="@objetivo.NombreObjetivo"
+                                    data-peso="@objetivo.Peso"
+                                    data-actual="@objetivo.ValorObtenido"
+                                    data-meta="@objetivo.Meta">
                                 Editar Actual
-                            </a>
+                            </button>
                         </td>
                     </tr>
                 }
@@ -132,7 +137,7 @@
     <!-- SECCIÓN para Competencias Asignadas -->
     <div class="mb-5">
         <h3>Competencias Asignadas</h3>
-        <table class="table table-bordered">
+        <table id="tbCompetenciasAsignadas" class="table table-bordered">
             <thead>
                 <tr>
                     <th>Competencia</th>
@@ -144,35 +149,28 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Fila de ejemplo 1 -->
-                <tr>
-                    <td>Competencia 1</td>
-                    <td>Genérica</td>
-                    <td>15%</td>
-                    <td>Dominar ABC</td>
-                    <td>5%</td>
-                    <td>
-                        <a href="/Evaluacion/ModificarActual?tipo=Competencia&obj=IDComp1&objName=Competencia%201&actualValue=5&metaValue=Dominar%20ABC"
-                           class="btn btn-sm btn-warning">
-                            Editar Actual
-                        </a>
-                    </td>
-                </tr>
-                <!-- Fila de ejemplo 2 -->
-                <tr>
-                    <td>Competencia 2</td>
-                    <td>Específica</td>
-                    <td>10%</td>
-                    <td>Mejorar XYZ</td>
-                    <td>0%</td>
-                    <td>
-                        <a href="/Evaluacion/ModificarActual?tipo=Competencia&obj=IDComp2&objName=Competencia%202&actualValue=0&metaValue=Mejorar%20XYZ"
-                           class="btn btn-sm btn-warning">
-                            Editar Actual
-                        </a>
-                    </td>
-                </tr>
-                <!-- Agrega más filas según tus datos reales -->
+                @foreach (var competencia in ViewBag.ListaCompetencias)
+                {
+                    <tr>
+                        <td>@competencia.TipoCompetencia</td>
+                        <td>@competencia.NombreCompetencia</td>
+                        <td>@competencia.Peso%</td>
+                        <td>@competencia.Meta</td>
+                        <td>@competencia.ValorObtenido%</td>
+                        <td>
+                            <button type="button"
+                                    class="btn btn-sm btn-warning btn-editar-actual-competencia"
+                                    data-id="@competencia.IdCompetencia"
+                                    data-tipo="@competencia.TipoCompetencia"
+                                    data-nombre="@competencia.NombreCompetencia"
+                                    data-peso="@competencia.Peso"
+                                    data-meta="@competencia.Meta"
+                                    data-actual="@competencia.ValorObtenido">
+                                Editar Actual
+                            </button>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
@@ -211,3 +209,91 @@
         </div>
     </div>
 </div>
+<!-- Modal EditarActual Objetivos -->
+<div class="modal fade" id="editarActualModal" tabindex="-1" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title">Editar Valor Actual</h5>
+                <button type="button" class="close" onclick="cerrarModal()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Tipo:</label>
+                    <p class="form-control-plaintext" id="modalTipoObjetivo"></p>
+                </div>
+                <div class="form-group">
+                    <label>Objetivo:</label>
+                    <p class="form-control-plaintext" id="modalNombreObjetivo"></p>
+                </div>
+                <div class="form-group">
+                    <label>Peso:</label>
+                    <p class="form-control-plaintext" id="modalPesoObjetivo"></p>
+                </div>
+                <div class="form-group">
+                    <label>Meta:</label>
+                    <p class="form-control-plaintext" id="modalMetaObjetivo"></p>
+                </div>
+                <div class="form-group">
+                    <label for="modalValorActual">Valor Actual (%):</label>
+                    <input type="number" class="form-control" id="modalValorActual">
+                    <small id="valorError" class="text-danger d-none">El valor debe estar entre 1 y <span id="maxPeso"></span>%</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="modalBtnConfirmar">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal EditarActual Competencias -->
+<div class="modal fade" id="editarActualCompetenciaModal" tabindex="-1" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title">Editar Valor Actual - Competencia</h5>
+                <button type="button" class="close" onclick="cerrarModalCompetencia()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Competencia:</label>
+                    <p class="form-control-plaintext" id="modalNombreCompetencia"></p>
+                </div>
+                <div class="form-group">
+                    <label>Tipo:</label>
+                    <p class="form-control-plaintext" id="modalTipoCompetencia"></p>
+                </div>
+                <div class="form-group">
+                    <label>Peso:</label>
+                    <p class="form-control-plaintext" id="modalPesoCompetencia"></p>
+                </div>
+                <div class="form-group">
+                    <label>Meta:</label>
+                    <p class="form-control-plaintext" id="modalMetaCompetencia"></p>
+                </div>
+                <div class="form-group">
+                    <label for="modalValorActualCompetencia">Valor Actual (%):</label>
+                    <input type="number" class="form-control" id="modalValorActualCompetencia">
+                    <small id="valorErrorCompetencia" class="text-danger d-none">El valor debe estar entre 1 y <span id="maxPesoCompetencia"></span>%</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalCompetencia()">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="modalBtnConfirmarCompetencia">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* **************** Llamada a JS ****************************************@
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/vista_RealizarEvaluacionComoFuncionario/editarActualObjetivos.js" asp-append-version="true"></script>
+    <script src="~/js/vista_RealizarEvaluacionComoFuncionario/editarActualCompetencias.js" asp-append-version="true"></script>
+
+}
