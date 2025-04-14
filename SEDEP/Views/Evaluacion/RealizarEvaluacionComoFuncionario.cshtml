@@ -190,7 +190,7 @@
                         <th>Tipo</th>
                         <th>Porcentaje</th>
                         <th style="width: 100px;">Valor</th>
-                        <th class="d-none">id tipo</th>
+                        <th >id tipo</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -212,7 +212,7 @@
                                 <input type="number" class="form-control input-calificacion"
                                        placeholder="@(item?.Porcentaje.ToString("0") ?? "0")%" readonly />
                             </td>
-                            <td class="d-none" data-tipo-id="@idTipo" data-tipo-categoria="@tipo">
+                            <td  data-tipo-id="@idTipo" data-tipo-categoria="@tipo">
                                 @idTipo
                             </td>
                         </tr>
@@ -320,5 +320,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/js/vista_RealizarEvaluacionComoFuncionario/editarActualObjetivos.js" asp-append-version="true"></script>
     <script src="~/js/vista_RealizarEvaluacionComoFuncionario/editarActualCompetencias.js" asp-append-version="true"></script>
+    <script src="~/js/vista_RealizarEvaluacionComoFuncionario/sumasTablaResultados.js" asp-append-version="true"></script>
+
 
 }

@@ -224,7 +224,7 @@ namespace SEDEP.Controllers
                 //newFuncionarioLogin = FuncionarioLogueado.retornarDatosFunc();
 
                 //Eliminar cuando el login este activo
-                newFuncionarioLogin.Cedula = "323456789";
+                newFuncionarioLogin.Cedula = "123456789";
 
 
                 newFuncionarioLogin.IdDepartamento = 1;
@@ -283,7 +283,7 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error al cargar la evaluación: {ex.Message}";
+                TempData["AlertMessage"] = $"Error al cargar la evaluación: {ex.Message}";
                 return RedirectToAction("Index");
             }
 

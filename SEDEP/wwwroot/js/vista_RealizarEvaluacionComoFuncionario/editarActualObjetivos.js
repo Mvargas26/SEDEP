@@ -90,6 +90,9 @@ $(document).ready(function () {
             campoActualEdicion.data('actual', nuevoValor); // Guardar dato para posterior envío
         }
 
+        //llamamos la funcion de suma automatica
+        actualizarSumasObjetivos();
+
         cerrarModal();
     });
 
@@ -103,4 +106,26 @@ $(document).ready(function () {
             e.stopPropagation();
         }
     });
+
+    function actualizarSumasObjetivos() {
+        // Resetear valores previos
+        window.sumasGlobales.objetivos = {};
+
+        // Procesar tabla de Objetivos
+        document.querySelectorAll('#tbObjetivosAsignados tbody tr').forEach(row => {
+            const tipoCell = row.querySelector('td:nth-child(1)'); // Columna Tipo
+            const valorCell = row.querySelector('td:nth-child(5)'); // Columna Actual
+
+            if (tipoCell && valorCell) {
+                const tipo = tipoCell.textContent.trim();
+                const valor = parseFloat(valorCell.textContent.replace('%', '')) || 0;
+
+                window.sumasGlobales.objetivos[tipo] =
+                    (window.sumasGlobales.objetivos[tipo] || 0) + valor;
+            }
+        });
+
+        actualizarTablaResultados();
+    }
+
 });

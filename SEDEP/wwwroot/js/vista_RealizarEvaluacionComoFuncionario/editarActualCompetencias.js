@@ -89,6 +89,8 @@ $(document).ready(function () {
             campoActualEdicionCompetencia.text(`${nuevoValor}%`);
             campoActualEdicionCompetencia.data('actual', nuevoValor);
         }
+        //llamamos la funcion de suma automatica
+        actualizarSumasCompetencias(); 
 
         cerrarModalCompetencia();
     });
@@ -103,4 +105,25 @@ $(document).ready(function () {
             e.stopPropagation();
         }
     });
+
+    function actualizarSumasCompetencias() {
+        // Resetear valores previos
+        window.sumasGlobales.competencias = {};
+
+        // Procesar tabla de Competencias
+        document.querySelectorAll('#tbCompetenciasAsignadas tbody tr').forEach(row => {
+            const tipoCell = row.querySelector('td:nth-child(2)'); // Columna Tipo
+            const valorCell = row.querySelector('td:nth-child(5)'); // Columna Actual
+
+            if (tipoCell && valorCell) {
+                const tipo = tipoCell.textContent.trim();
+                const valor = parseFloat(valorCell.textContent.replace('%', '')) || 0;
+
+                window.sumasGlobales.competencias[tipo] =
+                    (window.sumasGlobales.competencias[tipo] || 0) + valor;
+            }
+        });
+
+        actualizarTablaResultados();
+    }
 });
