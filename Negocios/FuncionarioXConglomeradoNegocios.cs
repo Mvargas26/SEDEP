@@ -138,13 +138,30 @@ namespace Negocios
                     new SqlParameter("@IdConglomerado", funcionarioXConglo.IdConglomerado)
                 };
 
-                objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudFuncionarioXConglomerado]", parametros);
+                objDatos.EjecutarSQLconSP_Void("[adm].[sp_FuncionarioXConglomerado_CRUD]", parametros);
             }
             catch (Exception ex)
             {
                 throw new Exception("Fallo en FuncionarioXConglomerado Negocios " + ex.Message);
             }
         }//fin ModificarFuncionarioXConglomerado
+        public void EliminarPorFuncionario(string idFuncionario)
+        {
+            try
+            {
+                List<SqlParameter> parametros = new()
+        {
+            new SqlParameter("@Operacion", "DELETE_POR_FUNCIONARIO"),
+            new SqlParameter("@idFuncionario", idFuncionario)
+        };
+
+                objDatos.EjecutarSQLconSP_Void("[adm].[sp_FuncionarioXConglomerado_CRUD]", parametros);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al eliminar relaciones: " + ex.Message);
+            }
+        }
 
         public void EliminarFuncionarioXConglomerado(int idFuncXConglo)
         {
