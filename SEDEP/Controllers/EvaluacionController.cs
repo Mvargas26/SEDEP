@@ -4,6 +4,7 @@ using Modelos;
 using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using AdministracionActivosFijos;
 
 namespace SEDEP.Controllers
 {
@@ -17,10 +18,50 @@ namespace SEDEP.Controllers
         EvaluacionesNegocio objeto_Evaluaciones = new();
         EvaluacionXObjetivosNegocio objeto_EvaXObjetivo = new();
         EvaluacionXcompetenciaNegocios objeto_EvaXcompetencia = new();
+
+        // Propiedad que devuelve la fecha actual en CR (se calcula cada vez que se accede)
+        private DateTime FechaCostaRica =>
+       TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
+       TimeZoneInfo.FindSystemTimeZoneById("Central America Standard Time")).Date;
+
         public IActionResult Index()
         {
             return View();
         }
+
+        [HttpGet]
+        public IActionResult CrearSeguimiento()
+        {
+            // En un escenario real, aquí cargarías la lista de objetivos
+            // que el Encargado definió, y se los pasas a la vista
+            // Por ahora, simplemente retornamos la vista con datos quemados
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult ModificarActualSeguimiento(string tipo, string obj, string objName, string actualValue, string metaValue)
+        {
+            ViewBag.Tipo = tipo;
+            ViewBag.Obj = obj;
+            ViewBag.ObjName = objName;
+            ViewBag.ActualValue = actualValue;
+            ViewBag.MetaValue = metaValue;
+            return View();
+        }
+
+       
+        [HttpGet]
+        public IActionResult ModificarActual(string tipo, string obj, string objName, string actualValue, string metaValue)
+        {
+            ViewBag.Tipo = tipo;
+            ViewBag.Obj = obj;
+            ViewBag.ObjName = objName;
+            ViewBag.ActualValue = actualValue;
+            ViewBag.MetaValue = metaValue;
+            return View();
+        }
+
+        #region Planificacion
 
         /// <summary>
         /// Pantalla para que la jefatura seleccione al subalterno a evaluar (EVA2).
@@ -90,42 +131,37 @@ namespace SEDEP.Controllers
                 string cedulaFuncionario = (string)jsonData["cedFuncionario"] ?? string.Empty;
                 int idConglo = ((JObject)jsonData)["idConglo"]?.Value<int>() ?? 0;
 
-
-                // Obtener la zona horaria de Costa Rica
-                TimeZoneInfo costaRicaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central America Standard Time");
-
-                // Convertir UTC a hora de Costa Rica y obtener solo la fecha
-                DateTime fechaCR = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, costaRicaTimeZone).Date;
-
                 //cargamos la data a un objeto nuevo
-                EvaluacionModel newEvaluacion = new() { 
-                IdFuncionario = cedulaFuncionario,
-                EstadoEvaluacion = 1, //1 = estado planificacion
-                FechaCreacion = fechaCR,
-                Observaciones = observaciones
+                EvaluacionModel newEvaluacion = new()
+                {
+                    IdFuncionario = cedulaFuncionario,
+                    EstadoEvaluacion = 1, //1 = estado planificacion
+                    FechaCreacion = FechaCostaRica,
+                    Observaciones = observaciones,
+                    idConglomerado = idConglo
                 };
 
                 //Guardamos y obtenemos el nuevo registro para sacar el id
                 EvaluacionModel evaluacionGuardada = objeto_Evaluaciones.CrearEvaluacion(newEvaluacion);
 
                 // con el idEvaluacion Cargamos los objetivos
-                List<EvaluacionXObjetivoModel> listaObjetivos = new List<EvaluacionXObjetivoModel>();
+                List<EvaluacionXObjetivoModel> listaObjetivosXEvaluacion = new List<EvaluacionXObjetivoModel>();
 
                 foreach (var objetivo in objetivos)
                 {
-                    listaObjetivos.Add(new EvaluacionXObjetivoModel
+                    listaObjetivosXEvaluacion.Add(new EvaluacionXObjetivoModel
                     {
                         IdEvaluacion = evaluacionGuardada.IdEvaluacion,
-                        IdObjetivo = Convert.ToInt32( objetivo["id"]),
+                        IdObjetivo = Convert.ToInt32(objetivo["id"]),
                         ValorObtenido = Convert.ToDecimal(objetivo["actual"]),
-                        peso = Convert.ToDecimal(objetivo["peso"]),
-                        meta = objetivo["meta"].ToString()
+                        Peso = Convert.ToDecimal(objetivo["peso"]),
+                        Meta = objetivo["meta"].ToString()
 
                     });
                 }
 
                 //Guardamos los objetivos de la tabla
-                foreach (EvaluacionXObjetivoModel new_EvaXObj in listaObjetivos)
+                foreach (EvaluacionXObjetivoModel new_EvaXObj in listaObjetivosXEvaluacion)
                 {
                     objeto_EvaXObjetivo.CrearEvaluacionXObjetivo(new_EvaXObj);
                 }
@@ -173,45 +209,80 @@ namespace SEDEP.Controllers
                 return View();
             }
         }
+        
+        #endregion
+
+        #region EvaluacionComoFuncionario
 
         [HttpGet]
-        public IActionResult CrearSeguimiento()
+        public IActionResult ElegirCongloComoFuncionario()
         {
-            // En un escenario real, aquí cargarías la lista de objetivos
-            // que el Encargado definió, y se los pasas a la vista
-            // Por ahora, simplemente retornamos la vista con datos quemados
-            return View();
+            try
+            {
+                //Esto se debe capturar en el login
+                FuncionarioModel newFuncionarioLogin = new();
+                //newFuncionarioLogin = FuncionarioLogueado.retornarDatosFunc();
+
+                //Eliminar cuando el login este activo
+                newFuncionarioLogin.Cedula = "123456789";
+
+
+                newFuncionarioLogin.IdDepartamento = 1;
+                ViewData["ListaConglomerados"] = objeto_ConglomeradosNegocios.ListarConglomerados();
+                return View(objeto_ConglomeradosNegocios.ConsultarConglomeradoXFuncionario(newFuncionarioLogin.Cedula));
+            }
+            catch (Exception)
+            {
+                return View();
+            }
         }
 
         [HttpGet]
-        public IActionResult ModificarActualSeguimiento(string tipo, string obj, string objName, string actualValue, string metaValue)
+        public IActionResult RealizarEvaluacionComoFuncionario(string cedula, int idConglomerado)
         {
-            ViewBag.Tipo = tipo;
-            ViewBag.Obj = obj;
-            ViewBag.ObjName = objName;
-            ViewBag.ActualValue = actualValue;
-            ViewBag.MetaValue = metaValue;
-            return View();
+
+            try
+            {
+                if (string.IsNullOrEmpty(cedula) || idConglomerado == 0)
+                {
+                    TempData["Error"] = "Debe seleccionar un Conglomerado para el funcionario a evaluar.";
+                    return RedirectToAction("SeleccionarSubalterno");
+                }
+                if (!string.IsNullOrEmpty(cedula))
+                {
+                    //Traemos la info necesaria para la vista
+                    var subalterno = objeto_FuncionarioNegocios.ConsultarFuncionarioID(cedula);
+                    var PesosConglomerados = objeto_ConglomeradosNegocios.ConsultarPesosXConglomerado(idConglomerado);
+                    ViewBag.anioActual = FechaCostaRica.Year;
+                    ViewBag.PesosConglomerados = PesosConglomerados;
+                    ViewBag.IdConglomerado = idConglomerado;
+                    ViewData["ListaConglomerados"] = objeto_ConglomeradosNegocios.ListarConglomerados();
+                    ViewData["ListaTiposObjetivos"] = objeto_TiposObjetivoNegocios.ListarTiposObjetivos();
+                    ViewData["ListaTiposCompetencias"] = objeto_TiposCompenNegocis.ListarTiposCompetencias();
+
+
+                    //Traemos la Evaluacion
+                    EvaluacionModel ultimaEvaluacion = new();
+                    ultimaEvaluacion = objeto_Evaluaciones.ConsultarEvaluacionComoFuncionario(cedula, idConglomerado);
+
+                    //Traemos la listas de obj y comp relacionadas a este conglomerado
+                    var (listaObjetivos, listaCompetencias) = objeto_Evaluaciones.Listar_objetivosYCompetenciasXEvaluacion(ultimaEvaluacion.IdEvaluacion);
+                    ViewBag.ListaObjetivos = listaObjetivos;
+                    ViewBag.ListaCompetencias = listaCompetencias;
+
+                    return View(subalterno);
+                }
+                return View();
+            }
+            catch (Exception)
+            {
+                return View();
+            }
+
         }
 
-        [HttpGet]
-        public IActionResult RealizarEvaluacionComoFuncionario()
-        {
-            // En un escenario real, aquí cargarías la lista de objetivos
-            // que el Encargado definió, y se los pasas a la vista
-            // Por ahora, simplemente retornamos la vista con datos quemados
-            return View();
-        }
+       
 
-        [HttpGet]
-        public IActionResult ModificarActual(string tipo, string obj, string objName, string actualValue, string metaValue)
-        {
-            ViewBag.Tipo = tipo;
-            ViewBag.Obj = obj;
-            ViewBag.ObjName = objName;
-            ViewBag.ActualValue = actualValue;
-            ViewBag.MetaValue = metaValue;
-            return View();
-        }
+        #endregion
     }
 }

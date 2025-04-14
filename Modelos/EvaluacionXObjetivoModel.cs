@@ -10,28 +10,17 @@ namespace Modelos
 {
     public class EvaluacionXObjetivoModel
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Display(Name = "ID Evaluación x Objetivo")]
-        public int IdEvaxObj { get; set; }
 
-        [Required]
-        [Display(Name = "Evaluación Asociada")]
-        [ForeignKey("Evaluacion")]
+        public int IdEvaxObj { get; set; }
         public int IdEvaluacion { get; set; }
         public virtual EvaluacionModel Evaluacion { get; set; }
-
-        [Required]
-        [Display(Name = "Objetivo Evaluado")]
-        [ForeignKey("Objetivo")]
         public int IdObjetivo { get; set; }
         public virtual ObjetivoModel Objetivo { get; set; }
-
-        [Required]
-        [Display(Name = "Valor Obtenido")]
         public decimal ValorObtenido { get; set; } 
-        public decimal peso { get; set; }
-        public string meta { get; set; }
+        public decimal Peso { get; set; }
+        public string? Meta { get; set; }
+        public string? NombreObjetivo { get; set; }
+        public string? TipoObjetivo { get; set; }
 
 
 

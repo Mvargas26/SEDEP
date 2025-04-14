@@ -36,8 +36,8 @@ namespace Negocios
                         IdEvaluacion = Convert.ToInt32(row["idEvaluacion"]),
                         IdObjetivo = Convert.ToInt32(row["idObjetivo"]),
                         ValorObtenido = row["ValorObtenido"] != DBNull.Value ? Convert.ToDecimal(row["ValorObtenido"]) : 0,
-                        peso = row["peso"] != DBNull.Value ? Convert.ToDecimal(row["peso"]) : 0,
-                        meta = row["meta"] != DBNull.Value ? Convert.ToString(row["meta"]) : string.Empty
+                        Peso = row["peso"] != DBNull.Value ? Convert.ToDecimal(row["peso"]) : 0,
+                        Meta = row["meta"] != DBNull.Value ? Convert.ToString(row["meta"]) : string.Empty
                     });
                 }
             }
@@ -60,8 +60,8 @@ namespace Negocios
                     new SqlParameter("@idEvaluacion", nueva.IdEvaluacion),
                     new SqlParameter("@idObjetivo", nueva.IdObjetivo),
                     new SqlParameter("@ValorObtenido", nueva.ValorObtenido),
-                    new SqlParameter("@peso", nueva.peso),
-                    new SqlParameter("@meta", nueva.meta ?? string.Empty)
+                    new SqlParameter("@peso", nueva.Peso),
+                    new SqlParameter("@meta", nueva.Meta ?? string.Empty)
                 };
 
                 objDatos.EjecutarSQLconSP_Void("[adm].[sp_EvaluacionPorObjetivo_CRUD]", parametros);
@@ -83,8 +83,8 @@ namespace Negocios
                     new SqlParameter("@idEvaluacion", evaluacion.IdEvaluacion),
                     new SqlParameter("@idObjetivo", evaluacion.IdObjetivo),
                     new SqlParameter("@ValorObtenido", evaluacion.ValorObtenido),
-                    new SqlParameter("@peso", evaluacion.peso),
-                    new SqlParameter("@meta", evaluacion.meta ?? string.Empty)
+                    new SqlParameter("@peso", evaluacion.Peso),
+                    new SqlParameter("@meta", evaluacion.Meta ?? string.Empty)
                 };
 
                 objDatos.EjecutarSQLconSP_Void("[adm].[sp_EvaluacionPorObjetivo_CRUD]", parametros);
@@ -136,8 +136,8 @@ namespace Negocios
                     IdEvaluacion = Convert.ToInt32(row["idEvaluacion"]),
                     IdObjetivo = Convert.ToInt32(row["idObjetivo"]),
                     ValorObtenido = row["ValorObtenido"] != DBNull.Value ? Convert.ToDecimal(row["ValorObtenido"]) : 0,
-                    peso = row["peso"] != DBNull.Value ? Convert.ToDecimal(row["peso"]) : 0,
-                    meta = row["meta"] != DBNull.Value ? Convert.ToString(row["meta"]) : string.Empty
+                    Peso = row["peso"] != DBNull.Value ? Convert.ToDecimal(row["peso"]) : 0,
+                    Meta = row["meta"] != DBNull.Value ? Convert.ToString(row["meta"]) : string.Empty
                 };
             }
             catch (Exception ex)

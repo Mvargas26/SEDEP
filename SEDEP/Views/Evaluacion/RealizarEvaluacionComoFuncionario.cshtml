@@ -17,7 +17,7 @@
 <div class="container mt-4 mb-5">
     <!-- Encabezado principal -->
     <h2 class="mb-2 text-center">Gestión Institucional de Recursos Humanos</h2>
-    <h4 class="mb-4 text-center">Evaluación del Desempeño 2025</h4>
+    <h4 class="mb-4 text-center">Evaluación del Desempeño @ViewBag.anioActual</h4>
 
     <!-- Texto introductorio -->
     <p>
@@ -78,10 +78,14 @@
         <div class="row">
             <div class="col-md-6">
                 <ul>
-                    <li><strong>Dependencia:</strong> Informática</li>
-                    <li><strong>Funcionario:</strong> Juan Flores</li>
-                    <li><strong>Clase Puesto:</strong> Técnico II</li>
-                    <li><strong>Jefatura:</strong> Edgar Rivera</li>
+                    <li><strong>Dependencia:</strong> @Model.Departamento</li>
+                    <li><strong>Cedula:</strong> @Model.Cedula</li>
+                    <li id="ceduFuncionario" hidden>@Model.Cedula</li>
+                    <li id="idConglo" hidden>@idConglomerado</li>
+                    <li>
+                        <strong>Funcionario:</strong> @Model.Nombre @Model.Apellido1 @Model.Apellido2
+                    </li>
+                    <li><strong>Clase Puesto:</strong> @Model.Puesto</li>
                 </ul>
             </div>
             <div class="col-md-6">
@@ -96,8 +100,8 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Objetivo</th>
                     <th>Tipo</th>
+                    <th>Nombre</th>
                     <th>Peso</th>
                     <th>Meta</th>
                     <th>Actual</th>
@@ -105,35 +109,22 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Fila de ejemplo 1 -->
-                <tr>
-                    <td>Objetivo Departamento 1</td>
-                    <td>Departamental</td>
-                    <td>20%</td>
-                    <td>Cumplir 80%</td>
-                    <td>0%</td>
-                    <td>
-                        <a href="/Evaluacion/ModificarActual?tipo=Departamental&obj=ID1&objName=Objetivo%20Departamento%201&actualValue=0&metaValue=Cumplir%2080%"
-                           class="btn btn-sm btn-warning">
-                            Editar Actual
-                        </a>
-                    </td>
-                </tr>
-                <!-- Fila de ejemplo 2 -->
-                <tr>
-                    <td>Objetivo Individual 10</td>
-                    <td>Individual</td>
-                    <td>25%</td>
-                    <td>Cumplir 90%</td>
-                    <td>10%</td>
-                    <td>
-                        <a href="/Evaluacion/ModificarActual?tipo=Individual&obj=ID10&objName=Objetivo%20Individual%2010&actualValue=10&metaValue=Cumplir%2090%"
-                           class="btn btn-sm btn-warning">
-                            Editar Actual
-                        </a>
-                    </td>
-                </tr>
-                <!-- Agrega más filas según tus datos reales -->
+                @foreach (var objetivo in ViewBag.listaObjetivos)
+                {
+                    <tr>
+                        <td>@objetivo.TipoObjetivo</td>
+                        <td>@objetivo.NombreObjetivo</td>
+                        <td>@objetivo.Peso%</td>
+                        <td>@objetivo.Meta</td>
+                        <td>@objetivo.ValorObtenido%</td>
+                        <td>
+                            <a href="/Evaluacion/ModificarActual?tipo=@Uri.EscapeDataString(objetivo.TipoObjetivo)&obj=@objetivo.IdObjetivo&objName=@Uri.EscapeDataString(objetivo.NombreObjetivo)&actualValue=@objetivo.ValorObtenido&metaValue=@Uri.EscapeDataString(objetivo.Meta)"
+                               class="btn btn-sm btn-warning">
+                                Editar Actual
+                            </a>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
