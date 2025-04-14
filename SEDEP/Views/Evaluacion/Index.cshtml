@@ -14,3 +14,9 @@
     <img src="~/assets/img/logo.jpg" alt="Gobierno Logo" />
     <h2>Bienvenido al SEDEP</h2>
 </div>
+@if (TempData["AlertMessage"] != null)
+{
+    <script>
+        alert('@Html.Raw(TempData["AlertMessage"])');
+    </script>
+}

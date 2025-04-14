@@ -14,6 +14,12 @@
     string[] coloresFuertes = { "#E63946", "#F4A261", "#2A9D8F", "#264653", "#8E44AD", "#D72638", "#3D348B", "#FF7F50" };
 }
 
+@{
+    var listaTiposObjetivos = ViewData["ListaTiposObjetivos"] as List<Modelos.TiposObjetivosModel>;
+    var listaTiposCompetencias = ViewData["ListaTiposCompetencias"] as List<Modelos.TiposCompetenciasModel>;
+}
+
+
 <div class="container mt-4 mb-5">
     <!-- Encabezado principal -->
     <h2 class="mb-2 text-center">Gestión Institucional de Recursos Humanos</h2>
@@ -27,9 +33,8 @@
         Directriz N°029-PLAN, anuando a la Ley de Marco de Empleo Público y a la Ley de Fortalecimiento de las Finanzas Públicas.
     </p>
 
-    <!-- Sección "Conglomerado" -->
+    <!-- Sección "Conglomerado (Ciruculos)" -->
     <div class="my-5">
-        @* Si tienes datos de conglomerado en ViewBag, los usas; sino, se muestra un texto por defecto *@
         @{
             var idConglomerado = ViewBag.IdConglomerado;
             var listaConglomerados = ViewData["ListaConglomerados"] as List<Modelos.ConglomeradoModel>;
@@ -49,10 +54,10 @@
                             @item.Porcentaje%
                         </div>
                         @{
-                            var listaTiposObjetivos = ViewData["ListaTiposObjetivos"] as List<Modelos.TiposObjetivosModel>;
+                            listaTiposObjetivos = ViewData["ListaTiposObjetivos"] as List<Modelos.TiposObjetivosModel>;
                             var nombreTipo = listaTiposObjetivos?.FirstOrDefault(t => t.IdTipoObjetivo == item.IdTipoObjetivo)?.Tipo;
 
-                            var listaTiposCompetencias = ViewData["ListaTiposCompetencias"] as List<Modelos.TiposCompetenciasModel>;
+                            listaTiposCompetencias = ViewData["ListaTiposCompetencias"] as List<Modelos.TiposCompetenciasModel>;
                             var nombreTipoCompet = listaTiposCompetencias?.FirstOrDefault(t => t.IdTipoCompetencia == item.IdTipoCompetencia)?.Tipo;
 
                             var nombreFinal = !string.IsNullOrEmpty(nombreTipo)
@@ -73,7 +78,7 @@
             La Fase de Planificación es la definición y programación de metas y objetivos por parte de la jefatura y su subalterno.
             Esta asignación se ejecuta en el mes de Enero de cada año; la jefatura deberá coordinar y acordar con su colaborador,
             considerando lineamientos, el perfil del cargo y las responsabilidades a su cargo, favoreciendo el logro de los objetivos
-            y metas del PEI (30%) y Metas correspondientes al POI (30%) y Metas desempeño Individual (50%).
+            y metas. 
         </p>
         <div class="row">
             <div class="col-md-6">
@@ -175,36 +180,56 @@
         </table>
     </div>
 
-    <!-- Resumen Final (opcional) -->
+    <!-- Resumen Final centrado y alineado -->
     <div class="d-flex justify-content-center">
         <div class="p-4" style="background-color: #f8d7da; max-width: 600px;">
-            <h5 class="text-center">Resumen para: Juan Flores</h5>
-            <table class="table table-borderless align-middle">
+            <h5 class="text-center">Resumen para: @Model.Nombre @Model.Apellido1</h5>
+            <table id="tablaResultados" class="table table-borderless align-middle">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Porcentaje</th>
+                        <th style="width: 100px;">Valor</th>
+                        <th class="d-none">id tipo</th>
+                    </tr>
+                </thead>
                 <tbody>
-                    <tr>
-                        <td><strong>Objetivos Departamento:</strong></td>
-                        <td>Deseado: 30% | Calificación:</td>
-                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="20%" /></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Objetivos Individuales:</strong></td>
-                        <td>Deseado: 50% | Calificación:</td>
-                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="10%" /></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Competencias:</strong></td>
-                        <td>Deseado: 20% | Calificación:</td>
-                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="15%" /></td>
-                    </tr>
+                    @foreach (var item in ViewBag.PesosConglomerados)
+                    {
+                        var nombreTipo = listaTiposObjetivos?.FirstOrDefault(t => t.IdTipoObjetivo == item?.IdTipoObjetivo)?.Tipo;
+                        var nombreTipoCompet = listaTiposCompetencias?.FirstOrDefault(t => t.IdTipoCompetencia == item?.IdTipoCompetencia)?.Tipo;
+                        var nombreFinal = nombreTipo ?? nombreTipoCompet ?? "Desconocido";
+
+                        var idTipoObjetivo = item?.IdTipoObjetivo ?? 0;
+                        var idTipoCompetencia = item?.IdTipoCompetencia ?? 0;
+                        var idTipo = idTipoObjetivo != 0 ? idTipoObjetivo : idTipoCompetencia;
+                        var tipo = idTipoObjetivo != 0 ? "Objetivo" : "Competencia";
+
+                        <tr>
+                            <td><strong>@nombreFinal</strong></td>
+                            <td><strong>@(item?.Porcentaje.ToString("0") ?? "0")%</strong></td>
+                            <td style="width: 100px;">
+                                <input type="number" class="form-control input-calificacion"
+                                       placeholder="@(item?.Porcentaje.ToString("0") ?? "0")%" readonly />
+                            </td>
+                            <td class="d-none" data-tipo-id="@idTipo" data-tipo-categoria="@tipo">
+                                @idTipo
+                            </td>
+                        </tr>
+                    }
+
                     <tr>
                         <td><strong>Resultado:</strong></td>
-                        <td>Deseado: 100% | Calificación:</td>
-                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="45%" /></td>
+                        <td><strong> 100%</strong></td>
+                        <td style="width: 100px;">
+                            <input type="number" class="form-control" id="resultado-total" readonly />
+                        </td>
+                        <td>-</td>
                     </tr>
                 </tbody>
             </table>
             <div class="text-center">
-                <button class="btn btn-success mt-3">Enviar Evaluación</button>
+                <button id="btnEnviarEvaluacion" class="btn btn-success mt-3">Enviar Evaluación</button>
             </div>
         </div>
     </div>

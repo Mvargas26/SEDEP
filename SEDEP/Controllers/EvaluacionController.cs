@@ -224,7 +224,7 @@ namespace SEDEP.Controllers
                 //newFuncionarioLogin = FuncionarioLogueado.retornarDatosFunc();
 
                 //Eliminar cuando el login este activo
-                newFuncionarioLogin.Cedula = "123456789";
+                newFuncionarioLogin.Cedula = "323456789";
 
 
                 newFuncionarioLogin.IdDepartamento = 1;
@@ -265,6 +265,13 @@ namespace SEDEP.Controllers
                     EvaluacionModel ultimaEvaluacion = new();
                     ultimaEvaluacion = objeto_Evaluaciones.ConsultarEvaluacionComoFuncionario(cedula, idConglomerado);
 
+                    //Validamos que tenga una Evaluacion
+                    if (ultimaEvaluacion == null)
+                    {
+                        TempData["AlertMessage"] = "No hay una evaluación para usted en este conglomerado.Por favor contacte a su Jefatura para planificarla.";
+                        return RedirectToAction("Index");
+                    }
+
                     //Traemos la listas de obj y comp relacionadas a este conglomerado
                     var (listaObjetivos, listaCompetencias) = objeto_Evaluaciones.Listar_objetivosYCompetenciasXEvaluacion(ultimaEvaluacion.IdEvaluacion);
                     ViewBag.ListaObjetivos = listaObjetivos;
@@ -274,9 +281,10 @@ namespace SEDEP.Controllers
                 }
                 return View();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return View();
+                TempData["ErrorMessage"] = $"Error al cargar la evaluación: {ex.Message}";
+                return RedirectToAction("Index");
             }
 
         }
