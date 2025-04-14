@@ -74,20 +74,21 @@ namespace SEDEP.Controllers
                 };
 
                 objeto_funcionario.CrearFuncionario(newFuncionario);
-                // Se obtine el ID del funcionario (cédula)
                 string idFuncionario = newFuncionario.Cedula;
+                // Se obtienen los conglomerados seleccionados y puende ser multiples 
 
-                // IdConglomerado
-                int idConglomerado = Convert.ToInt32(collectionn["Funcionario.IdConglomerado"]);
+                var conglomeradosSeleccionados = collectionn["IdConglomeradosSeleccionados"];
 
-                // relación en tabla FuncionarioXConglomerado
-                FuncionarioXConglomeradoModel relacion = new FuncionarioXConglomeradoModel
+                foreach (var id in conglomeradosSeleccionados)
                 {
-                    IdFuncionario = idFuncionario,
-                    IdConglomerado = idConglomerado
-                };
+                    FuncionarioXConglomeradoModel relacion = new FuncionarioXConglomeradoModel
+                    {
+                        IdFuncionario = idFuncionario,
+                        IdConglomerado = Convert.ToInt32(id)
+                    };
 
-               objeto_funcionarioXConglomerado.CrearFuncionarioXConglomerado(relacion); 
+                    objeto_funcionarioXConglomerado.CrearFuncionarioXConglomerado(relacion);
+                }
 
                 TempData["MensajeExito"] = $"Funcionario {newFuncionario.Nombre} {newFuncionario.Apellido1} {newFuncionario.Apellido2} creado correctamente.";
                 return RedirectToAction(nameof(ManteniFuncionarios));
@@ -115,8 +116,12 @@ namespace SEDEP.Controllers
         [HttpGet("Mantenimientos/EditaFuncionario/{cedula}")]
         public IActionResult EditaFuncionario(string cedula)
         {
+
             // Consulta el funcionario por cédula
             var funcionario = objeto_funcionario.ConsultarFuncionarioID(cedula);
+
+            // Consulta los conglomerados asociados al funcionario
+            var conglomerados = objeto_ConglomeradosNegocios.ListarConglomerados();
 
             // Obtiene la lista de puestos de la capa de negocios
             var puestos = _objetoPuesto.ObtenerPuestos(); 
@@ -125,7 +130,8 @@ namespace SEDEP.Controllers
             FuncionarioViewModel viewModel = new FuncionarioViewModel
             {
                 Funcionario = funcionario,
-                Puestos = puestos
+                Puestos = puestos,
+                Conglomerados = conglomerados
             };
 
             return View(viewModel);
@@ -153,6 +159,21 @@ namespace SEDEP.Controllers
                 };
 
                 objeto_funcionario.ModificarFuncionario(funcionarioEditar);
+                // 🔁 Eliminar relaciones actuales
+                objeto_funcionarioXConglomerado.EliminarPorFuncionario(cedula);
+
+                // 🔁 Insertar las nuevas relaciones
+                var conglomeradosSeleccionados = collection["IdConglomeradosSeleccionados"];
+                foreach (var id in conglomeradosSeleccionados)
+                {
+                    FuncionarioXConglomeradoModel relacion = new FuncionarioXConglomeradoModel
+                    {
+                        IdFuncionario = cedula,
+                        IdConglomerado = Convert.ToInt32(id)
+                    };
+                    objeto_funcionarioXConglomerado.CrearFuncionarioXConglomerado(relacion);
+                }
+
                 TempData["MensajeExito"] = $"Funcionario {funcionarioEditar.Nombre} {funcionarioEditar.Apellido1} {funcionarioEditar.Apellido2} modificado correctamente.";
                 return RedirectToAction(nameof(ManteniFuncionarios));
             }
