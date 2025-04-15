@@ -78,28 +78,7 @@ function enviarEvaluacion() {
     };
 
     // Enviar al servidor
-    fetch('/Evaluacion/EvaluacionSubalterno', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(evaluacionData)
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error en la respuesta del servidor');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Manejar respuesta exitosa
-            alert('Evaluación enviada correctamente');
-            // Redirigir o hacer algo más
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al enviar la evaluación');
-        });
+    enviarPeticionEvaluacion(evaluacionData);
 }
 
 // Función auxiliar para extraer datos de las filas de la tabla
@@ -116,4 +95,21 @@ function obtenerDatosTabla(selector) {
             actual: celdas[5].innerText.replace('%', '')
         };
     });
+}
+//fucion de la peticion
+async function enviarPeticionEvaluacion(evaluacionData) {
+    try {
+        const data = await (await fetch('/Evaluacion/EvaluacionSubalterno', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(evaluacionData)
+        })).json();
+
+        if (!data.success) throw new Error(data.error);
+
+        alert('Evaluación enviada correctamente');
+        window.location.href = data.redirectUrl || '/Evaluacion/Index';
+    } catch (error) {
+        alert(`Error: ${error.message}`);
+    }
 }

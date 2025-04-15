@@ -18,8 +18,17 @@ function agregarFilaObjetivos() {
         alert("Ingrese un peso para el objetivo.");
         return;
     }
+    if (pesoIngresado < 1) {
+        alert("El peso minimo debe ser 1.");
+        return;
+    }
 
-    const metaIngresada = inputMetaObj.value || "Sin meta";
+    const metaIngresada = inputMetaObj.value;
+    if (!metaIngresada) {
+        alert("Ingrese una meta para el objetivo.");
+        return;
+    }
+
 
     const tbody = document.querySelector("#tablaObjetivos tbody");
     const nuevaFila = document.createElement("tr");
@@ -98,7 +107,16 @@ function agregarFilaCompetencias() {
         return;
     }
 
-    const metaIngresada = inputMetaComp.value || "Sin meta";
+    if (pesoIngresado < 1) {
+        alert("El peso minimo debe ser 1.");
+        return;
+    }
+
+    const metaIngresada = inputMetaComp.value;
+    if (!metaIngresada) {
+        alert("Ingrese una meta para el objetivo.");
+        return;
+    }
 
     const tbody = document.querySelector("#tablaCompetencias tbody");
     const nuevaFila = document.createElement("tr");

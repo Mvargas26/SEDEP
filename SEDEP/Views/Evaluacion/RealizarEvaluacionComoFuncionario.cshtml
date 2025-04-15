@@ -14,10 +14,16 @@
     string[] coloresFuertes = { "#E63946", "#F4A261", "#2A9D8F", "#264653", "#8E44AD", "#D72638", "#3D348B", "#FF7F50" };
 }
 
+@{
+    var listaTiposObjetivos = ViewData["ListaTiposObjetivos"] as List<Modelos.TiposObjetivosModel>;
+    var listaTiposCompetencias = ViewData["ListaTiposCompetencias"] as List<Modelos.TiposCompetenciasModel>;
+}
+
+
 <div class="container mt-4 mb-5">
     <!-- Encabezado principal -->
     <h2 class="mb-2 text-center">Gestión Institucional de Recursos Humanos</h2>
-    <h4 class="mb-4 text-center">Evaluación del Desempeño 2025</h4>
+    <h4 class="mb-4 text-center">Evaluación del Desempeño @ViewBag.anioActual</h4>
 
     <!-- Texto introductorio -->
     <p>
@@ -27,9 +33,8 @@
         Directriz N°029-PLAN, anuando a la Ley de Marco de Empleo Público y a la Ley de Fortalecimiento de las Finanzas Públicas.
     </p>
 
-    <!-- Sección "Conglomerado" -->
+    <!-- Sección "Conglomerado (Ciruculos)" -->
     <div class="my-5">
-        @* Si tienes datos de conglomerado en ViewBag, los usas; sino, se muestra un texto por defecto *@
         @{
             var idConglomerado = ViewBag.IdConglomerado;
             var listaConglomerados = ViewData["ListaConglomerados"] as List<Modelos.ConglomeradoModel>;
@@ -49,10 +54,10 @@
                             @item.Porcentaje%
                         </div>
                         @{
-                            var listaTiposObjetivos = ViewData["ListaTiposObjetivos"] as List<Modelos.TiposObjetivosModel>;
+                            listaTiposObjetivos = ViewData["ListaTiposObjetivos"] as List<Modelos.TiposObjetivosModel>;
                             var nombreTipo = listaTiposObjetivos?.FirstOrDefault(t => t.IdTipoObjetivo == item.IdTipoObjetivo)?.Tipo;
 
-                            var listaTiposCompetencias = ViewData["ListaTiposCompetencias"] as List<Modelos.TiposCompetenciasModel>;
+                            listaTiposCompetencias = ViewData["ListaTiposCompetencias"] as List<Modelos.TiposCompetenciasModel>;
                             var nombreTipoCompet = listaTiposCompetencias?.FirstOrDefault(t => t.IdTipoCompetencia == item.IdTipoCompetencia)?.Tipo;
 
                             var nombreFinal = !string.IsNullOrEmpty(nombreTipo)
@@ -73,19 +78,22 @@
             La Fase de Planificación es la definición y programación de metas y objetivos por parte de la jefatura y su subalterno.
             Esta asignación se ejecuta en el mes de Enero de cada año; la jefatura deberá coordinar y acordar con su colaborador,
             considerando lineamientos, el perfil del cargo y las responsabilidades a su cargo, favoreciendo el logro de los objetivos
-            y metas del PEI (30%) y Metas correspondientes al POI (30%) y Metas desempeño Individual (50%).
+            y metas. 
         </p>
         <div class="row">
             <div class="col-md-6">
                 <ul>
-                    <li><strong>Dependencia:</strong> Informática</li>
-                    <li><strong>Funcionario:</strong> Juan Flores</li>
-                    <li><strong>Clase Puesto:</strong> Técnico II</li>
-                    <li><strong>Jefatura:</strong> Edgar Rivera</li>
+                    <li><strong>Dependencia:</strong> @Model.Departamento</li>
+                    <li><strong>Cedula:</strong> @Model.Cedula</li>
+                    <li id="ceduFuncionario" hidden>@Model.Cedula</li>
+                    <li id="idConglo" hidden>@idConglomerado</li>
+                    <li>
+                        <strong>Funcionario:</strong> @Model.Nombre @Model.Apellido1 @Model.Apellido2
+                    </li>
+                    <li><strong>Clase Puesto:</strong> @Model.Puesto</li>
                 </ul>
             </div>
             <div class="col-md-6">
-                <!-- Otros datos si los requieres -->
             </div>
         </div>
     </div>
@@ -93,11 +101,11 @@
     <!-- SECCIÓN para Objetivos Asignados -->
     <div class="mb-5">
         <h3>Objetivos Asignados</h3>
-        <table class="table table-bordered">
+        <table id="tbObjetivosAsignados" class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Objetivo</th>
                     <th>Tipo</th>
+                    <th>Nombre</th>
                     <th>Peso</th>
                     <th>Meta</th>
                     <th>Actual</th>
@@ -105,35 +113,28 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Fila de ejemplo 1 -->
-                <tr>
-                    <td>Objetivo Departamento 1</td>
-                    <td>Departamental</td>
-                    <td>20%</td>
-                    <td>Cumplir 80%</td>
-                    <td>0%</td>
-                    <td>
-                        <a href="/Evaluacion/ModificarActual?tipo=Departamental&obj=ID1&objName=Objetivo%20Departamento%201&actualValue=0&metaValue=Cumplir%2080%"
-                           class="btn btn-sm btn-warning">
-                            Editar Actual
-                        </a>
-                    </td>
-                </tr>
-                <!-- Fila de ejemplo 2 -->
-                <tr>
-                    <td>Objetivo Individual 10</td>
-                    <td>Individual</td>
-                    <td>25%</td>
-                    <td>Cumplir 90%</td>
-                    <td>10%</td>
-                    <td>
-                        <a href="/Evaluacion/ModificarActual?tipo=Individual&obj=ID10&objName=Objetivo%20Individual%2010&actualValue=10&metaValue=Cumplir%2090%"
-                           class="btn btn-sm btn-warning">
-                            Editar Actual
-                        </a>
-                    </td>
-                </tr>
-                <!-- Agrega más filas según tus datos reales -->
+                @foreach (var objetivo in ViewBag.listaObjetivos)
+                {
+                    <tr>
+                        <td>@objetivo.TipoObjetivo</td>
+                        <td>@objetivo.NombreObjetivo</td>
+                        <td>@objetivo.Peso%</td>
+                        <td>@objetivo.Meta</td>
+                        <td>@objetivo.ValorObtenido%</td>
+                        <td>
+                            <button type="button"
+                                    class="btn btn-sm btn-warning btn-editar-actual"
+                                    data-id="@objetivo.IdObjetivo"
+                                    data-tipo="@objetivo.TipoObjetivo"
+                                    data-nombre="@objetivo.NombreObjetivo"
+                                    data-peso="@objetivo.Peso"
+                                    data-actual="@objetivo.ValorObtenido"
+                                    data-meta="@objetivo.Meta">
+                                Editar Actual
+                            </button>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
@@ -141,7 +142,7 @@
     <!-- SECCIÓN para Competencias Asignadas -->
     <div class="mb-5">
         <h3>Competencias Asignadas</h3>
-        <table class="table table-bordered">
+        <table id="tbCompetenciasAsignadas" class="table table-bordered">
             <thead>
                 <tr>
                     <th>Competencia</th>
@@ -153,70 +154,173 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Fila de ejemplo 1 -->
-                <tr>
-                    <td>Competencia 1</td>
-                    <td>Genérica</td>
-                    <td>15%</td>
-                    <td>Dominar ABC</td>
-                    <td>5%</td>
-                    <td>
-                        <a href="/Evaluacion/ModificarActual?tipo=Competencia&obj=IDComp1&objName=Competencia%201&actualValue=5&metaValue=Dominar%20ABC"
-                           class="btn btn-sm btn-warning">
-                            Editar Actual
-                        </a>
-                    </td>
-                </tr>
-                <!-- Fila de ejemplo 2 -->
-                <tr>
-                    <td>Competencia 2</td>
-                    <td>Específica</td>
-                    <td>10%</td>
-                    <td>Mejorar XYZ</td>
-                    <td>0%</td>
-                    <td>
-                        <a href="/Evaluacion/ModificarActual?tipo=Competencia&obj=IDComp2&objName=Competencia%202&actualValue=0&metaValue=Mejorar%20XYZ"
-                           class="btn btn-sm btn-warning">
-                            Editar Actual
-                        </a>
-                    </td>
-                </tr>
-                <!-- Agrega más filas según tus datos reales -->
+                @foreach (var competencia in ViewBag.ListaCompetencias)
+                {
+                    <tr>
+                        <td>@competencia.TipoCompetencia</td>
+                        <td>@competencia.NombreCompetencia</td>
+                        <td>@competencia.Peso%</td>
+                        <td>@competencia.Meta</td>
+                        <td>@competencia.ValorObtenido%</td>
+                        <td>
+                            <button type="button"
+                                    class="btn btn-sm btn-warning btn-editar-actual-competencia"
+                                    data-id="@competencia.IdCompetencia"
+                                    data-tipo="@competencia.TipoCompetencia"
+                                    data-nombre="@competencia.NombreCompetencia"
+                                    data-peso="@competencia.Peso"
+                                    data-meta="@competencia.Meta"
+                                    data-actual="@competencia.ValorObtenido">
+                                Editar Actual
+                            </button>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
 
-    <!-- Resumen Final (opcional) -->
+    <!-- Resumen Final centrado y alineado -->
     <div class="d-flex justify-content-center">
         <div class="p-4" style="background-color: #f8d7da; max-width: 600px;">
-            <h5 class="text-center">Resumen para: Juan Flores</h5>
-            <table class="table table-borderless align-middle">
+            <h5 class="text-center">Resumen para: @Model.Nombre @Model.Apellido1</h5>
+            <table id="tablaResultados" class="table table-borderless align-middle">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Porcentaje</th>
+                        <th style="width: 100px;">Valor</th>
+                        <th >id tipo</th>
+                    </tr>
+                </thead>
                 <tbody>
-                    <tr>
-                        <td><strong>Objetivos Departamento:</strong></td>
-                        <td>Deseado: 30% | Calificación:</td>
-                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="20%" /></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Objetivos Individuales:</strong></td>
-                        <td>Deseado: 50% | Calificación:</td>
-                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="10%" /></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Competencias:</strong></td>
-                        <td>Deseado: 20% | Calificación:</td>
-                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="15%" /></td>
-                    </tr>
+                    @foreach (var item in ViewBag.PesosConglomerados)
+                    {
+                        var nombreTipo = listaTiposObjetivos?.FirstOrDefault(t => t.IdTipoObjetivo == item?.IdTipoObjetivo)?.Tipo;
+                        var nombreTipoCompet = listaTiposCompetencias?.FirstOrDefault(t => t.IdTipoCompetencia == item?.IdTipoCompetencia)?.Tipo;
+                        var nombreFinal = nombreTipo ?? nombreTipoCompet ?? "Desconocido";
+
+                        var idTipoObjetivo = item?.IdTipoObjetivo ?? 0;
+                        var idTipoCompetencia = item?.IdTipoCompetencia ?? 0;
+                        var idTipo = idTipoObjetivo != 0 ? idTipoObjetivo : idTipoCompetencia;
+                        var tipo = idTipoObjetivo != 0 ? "Objetivo" : "Competencia";
+
+                        <tr>
+                            <td><strong>@nombreFinal</strong></td>
+                            <td><strong>@(item?.Porcentaje.ToString("0") ?? "0")%</strong></td>
+                            <td style="width: 100px;">
+                                <input type="number" class="form-control input-calificacion"
+                                       placeholder="@(item?.Porcentaje.ToString("0") ?? "0")%" readonly />
+                            </td>
+                            <td  data-tipo-id="@idTipo" data-tipo-categoria="@tipo">
+                                @idTipo
+                            </td>
+                        </tr>
+                    }
+
                     <tr>
                         <td><strong>Resultado:</strong></td>
-                        <td>Deseado: 100% | Calificación:</td>
-                        <td style="width: 100px;"><input type="text" class="form-control" placeholder="45%" /></td>
+                        <td><strong> 100%</strong></td>
+                        <td style="width: 100px;">
+                            <input type="number" class="form-control" id="resultado-total" readonly />
+                        </td>
+                        <td>-</td>
                     </tr>
                 </tbody>
             </table>
             <div class="text-center">
-                <button class="btn btn-success mt-3">Enviar Evaluación</button>
+                <button id="btnEnviarEvaluacion" class="btn btn-success mt-3">Enviar Evaluación</button>
             </div>
         </div>
     </div>
 </div>
+<!-- Modal EditarActual Objetivos -->
+<div class="modal fade" id="editarActualModal" tabindex="-1" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title">Editar Valor Actual</h5>
+                <button type="button" class="close" onclick="cerrarModal()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Tipo:</label>
+                    <p class="form-control-plaintext" id="modalTipoObjetivo"></p>
+                </div>
+                <div class="form-group">
+                    <label>Objetivo:</label>
+                    <p class="form-control-plaintext" id="modalNombreObjetivo"></p>
+                </div>
+                <div class="form-group">
+                    <label>Peso:</label>
+                    <p class="form-control-plaintext" id="modalPesoObjetivo"></p>
+                </div>
+                <div class="form-group">
+                    <label>Meta:</label>
+                    <p class="form-control-plaintext" id="modalMetaObjetivo"></p>
+                </div>
+                <div class="form-group">
+                    <label for="modalValorActual">Valor Actual (%):</label>
+                    <input type="number" class="form-control" id="modalValorActual">
+                    <small id="valorError" class="text-danger d-none">El valor debe estar entre 1 y <span id="maxPeso"></span>%</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="modalBtnConfirmar">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal EditarActual Competencias -->
+<div class="modal fade" id="editarActualCompetenciaModal" tabindex="-1" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title">Editar Valor Actual - Competencia</h5>
+                <button type="button" class="close" onclick="cerrarModalCompetencia()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Competencia:</label>
+                    <p class="form-control-plaintext" id="modalNombreCompetencia"></p>
+                </div>
+                <div class="form-group">
+                    <label>Tipo:</label>
+                    <p class="form-control-plaintext" id="modalTipoCompetencia"></p>
+                </div>
+                <div class="form-group">
+                    <label>Peso:</label>
+                    <p class="form-control-plaintext" id="modalPesoCompetencia"></p>
+                </div>
+                <div class="form-group">
+                    <label>Meta:</label>
+                    <p class="form-control-plaintext" id="modalMetaCompetencia"></p>
+                </div>
+                <div class="form-group">
+                    <label for="modalValorActualCompetencia">Valor Actual (%):</label>
+                    <input type="number" class="form-control" id="modalValorActualCompetencia">
+                    <small id="valorErrorCompetencia" class="text-danger d-none">El valor debe estar entre 1 y <span id="maxPesoCompetencia"></span>%</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalCompetencia()">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="modalBtnConfirmarCompetencia">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* **************** Llamada a JS ****************************************@
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/vista_RealizarEvaluacionComoFuncionario/editarActualObjetivos.js" asp-append-version="true"></script>
+    <script src="~/js/vista_RealizarEvaluacionComoFuncionario/editarActualCompetencias.js" asp-append-version="true"></script>
+    <script src="~/js/vista_RealizarEvaluacionComoFuncionario/sumasTablaResultados.js" asp-append-version="true"></script>
+
+
+}

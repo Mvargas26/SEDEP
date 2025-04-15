@@ -10,5 +10,6 @@ namespace Modelos
     {
         public FuncionarioModel Funcionario { get; set; }
         public List<PuestoModel> Puestos { get; set; }
+        public List<ConglomeradoModel> Conglomerados { get; set; }
     }
 }

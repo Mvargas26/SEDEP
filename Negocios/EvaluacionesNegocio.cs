@@ -60,7 +60,8 @@ namespace Negocios
                     new SqlParameter("@IdFuncionario", nueva.IdFuncionario),
                     new SqlParameter("@Observaciones", (object)nueva.Observaciones ?? DBNull.Value),
                     new SqlParameter("@FechaCreacion", fechaTratada),
-                    new SqlParameter("@EstadoEvaluacion", nueva.EstadoEvaluacion)
+                    new SqlParameter("@EstadoEvaluacion", nueva.EstadoEvaluacion),
+                    new SqlParameter("@idConglomerado", nueva.idConglomerado)
                 };
 
                 // Ejecutar el procedimiento almacenado
@@ -77,7 +78,8 @@ namespace Negocios
                     IdFuncionario = row["idFuncionario"].ToString(),
                     Observaciones = row["Observaciones"]?.ToString(),
                     FechaCreacion = Convert.ToDateTime(row["fechaCreacion"]),
-                    EstadoEvaluacion = Convert.ToInt32(row["estadoEvaluacion"])
+                    EstadoEvaluacion = Convert.ToInt32(row["estadoEvaluacion"]),
+                    idConglomerado = Convert.ToInt32(row["idConglomerado"])
                 };
             }
             catch (Exception ex)
@@ -97,7 +99,9 @@ namespace Negocios
                     new SqlParameter("@IdFuncionario", evaluacion.IdFuncionario),
                     new SqlParameter("@Observaciones", (object)evaluacion.Observaciones ?? DBNull.Value),
                     new SqlParameter("@FechaCreacion", evaluacion.FechaCreacion),
-                    new SqlParameter("@EstadoEvaluacion", evaluacion.EstadoEvaluacion)
+                    new SqlParameter("@EstadoEvaluacion", evaluacion.EstadoEvaluacion),
+                    new SqlParameter("@idConglomerado", evaluacion.idConglomerado)
+
                 };
 
                 objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudEvaluaciones]", parametros);
@@ -148,14 +152,48 @@ namespace Negocios
                     IdFuncionario = row["idFuncionario"].ToString(),
                     Observaciones = row["Observaciones"]?.ToString(),
                     FechaCreacion = Convert.ToDateTime(row["fechaCreacion"]),
-                    EstadoEvaluacion = Convert.ToInt32(row["estadoEvaluacion"])
+                    EstadoEvaluacion = Convert.ToInt32(row["estadoEvaluacion"]),
+                    idConglomerado = Convert.ToInt32(row["idConglomerado"])
                 };
             }
             catch (Exception ex)
             {
                 throw new Exception("Error al consultar evaluación por ID: " + ex.Message);
             }
-        }
+        }//fin
+
+        public EvaluacionModel ConsultarEvaluacionComoFuncionario(string idFuncionario, int idConglomerado)
+        {
+            try
+            {
+                List<SqlParameter> parametros = new()
+        {
+            new SqlParameter("@idFuncionario", idFuncionario),
+            new SqlParameter("@idConglomerado", idConglomerado)
+        };
+
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_consultarEvaluacionComoFuncionario", parametros);
+
+                if (dt.Rows.Count == 0)
+                    return null;
+
+                DataRow row = dt.Rows[0];
+
+                return new EvaluacionModel
+                {
+                    IdEvaluacion = Convert.ToInt32(row["idEvaluacion"]),
+                    IdFuncionario = row["idFuncionario"].ToString(),
+                    Observaciones = row["Observaciones"]?.ToString(),
+                    FechaCreacion = Convert.ToDateTime(row["fechaCreacion"]),
+                    EstadoEvaluacion = Convert.ToInt32(row["estadoEvaluacion"]),
+                    idConglomerado = Convert.ToInt32(row["idConglomerado"])
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al consultar evaluación del funcionario: " + ex.Message);
+            }
+        }//fin 
 
         public (List<ObjetivoModel>, List<CompetenciasModel>) ListarObjYCompetenciasXConglomerado(int idConglomerado)
         {
@@ -205,7 +243,66 @@ namespace Negocios
             {
                 throw new Exception("Error al listar objetivos y competencias por conglomerado: " + ex.Message);
             }
-        }
+        }//fin ConsultarEvaluacionPorID
+
+        public (List<EvaluacionXObjetivoModel>,List <EvaluacionXcompetenciaModel>) Listar_objetivosYCompetenciasXEvaluacion (int idEvaluacion)
+        {
+            List<EvaluacionXObjetivoModel> listaObjetivos = new();
+            List<EvaluacionXcompetenciaModel> listaCompetencias = new();
+
+            try
+            {
+                List<SqlParameter> parametros = new()
+                {
+                    new SqlParameter("@idEvaluacion", idEvaluacion)
+                };
+
+                DataSet ds = objDatos.EjecutarSQLconSP_DS("sp_objetivosYCompetenciasXEvaluacion", parametros);
+
+                if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                {
+                    foreach (DataRow row in ds.Tables[0].Rows)
+                    {
+                        listaCompetencias.Add(new EvaluacionXcompetenciaModel
+                        {
+                            IdEvaxComp = Convert.ToInt32(row["IdEvaxComp"]),
+                            IdEvaluacion = Convert.ToInt32(row["idEvaluacion"]),
+                            IdCompetencia = Convert.ToInt32(row["idCompetencia"]),
+                            ValorObtenido = Convert.ToDecimal(row["valorObtenido"]),
+                            Peso = Convert.ToDecimal(row["peso"]),
+                            Meta = row["meta"].ToString(),
+                            NombreCompetencia = row["NombreCompetencia"].ToString(),
+                            TipoCompetencia = row["TipoCompetencia"].ToString()
+                        });
+                    }
+                }
+
+                if (ds.Tables.Count > 1 && ds.Tables[1].Rows.Count > 0)
+                {
+                    foreach (DataRow row in ds.Tables[1].Rows)
+                    {
+                        listaObjetivos.Add(new EvaluacionXObjetivoModel
+                        {
+                            IdEvaxObj = Convert.ToInt32(row["IdEvaxObj"]),
+                            IdEvaluacion = Convert.ToInt32(row["idEvaluacion"]),
+                            IdObjetivo = Convert.ToInt32(row["idObjetivo"]),
+                            ValorObtenido = Convert.ToDecimal(row["valorObtenido"]),
+                            Peso = Convert.ToDecimal(row["peso"]),
+                            Meta = row["meta"].ToString(),
+                            NombreObjetivo = row["NombreObjetivo"].ToString(),
+                            TipoObjetivo = row["TipoObjetivo"].ToString()
+                        });
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return (listaObjetivos, listaCompetencias);
+        }//fin Listar_objetivosYCompetenciasXEvaluacion
 
     }//fin class
 }//fin space

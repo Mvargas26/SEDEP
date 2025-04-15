@@ -75,7 +75,7 @@
             La Fase de Planificación es la definición y programación de metas y objetivos por parte de la jefatura y su subalterno.
             Esta asignación se ejecuta en el mes de Enero de cada año; la jefatura deberá coordinar y acordar con su colaborador,
             considerando lineamientos, el perfil del cargo y las responsabilidades a su cargo, favoreciendo el logro de los objetivos
-            y metas del PEI (30%) y Metas correspondientes al POI (30%) y Metas desempeño Individual (50%).
+            y metas. 
         </p>
         <div class="row">
             <div class="col-md-6">
@@ -255,7 +255,7 @@
 
                         <tr>
                             <td><strong>@nombreFinal</strong></td>
-                            <td>Deseado: <strong>@(item?.Porcentaje.ToString("0") ?? "0")%</strong></td>
+                            <td><strong>@(item?.Porcentaje.ToString("0") ?? "0")%</strong></td>
                             <td style="width: 100px;">
                                 <input type="number" class="form-control input-calificacion"
                                        placeholder="@(item?.Porcentaje.ToString("0") ?? "0")%"  readonly/>
@@ -268,7 +268,7 @@
 
                     <tr>
                         <td><strong>Resultado:</strong></td>
-                        <td>Deseado:<strong> 100%</strong></td>
+                        <td><strong> 100%</strong></td>
                         <td style="width: 100px;">
                             <input type="number" class="form-control" id="resultado-total" readonly />
                         </td>
