@@ -91,6 +91,9 @@
                         <strong>Funcionario:</strong> @Model.Nombre @Model.Apellido1 @Model.Apellido2
                     </li>
                     <li><strong>Clase Puesto:</strong> @Model.Puesto</li>
+                    <li><strong>ID de la Evaluación  Planificada:</strong> @ViewBag.idEvaluacion</li>
+                    <li class="d-none" id="idEvaluacion">@ViewBag.idEvaluacion</li>
+
                 </ul>
             </div>
             <div class="col-md-6">
@@ -110,6 +113,7 @@
                     <th>Meta</th>
                     <th>Actual</th>
                     <th>Acciones</th>
+                    <th class="d-none">ID</th>
                 </tr>
             </thead>
             <tbody>
@@ -133,6 +137,8 @@
                                 Editar Actual
                             </button>
                         </td>
+                        <td class="d-none">@objetivo.IdEvaxObj</td>
+
                     </tr>
                 }
             </tbody>
@@ -145,12 +151,13 @@
         <table id="tbCompetenciasAsignadas" class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Competencia</th>
                     <th>Tipo</th>
+                    <th>Nombre</th>
                     <th>Peso</th>
                     <th>Meta</th>
                     <th>Actual</th>
                     <th>Acciones</th>
+                    <th class="d-none">ID</th>
                 </tr>
             </thead>
             <tbody>
@@ -174,23 +181,25 @@
                                 Editar Actual
                             </button>
                         </td>
+                        <td class="d-none">@competencia.IdEvaxComp</td>
+
                     </tr>
                 }
             </tbody>
         </table>
     </div>
 
-    <!-- Resumen Final centrado y alineado -->
+    <!-- Resumen Final -->
     <div class="d-flex justify-content-center">
         <div class="p-4" style="background-color: #f8d7da; max-width: 600px;">
-            <h5 class="text-center">Resumen para: @Model.Nombre @Model.Apellido1</h5>
+            <h5 class="text-center">Resumen para: @Model.Nombre @Model.Apellido1 @Model.Apellido2</h5>
             <table id="tablaResultados" class="table table-borderless align-middle">
                 <thead>
                     <tr>
                         <th>Tipo</th>
                         <th>Porcentaje</th>
                         <th style="width: 100px;">Valor</th>
-                        <th >id tipo</th>
+                        <th class="d-none">id tipo</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -212,7 +221,7 @@
                                 <input type="number" class="form-control input-calificacion"
                                        placeholder="@(item?.Porcentaje.ToString("0") ?? "0")%" readonly />
                             </td>
-                            <td  data-tipo-id="@idTipo" data-tipo-categoria="@tipo">
+                            <td class="d-none" data-tipo-id="@idTipo" data-tipo-categoria="@tipo">
                                 @idTipo
                             </td>
                         </tr>
@@ -229,7 +238,9 @@
                 </tbody>
             </table>
             <div class="text-center">
-                <button id="btnEnviarEvaluacion" class="btn btn-success mt-3">Enviar Evaluación</button>
+                <button id="btnGuardarNotas" class="btn btn-info mt-3">Guardar Notas</button>
+                <button id="btnEnviarEvaluacionJefatura" class="btn btn-success mt-3">Enviar a Jefatura</button>
+
             </div>
         </div>
     </div>
@@ -321,6 +332,8 @@
     <script src="~/js/vista_RealizarEvaluacionComoFuncionario/editarActualObjetivos.js" asp-append-version="true"></script>
     <script src="~/js/vista_RealizarEvaluacionComoFuncionario/editarActualCompetencias.js" asp-append-version="true"></script>
     <script src="~/js/vista_RealizarEvaluacionComoFuncionario/sumasTablaResultados.js" asp-append-version="true"></script>
+    <script src="~/js/vista_RealizarEvaluacionComoFuncionario/enviarEvaluacionAJefatura.js" asp-append-version="true"></script>
+
 
 
 }

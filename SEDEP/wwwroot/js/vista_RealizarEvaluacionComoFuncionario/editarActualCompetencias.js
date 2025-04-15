@@ -112,7 +112,7 @@ $(document).ready(function () {
 
         // Procesar tabla de Competencias
         document.querySelectorAll('#tbCompetenciasAsignadas tbody tr').forEach(row => {
-            const tipoCell = row.querySelector('td:nth-child(2)'); // Columna Tipo
+            const tipoCell = row.querySelector('td:nth-child(1)');
             const valorCell = row.querySelector('td:nth-child(5)'); // Columna Actual
 
             if (tipoCell && valorCell) {

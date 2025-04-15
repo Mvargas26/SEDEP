@@ -112,4 +112,4 @@ async function enviarPeticionEvaluacion(evaluacionData) {
     } catch (error) {
         alert(`Error: ${error.message}`);
     }
-}
+}//fin enviarPeticionEvaluacion
