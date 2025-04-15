@@ -9,7 +9,7 @@
     <form method="post" asp-action="CrearCompetencia">
         <div class="mb-3">
             <label for="Competencia" class="form-label">Nombre de la Competencia</label>
-            <input type="text" id="Competencia" name="Competencia" class="form-control" required maxlength="255">
+            <input type="text" id="Competencia" name="Competencia" class="form-control" required maxlength="255" pattern=".*\S.*" >
         </div>
 
         <div class="mb-3">

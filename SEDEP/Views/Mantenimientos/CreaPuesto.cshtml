@@ -6,10 +6,19 @@
 <div class="container mt-4">
     <h2 class="mb-4">Crear Nuevo Puesto</h2>
 
+    <!-- Mostrar mensaje de éxito si existe -->
+    @if (TempData["MensajeExito"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["MensajeExito"]
+        </div>
+    }
+
+    <!-- Formulario para crear el puesto -->
     <form method="post" asp-action="CreaPuestos" class="form">
         <div class="mb-3">
             <label for="Puesto" class="form-label">Nombre del Puesto</label>
-            <input type="text" class="form-control" id="Puesto" name="Puesto" required>
+            <input type="text" class="form-control" id="Puesto" name="Puesto" value="@Model?.Puesto" required pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ]+$">
         </div>
 
         <button type="submit" class="btn btn-primary">
@@ -18,4 +27,3 @@
         <a href="/Mantenimientos/ManteniPuestos" class="btn btn-secondary">Cancelar</a>
     </form>
 </div>
-

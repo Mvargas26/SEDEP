@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Modelos;
 using Negocios;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SEDEP.Controllers
 {
@@ -445,6 +446,20 @@ namespace SEDEP.Controllers
         {
             try
             {
+                string nombre = collection["NombreConglomerado"]!;
+                string descripcion = collection["Descripcion"]!;
+
+                // Validación: que no estén vacíos o solo espacios
+                if (string.IsNullOrWhiteSpace(nombre) || string.IsNullOrWhiteSpace(descripcion))
+                {
+                    TempData["MensajeError"] = "El nombre y la descripción no pueden estar vacíos ni contener solo espacios.";
+                    return View(new ConglomeradoModel
+                    {
+                        IdConglomerado = Convert.ToInt32(collection["IdConglomerado"]!),
+                        NombreConglomerado = nombre,
+                        Descripcion = descripcion
+                    });
+                }
                 ConglomeradoModel newConglomerado = new ConglomeradoModel
                 {
                     IdConglomerado = Convert.ToInt32(collection["IdConglomerado"]!),
@@ -751,12 +766,13 @@ namespace SEDEP.Controllers
         }
 
         // Vista para crear un puesto
+        // Acción GET para mostrar el formulario de creación
         public IActionResult CreaPuesto()
         {
             return View("CreaPuesto", new PuestoModel());
         }
 
-        // Acción para crear un puesto
+        // Acción POST para procesar el formulario y crear el puesto
         [HttpPost]
         public IActionResult CreaPuestos(PuestoModel nuevoPuesto)
         {
@@ -764,21 +780,29 @@ namespace SEDEP.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    // Aquí llamas al método para agregar el puesto a la base de datos
                     _objetoPuesto.AgregarPuesto(nuevoPuesto);
+
+                    // Si la inserción fue exitosa, muestras el mensaje de éxito
                     TempData["MensajeExito"] = $"Puesto {nuevoPuesto.Puesto} creado correctamente.";
                     return RedirectToAction(nameof(ManteniPuestos));
                 }
                 else
                 {
-                    return View(nuevoPuesto);
+                    // Si el modelo no es válido, vuelve a la vista original con los datos
+                    return View("CreaPuesto", nuevoPuesto); // Usa el mismo nombre de vista aquí
                 }
             }
             catch (Exception ex)
             {
+                // Aquí atrapas el error y lo muestras en la vista usando TempData
                 TempData["MensajeError"] = $"Error al crear el puesto: {ex.Message}";
-                return View();
+                return View("CreaPuesto", nuevoPuesto); // Usa el mismo nombre de vista aquí
             }
         }
+
+
+
 
         // Vista para editar un puesto
         public IActionResult EditaPuesto(int id)

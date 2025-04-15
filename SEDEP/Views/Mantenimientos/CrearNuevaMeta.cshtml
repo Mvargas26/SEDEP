@@ -9,7 +9,7 @@
     <form method="post" asp-action="CrearMeta">
         <div class="mb-3">
             <label for="Meta" class="form-label">Nombre de la meta</label>
-            <input type="text" id="Meta" name="Meta" class="form-control" required maxlength="255">
+            <input type="text" id="Meta" name="Meta" class="form-control" required pattern=".*\S.*" maxlength="255">
         </div>
 
         <div class="mb-3">

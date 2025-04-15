@@ -10,7 +10,7 @@
         <input type="hidden" id="IdCompetencia" asp-for="IdCompetencia">
         <div class="mb-3">
             <label for="Competencia" class="form-label">Nombre de la Competencia</label>
-            <input type="text" id="Competencia" class="form-control" asp-for="Competencia" required maxlength="255">
+            <input type="text" id="Competencia" class="form-control" asp-for="Competencia" required pattern=".*\S.*" maxlength="255">
         </div>
         <div class="mb-3">
             <label for="Calificacion" class="form-label">Calificacion</label>

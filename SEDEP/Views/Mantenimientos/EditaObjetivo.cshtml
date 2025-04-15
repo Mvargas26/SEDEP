@@ -10,7 +10,7 @@
         <input type="hidden" id="objetivoId" asp-for="IdObjetivo">
         <div class="mb-3">
             <label for="nombreObjetivo" class="form-label">Nombre del Objetivo</label>
-            <input type="text" id="nombreObjetivo" class="form-control" asp-for="Objetivo" required maxlength="255">
+            <input type="text" id="nombreObjetivo" class="form-control" asp-for="Objetivo" required pattern=".*\S.*" maxlength="255">
         </div>
         <div class="mb-3">
             <label for="porcentaje" class="form-label">Porcentaje</label>

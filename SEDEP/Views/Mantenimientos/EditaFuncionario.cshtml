@@ -15,17 +15,17 @@
 
         <div class="mb-3">
             <label asp-for="Funcionario.Nombre" class="form-label">Nombre</label>
-            <input asp-for="Funcionario.Nombre" class="form-control" required maxlength="255" />
+            <input asp-for="Funcionario.Nombre" class="form-control" required pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ]+$" maxlength="255" />
         </div>
 
         <div class="mb-3">
             <label asp-for="Funcionario.Apellido1" class="form-label">Primer Apellido</label>
-            <input asp-for="Funcionario.Apellido1" class="form-control" required maxlength="255" />
+            <input asp-for="Funcionario.Apellido1" class="form-control" required pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ]+$" maxlength="255" />
         </div>
 
         <div class="mb-3">
             <label asp-for="Funcionario.Apellido2" class="form-label">Segundo Apellido</label>
-            <input asp-for="Funcionario.Apellido2" class="form-control" required maxlength="255" />
+            <input asp-for="Funcionario.Apellido2" class="form-control" required pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ]+$" maxlength="255" />
         </div>
 
         <div class="mb-3">

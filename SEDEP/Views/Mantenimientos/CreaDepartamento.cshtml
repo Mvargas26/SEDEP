@@ -14,7 +14,7 @@
     <form asp-action="CreaDepartamento" method="post">
         <div class="mb-3">
             <label for="Departamento" class="form-label">Nombre del Departamento</label>
-            <input type="text" id="Departamento" name="Departamento" class="form-control" value="@Model.Departamento" required maxlength="255">
+            <input type="text" id="Departamento" name="Departamento" class="form-control" value="@Model.Departamento" required pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ]+$" maxlength="255">
         </div>
 
         <div class="d-flex justify-content-between">
