@@ -9,12 +9,12 @@
     <form>
         <div class="mb-3">
             <label for="Nombre" class="form-label">Nombre del Conglomerado</label>
-            <input type="text" id="NombreConglomerado" class="form-control" required maxlength="255">
+            <input type="text" id="NombreConglomerado" class="form-control" required pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ]+$" maxlength="255">
         </div>
 
         <div class="mb-3">
             <label for="Descripcion" class="form-label">Descripción del Conglomerado</label>
-            <input type="text" id="Descripcion" class="form-control" required maxlength="500">
+            <input type="text" id="Descripcion" class="form-control" required maxlength="500" pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ]+$">
         </div>
 
         <div class="d-flex justify-content-between">

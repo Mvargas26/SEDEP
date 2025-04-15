@@ -9,7 +9,7 @@
     <form method="post" asp-action="CrearObjetivo">
         <div class="mb-3">
             <label for="Objetivo" class="form-label">Nombre del Objetivo</label>
-            <input type="text" id="Objetivo" name="Objetivo" class="form-control" required maxlength="255">
+            <input type="text" id="Objetivo" name="Objetivo" class="form-control" required pattern=".*\S.*" maxlength="255">
         </div>
 
         <div class="mb-3">

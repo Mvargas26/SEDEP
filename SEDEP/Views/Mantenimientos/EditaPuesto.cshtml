@@ -11,7 +11,7 @@
         <input type="hidden" id="idPuesto" asp-for="idPuesto">
         <div class="mb-3">
             <label for="Puesto" class="form-label">Nombre del Puesto</label>
-            <input type="text" class="form-control" id="Puesto" name="Puesto" value="@Model.Puesto" required>
+            <input type="text" class="form-control" id="Puesto" name="Puesto" value="@Model.Puesto" required pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ]+$">
         </div>
 
         <button type="submit" class="btn btn-primary">

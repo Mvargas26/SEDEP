@@ -9,21 +9,21 @@
     <form asp-action="CrearNuevoFuncionario" method="post">
         <div class="mb-3">
             <label asp-for="Cedula" class="form-label">Cedula</label>
-            <input asp-for="Cedula" class="form-control" required maxlength="15">
+            <input asp-for="Cedula" class="form-control" required pattern=".*\S.*" maxlength="15">
         </div>
         <div class="mb-3">
             <label asp-for="Nombre" class="form-label">Nombre</label>
-            <input asp-for="Nombre" class="form-control" required maxlength="100">
+            <input asp-for="Nombre" class="form-control" required pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ]+$" maxlength="100">
         </div>
 
         <div class="mb-3">
             <label asp-for="Apellido1" class="form-label">Primer Apellido</label>
-            <input asp-for="Apellido1" class="form-control" required maxlength="100">
+            <input asp-for="Apellido1" class="form-control" required pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ]+$" maxlength="100">
         </div>
 
         <div class="mb-3">
             <label asp-for="Apellido2" class="form-label">Segundo Apellido</label>
-            <input asp-for="Apellido2" class="form-control" required maxlength="100">
+            <input asp-for="Apellido2" class="form-control" required pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ]+$" maxlength="100">
         </div>
 
         <div class="mb-3">
