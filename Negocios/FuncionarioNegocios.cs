@@ -240,7 +240,7 @@ namespace Negocios
                     new SqlParameter("@idDepartamento", idDepartamento)
                 };
 
-                DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_FuncionariosXDepartamento", parametros);
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_funcionariosConEvalucionXAprobar", parametros);
                 List<FuncionarioModel> lista = new();
 
                 foreach (DataRow row in dt.Rows)
@@ -252,7 +252,6 @@ namespace Negocios
                         Apellido1 = row["apellido1"].ToString(),
                         Apellido2 = row["apellido2"]?.ToString(), // Manejo de nulos
                         Correo = row["correo"].ToString(),
-                        Password = row["password"].ToString(),
                         IdDepartamento = Convert.ToInt32(row["idDepartamento"]),
                         IdRol = Convert.ToInt32(row["idRol"]),
                         IdPuesto = Convert.ToInt32(row["idPuesto"]),

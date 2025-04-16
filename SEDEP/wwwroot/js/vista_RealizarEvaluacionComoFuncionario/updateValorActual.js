@@ -64,7 +64,6 @@ async function enviarPeticionEvaluacion(evaluacionData) {
         if (!data.success) throw new Error(data.error);
 
         alert('Notas Actualizadas Correctamente');
-        window.location.href = data.redirectUrl || '/Evaluacion/Index';
     } catch (error) {
         alert(`Error: ${error.message}`);
     }

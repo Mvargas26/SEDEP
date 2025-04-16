@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using AdministracionActivosFijos;
 using Azure.Core;
+using Microsoft.IdentityModel.Tokens;
 
 namespace SEDEP.Controllers
 {
@@ -351,7 +352,7 @@ namespace SEDEP.Controllers
 
                 }
 
-                return Json(new { success = true, redirectUrl = Url.Action("Index", "Evaluacion") });
+                return Json(new { success = true });
 
             }
             catch (Exception ex)
@@ -398,14 +399,20 @@ namespace SEDEP.Controllers
         #endregion
 
         #region AprobarComoJefatura
-
         [HttpGet]
         public IActionResult SeleccionarSubalternoParaAprobarEvaluacion()
         {
             try
             {
                 int idDepartamento = 1;
-                var listaSubalternos = objeto_FuncionarioNegocios.ObtenerFuncionariosPorDepartamento(idDepartamento);
+                var listaSubalternos = objeto_FuncionarioNegocios.Obt_Func_ConEvaluacionXAprobarXDepart(idDepartamento);
+
+                if (listaSubalternos == null || !listaSubalternos.Any())
+                {
+                    TempData["Error"] = "No hay evaluaciones por aprobar";
+                    return View("SeleccionarSubalternoParaAprobarEvaluacion");
+                }
+
                 return View(listaSubalternos);
             }
             catch (Exception)
@@ -415,7 +422,16 @@ namespace SEDEP.Controllers
 
             }
         }//fin SeleccionarSubalternoParaAprobarEvaluacion
-
+        [HttpPost]
+        public IActionResult SeleccionarSubalternoParaAprobarEvaluacion(string cedulaSeleccionada)
+        {
+            if (string.IsNullOrEmpty(cedulaSeleccionada))
+            {
+                TempData["Error"] = "Debe seleccionar un subalterno.";
+                return RedirectToAction("SeleccionarSubalternoParaAprobarEvaluacion");
+            }
+            return RedirectToAction("CrearSeguimiento", new { cedula = cedulaSeleccionada });
+        }
 
         [HttpGet]
         public IActionResult CrearSeguimiento()
