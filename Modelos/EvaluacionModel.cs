@@ -17,9 +17,8 @@ namespace Modelos
         [Required]
         [StringLength(20)]
         [Display(Name = "Funcionario Evaluado")]
+        [ForeignKey("Funcionario")]
         public string IdFuncionario { get; set; }
-
-        [ForeignKey("IdFuncionario")]
         public virtual FuncionarioModel Funcionario { get; set; }
 
         [Display(Name = "Observaciones")]
@@ -31,10 +30,11 @@ namespace Modelos
 
         [Required]
         [Display(Name = "Estado de la Evaluación")]
+        [ForeignKey("EstadoEvaluacion")]
         public int EstadoEvaluacion { get; set; }
         public int idConglomerado { get; set; }
 
-        [ForeignKey("EstadoEvaluacion")]
         public virtual EstadoEvaluacionModel EstadoEvaluacionObj { get; set; }
+
     }//Fin Clase
 }//Fin Space 

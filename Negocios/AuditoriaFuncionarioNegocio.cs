@@ -12,6 +12,8 @@ namespace Negocios
 {
     public class AuditoriaFuncionarioNegocio
     {
+
+        //***************** VARIABLES *******************
         SQLServerContext_Datos objDatos = new SQLServerContext_Datos();
 
         public List<AuditoriaFuncionarioModel> ListarAuditorias()
@@ -22,10 +24,10 @@ namespace Negocios
             {
                 List<SqlParameter> parametros = new()
                 {
-                    new SqlParameter("@Operacion", "R")
+                    new SqlParameter("@Accion", "SELECT")
                 };
 
-                DataTable dt = objDatos.EjecutarSQLconSP_DT("sp_AuditoriaFuncionarios_CRUD", parametros);
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("[adm].[sp_CrudAuditoriaFuncionarios]", parametros);
 
                 foreach (DataRow row in dt.Rows)
                 {
@@ -44,58 +46,68 @@ namespace Negocios
             }
             catch (Exception ex)
             {
-                throw new Exception("Fallo al listar auditorías: " + ex.Message);
+                throw new Exception("Fallo en AuditoriaFuncionarioNegocios " + ex);
             }
-
             return lista;
         }
 
-        public void CrearAuditoria(AuditoriaFuncionarioModel auditoria)
+        public void CrearAuditoria(AuditoriaFuncionarioModel auditoriaNueva)
         {
             try
             {
                 List<SqlParameter> parametros = new()
                 {
-                    new SqlParameter("@Operacion", "C"),
-                    new SqlParameter("@IdFuncionario", auditoria.IdFuncionario),
-                    new SqlParameter("@Accion", auditoria.Accion),
-                    new SqlParameter("@FechaHora", auditoria.FechaHora),
-                    new SqlParameter("@UsuarioAccion", auditoria.UsuarioAccion),
-                    new SqlParameter("@CampoModificado", auditoria.CampoModificado),
-                    new SqlParameter("@ValorAnterior", auditoria.ValorAnterior ?? (object)DBNull.Value),
-                    new SqlParameter("@ValorNuevo", auditoria.ValorNuevo ?? (object)DBNull.Value)
+                    new SqlParameter("@Accion", "INSERT"),
+                    new SqlParameter("@IdAuditoria", auditoriaNueva.IdAuditoria),
+                    new SqlParameter("@IdFuncionario", auditoriaNueva.IdFuncionario),
+                    new SqlParameter("@AccionRealizada", auditoriaNueva.Accion),
+                    new SqlParameter("@FechaHora", auditoriaNueva.FechaHora),
+                    new SqlParameter("@UsuarioAccion", auditoriaNueva.UsuarioAccion),
+                    new SqlParameter("@CampoModificado", auditoriaNueva.CampoModificado),
+                    new SqlParameter("@ValorAnterior", auditoriaNueva.ValorAnterior),
+                    new SqlParameter("@ValorNuevo", auditoriaNueva.ValorNuevo)
                 };
 
-                objDatos.EjecutarSQLconSP_Void("sp_AuditoriaFuncionarios_CRUD", parametros);
+                objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudAuditoriaFuncionarios]", parametros);
             }
             catch (Exception ex)
             {
-                throw new Exception("Fallo al crear auditoría: " + ex.Message);
+                throw new Exception("Fallo en AuditoriaFuncionarioNegocios " + ex);
             }
         }
 
-        public void ModificarAuditoria(AuditoriaFuncionarioModel auditoria)
+        public List<AuditoriaFuncionarioModel> ObtenerAuditoriasPorFuncionario(string idFuncionario)
         {
             try
             {
                 List<SqlParameter> parametros = new()
                 {
-                    new SqlParameter("@Operacion", "U"),
-                    new SqlParameter("@IdAuditoria", auditoria.IdAuditoria),
-                    new SqlParameter("@IdFuncionario", auditoria.IdFuncionario),
-                    new SqlParameter("@Accion", auditoria.Accion),
-                    new SqlParameter("@FechaHora", auditoria.FechaHora),
-                    new SqlParameter("@UsuarioAccion", auditoria.UsuarioAccion),
-                    new SqlParameter("@CampoModificado", auditoria.CampoModificado),
-                    new SqlParameter("@ValorAnterior", auditoria.ValorAnterior ?? (object)DBNull.Value),
-                    new SqlParameter("@ValorNuevo", auditoria.ValorNuevo ?? (object)DBNull.Value)
+                    new SqlParameter("@IdFuncionario", idFuncionario)
                 };
 
-                objDatos.EjecutarSQLconSP_Void("sp_AuditoriaFuncionarios_CRUD", parametros);
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_AuditoriasPorFuncionario", parametros);
+                List<AuditoriaFuncionarioModel> lista = new();
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    lista.Add(new AuditoriaFuncionarioModel
+                    {
+                        IdAuditoria = row["idAuditoria"].ToString(),
+                        IdFuncionario = row["idFuncionario"].ToString(),
+                        Accion = row["accion"].ToString(),
+                        FechaHora = row["fechaHora"].ToString(),
+                        UsuarioAccion = row["usuarioAccion"].ToString(),
+                        CampoModificado = row["campoModificado"].ToString(),
+                        ValorAnterior = row["valorAnterior"].ToString(),
+                        ValorNuevo = row["valorNuevo"].ToString()
+                    });
+                }
+
+                return lista;
             }
             catch (Exception ex)
             {
-                throw new Exception("Fallo al modificar auditoría: " + ex.Message);
+                throw new Exception("Error al obtener auditorías por funcionario: " + ex.Message);
             }
         }
 
@@ -105,50 +117,16 @@ namespace Negocios
             {
                 List<SqlParameter> parametros = new()
                 {
-                    new SqlParameter("@Operacion", "D"),
+                    new SqlParameter("@Accion", "DELETE"),
                     new SqlParameter("@IdAuditoria", idAuditoria)
                 };
-
-                objDatos.EjecutarSQLconSP_Void("sp_AuditoriaFuncionarios_CRUD", parametros);
+                objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudAuditoriaFuncionarios]", parametros);
             }
             catch (Exception ex)
             {
-                throw new Exception("Fallo al eliminar auditoría: " + ex.Message);
+                throw new Exception("Fallo en AuditoriaFuncionarioNegocios " + ex);
             }
         }
 
-        public AuditoriaFuncionarioModel ConsultarAuditoriaPorID(string idAuditoria)
-        {
-            try
-            {
-                List<SqlParameter> parametros = new()
-                {
-                    new SqlParameter("@IdAuditoria", idAuditoria)
-                };
-
-                DataTable dt = objDatos.EjecutarSQLconSP_DT("sp_ConsultarAuditoriaPorID", parametros);
-
-                if (dt.Rows.Count == 0)
-                    return null;
-
-                DataRow row = dt.Rows[0];
-
-                return new AuditoriaFuncionarioModel
-                {
-                    IdAuditoria = row["idAuditoria"].ToString(),
-                    IdFuncionario = row["idFuncionario"].ToString(),
-                    Accion = row["accion"].ToString(),
-                    FechaHora = row["fechaHora"].ToString(),
-                    UsuarioAccion = row["usuarioAccion"].ToString(),
-                    CampoModificado = row["campoModificado"].ToString(),
-                    ValorAnterior = row["valorAnterior"].ToString(),
-                    ValorNuevo = row["valorNuevo"].ToString()
-                };
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error al consultar auditoría por ID: " + ex.Message);
-            }
-        }
     }
 }
