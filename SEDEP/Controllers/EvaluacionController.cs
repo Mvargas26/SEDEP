@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using AdministracionActivosFijos;
+using Azure.Core;
 
 namespace SEDEP.Controllers
 {
@@ -138,7 +139,7 @@ namespace SEDEP.Controllers
                     EstadoEvaluacion = 1, //1 = estado planificacion
                     FechaCreacion = FechaCostaRica,
                     Observaciones = observaciones,
-                    idConglomerado = idConglo
+                    IdConglomerado = idConglo
                 };
 
                 //Guardamos y obtenemos el nuevo registro para sacar el id
@@ -357,9 +358,6 @@ namespace SEDEP.Controllers
 
                 }
 
-
-
-
                 return Json(new { success = true, redirectUrl = Url.Action("Index", "Evaluacion") });
 
             }
@@ -371,7 +369,40 @@ namespace SEDEP.Controllers
 
         }
 
+        [HttpPost]
+        public IActionResult EnviarEvaluacionAlaJefatura([FromBody] dynamic request)
+        {
+            try
+            {
+                // Convertir a JObject para manipular más fácilmente
+                var jsonData = JObject.Parse(request.ToString());
+               
+                //extraemos el id
+                int idEvaluacion = ((JObject)jsonData)["idEvaluacion"]?.Value<int>() ?? 0;
 
-        #endregion
-    }
-}
+                //Traemos la Evaluacion
+                EvaluacionModel ultimaEvaluacion = new();
+                EvaluacionesNegocio evaluacionesNegocio = new();
+                ultimaEvaluacion = evaluacionesNegocio.ConsultarEvaluacionPorID(idEvaluacion);
+
+                //le cambiamos el Estado
+                ultimaEvaluacion.EstadoEvaluacion = 2;//  2 = Aprobado Funcionario
+
+                //Lo guardamos nuevamente
+                objeto_Evaluaciones.ModificarEvaluacion(ultimaEvaluacion);
+
+                return Json(new
+                {
+                    success = true,
+                    redirectUrl = Url.Action("Index", "Evaluacion")
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new {success = false});
+            }
+        }//fin EnviarEvaluacionAlaJefatura
+    }//fin class
+   #endregion
+    
+}//fin space

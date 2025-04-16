@@ -61,7 +61,7 @@ namespace Negocios
                     new SqlParameter("@Observaciones", (object)nueva.Observaciones ?? DBNull.Value),
                     new SqlParameter("@FechaCreacion", fechaTratada),
                 new SqlParameter("@EstadoEvaluacion", nueva.EstadoEvaluacion),
-                    new SqlParameter("@idConglomerado", nueva.idConglomerado)
+                    new SqlParameter("@idConglomerado", nueva.IdConglomerado)
                 };
 
                 // Ejecutar el procedimiento almacenado
@@ -79,7 +79,7 @@ namespace Negocios
                     Observaciones = row["Observaciones"]?.ToString(),
                     FechaCreacion = Convert.ToDateTime(row["fechaCreacion"]),
                     EstadoEvaluacion = Convert.ToInt32(row["estadoEvaluacion"]),
-                    idConglomerado = Convert.ToInt32(row["idConglomerado"])
+                    IdConglomerado = Convert.ToInt32(row["idConglomerado"])
                 };
             }
             catch (Exception ex)
@@ -93,24 +93,23 @@ namespace Negocios
             try
             {
                 List<SqlParameter> parametros = new()
-                {
-                    new SqlParameter("@Accion", "UPDATE"),
-                    new SqlParameter("@IdEvaluacion", evaluacion.IdEvaluacion),
-                    new SqlParameter("@IdFuncionario", evaluacion.IdFuncionario),
-                    new SqlParameter("@Observaciones", (object)evaluacion.Observaciones ?? DBNull.Value),
-                    new SqlParameter("@FechaCreacion", evaluacion.FechaCreacion),
-                    new SqlParameter("@EstadoEvaluacion", evaluacion.EstadoEvaluacion),
-                    new SqlParameter("@idConglomerado", evaluacion.idConglomerado)
+        {
+            new SqlParameter("@Operacion", "U"),
+            new SqlParameter("@idEvaluacion", evaluacion.IdEvaluacion),
+            new SqlParameter("@idFuncionario", evaluacion.IdFuncionario),
+            new SqlParameter("@idConglomerado", (object)evaluacion.IdConglomerado ?? DBNull.Value),
+            new SqlParameter("@Observaciones", (object)evaluacion.Observaciones ?? DBNull.Value),
+            new SqlParameter("@fechaCreacion", evaluacion.FechaCreacion),
+            new SqlParameter("@estadoEvaluacion", evaluacion.EstadoEvaluacion)
+        };
 
-                };
-
-                objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudEvaluaciones]", parametros);
+                objDatos.EjecutarSQLconSP_Void("[adm].[sp_Evaluacion_CRUD]", parametros);
             }
             catch (Exception ex)
             {
                 throw new Exception("Fallo al modificar evaluación: " + ex.Message);
             }
-        }
+        }//fin ModificarEvaluacion
 
         public void EliminarEvaluacion(int idEvaluacion)
         {
@@ -136,10 +135,11 @@ namespace Negocios
             {
                 List<SqlParameter> parametros = new()
                 {
-                    new SqlParameter("@IdEvaluacion", idEvaluacion)
+                    new SqlParameter("@Operacion","R"),  
+                    new SqlParameter("@idEvaluacion", idEvaluacion)  
                 };
 
-                DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_ConsultarEvaluacionPorID", parametros);
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("sp_Evaluacion_CRUD", parametros);  
 
                 if (dt.Rows.Count == 0)
                     return null;
@@ -149,17 +149,18 @@ namespace Negocios
                 return new EvaluacionModel
                 {
                     IdEvaluacion = Convert.ToInt32(row["idEvaluacion"]),
-                    IdFuncionario = row["idFuncionario"].ToString(),
-                    Observaciones = row["Observaciones"]?.ToString(),
+                    IdFuncionario = row["idFuncionario"] != DBNull.Value ? row["idFuncionario"].ToString() : null,
+                    IdConglomerado = Convert.ToInt32(row["idConglomerado"]),
+                    Observaciones = row["Observaciones"] != DBNull.Value ? row["Observaciones"].ToString() : null,
                     FechaCreacion = Convert.ToDateTime(row["fechaCreacion"]),
-                    EstadoEvaluacion = Convert.ToInt32(row["estadoEvaluacion"]),
+                    EstadoEvaluacion = Convert.ToInt32(row["estadoEvaluacion"])
                 };
             }
             catch (Exception ex)
             {
                 throw new Exception("Error al consultar evaluación por ID: " + ex.Message);
             }
-        }//fin
+        }//fin ConsultarEvaluacionPorID
 
         public EvaluacionModel ConsultarEvaluacionComoFuncionario(string idFuncionario, int idConglomerado)
         {

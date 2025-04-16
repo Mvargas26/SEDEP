@@ -32,7 +32,7 @@ namespace Modelos
         [Display(Name = "Estado de la Evaluación")]
         [ForeignKey("EstadoEvaluacion")]
         public int EstadoEvaluacion { get; set; }
-        public int idConglomerado { get; set; }
+        public int IdConglomerado { get; set; }
 
         public virtual EstadoEvaluacionModel EstadoEvaluacionObj { get; set; }
 

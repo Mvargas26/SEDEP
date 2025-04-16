@@ -1,6 +1,6 @@
-﻿document.getElementById("btnGuardarNotas").addEventListener("click", enviarEvaluacionAJefatura);
+﻿document.getElementById("btnGuardarNotas").addEventListener("click", updateValorActual);
 
-function enviarEvaluacionAJefatura() {
+function updateValorActual() {
     // Recolectar datos de ambas tablas
     const objetivosAsignados = obtenerDatosTabla('#tbObjetivosAsignados tbody tr');
     const competenciasAsignadas = obtenerDatosTabla('#tbCompetenciasAsignadas tbody tr');
