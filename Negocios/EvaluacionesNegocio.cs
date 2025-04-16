@@ -189,6 +189,38 @@ namespace Negocios
             }
         }//fin 
 
+        public EvaluacionModel ConsultarEvaluacionPorAprobar(string idFuncionario, int idConglomerado)
+        {
+            try
+            {
+                List<SqlParameter> parametros = new()
+        {
+            new SqlParameter("@idFuncionario", idFuncionario),
+            new SqlParameter("@idConglomerado", idConglomerado)
+        };
+
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_ConsultarEvaluacionPorAprobar", parametros);
+
+                if (dt.Rows.Count == 0)
+                    return null;
+
+                DataRow row = dt.Rows[0];
+
+                return new EvaluacionModel
+                {
+                    IdEvaluacion = Convert.ToInt32(row["idEvaluacion"]),
+                    IdFuncionario = row["idFuncionario"].ToString(),
+                    Observaciones = row["Observaciones"]?.ToString(),
+                    FechaCreacion = Convert.ToDateTime(row["fechaCreacion"]),
+                    EstadoEvaluacion = Convert.ToInt32(row["estadoEvaluacion"]),
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al consultar evaluación por aprobar del funcionario: " + ex.Message);
+            }
+        }//fin 
+
         public (List<ObjetivoModel>, List<CompetenciasModel>) ListarObjYCompetenciasXConglomerado(int idConglomerado)
         {
             try

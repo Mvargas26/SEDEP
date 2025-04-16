@@ -219,7 +219,7 @@ namespace SEDEP.Controllers
                 //newFuncionarioLogin = FuncionarioLogueado.retornarDatosFunc();
 
                 //Eliminar cuando el login este activo
-                newFuncionarioLogin.Cedula = "123456789";
+                newFuncionarioLogin.Cedula = "323456789";
 
 
                 newFuncionarioLogin.IdDepartamento = 1;
@@ -430,19 +430,109 @@ namespace SEDEP.Controllers
                 TempData["Error"] = "Debe seleccionar un subalterno.";
                 return RedirectToAction("SeleccionarSubalternoParaAprobarEvaluacion");
             }
-            return RedirectToAction("CrearSeguimiento", new { cedula = cedulaSeleccionada });
+            return RedirectToAction("ConglomeradosPorFuncAprobarEvaluacion", new { cedula = cedulaSeleccionada });
         }
 
         [HttpGet]
-        public IActionResult CrearSeguimiento()
+        public IActionResult ConglomeradosPorFuncAprobarEvaluacion(string cedula)
         {
-            // En un escenario real, aquí cargarías la lista de objetivos
-            // que el Encargado definió, y se los pasas a la vista
-            // Por ahora, simplemente retornamos la vista con datos quemados
-            return View();
+            try
+            {
+                ViewData["ListaConglomerados"] = objeto_ConglomeradosNegocios.ListarConglomerados();
+                return View(objeto_ConglomeradosNegocios.ConsultarConglomeradoXFuncionario(cedula));
+            }
+            catch (Exception)
+            {
+                return View();
+            }
+        }
+
+        [HttpGet]
+        public IActionResult CrearSeguimiento(string cedula, int idConglomerado)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(cedula) || idConglomerado == 0)
+                {
+                    TempData["Error"] = "Debe seleccionar un Conglomerado para el funcionario a evaluar.";
+                    return RedirectToAction("ConglomeradosPorFuncAprobarEvaluacion");
+                }
+                if (!string.IsNullOrEmpty(cedula))
+                {
+                    //Traemos la info necesaria para la vista
+                    var subalterno = objeto_FuncionarioNegocios.ConsultarFuncionarioID(cedula);
+                    var PesosConglomerados = objeto_ConglomeradosNegocios.ConsultarPesosXConglomerado(idConglomerado);
+                    ViewBag.anioActual = FechaCostaRica.Year;
+                    ViewBag.PesosConglomerados = PesosConglomerados;
+                    ViewBag.IdConglomerado = idConglomerado;
+                    ViewData["ListaConglomerados"] = objeto_ConglomeradosNegocios.ListarConglomerados();
+                    ViewData["ListaTiposObjetivos"] = objeto_TiposObjetivoNegocios.ListarTiposObjetivos();
+                    ViewData["ListaTiposCompetencias"] = objeto_TiposCompenNegocis.ListarTiposCompetencias();
+
+
+                    //Traemos la Evaluacion
+                    EvaluacionModel ultimaEvaluacion = new();
+                    ultimaEvaluacion = objeto_Evaluaciones.ConsultarEvaluacionPorAprobar(cedula, idConglomerado);
+
+                    //Validamos que tenga una Evaluacion
+                    if (ultimaEvaluacion == null)
+                    {
+                        TempData["AlertMessage"] = "No hay una evaluación para este funcionario en este conglomerado, contacte a su sub Alterno.";
+                        return RedirectToAction("Index");
+                    }
+
+                    //Traemos la listas de obj y comp relacionadas a este conglomerado
+                    var (listaObjetivos, listaCompetencias) = objeto_Evaluaciones.Listar_objetivosYCompetenciasXEvaluacion(ultimaEvaluacion.IdEvaluacion);
+                    ViewBag.ListaObjetivos = listaObjetivos;
+                    ViewBag.ListaCompetencias = listaCompetencias;
+                    ViewBag.idEvaluacion = ultimaEvaluacion.IdEvaluacion;
+
+                    return View(subalterno);
+                }
+                return View();
+            }
+            catch (Exception ex)
+            {
+                TempData["AlertMessage"] = $"Error al cargar la evaluación: {ex.Message}";
+                return RedirectToAction("Index");
+            }
+
         }
         #endregion
 
+        [HttpPost]
+        public IActionResult CrearSeguimiento([FromBody] dynamic request)
+        {
+            try
+            {
+                // Convertir a JObject para manipular más fácilmente
+                var jsonData = JObject.Parse(request.ToString());
+
+                //extraemos el id
+                int idEvaluacion = ((JObject)jsonData)["idEvaluacion"]?.Value<int>() ?? 0;
+
+                //Traemos la Evaluacion
+                EvaluacionModel ultimaEvaluacion = new();
+                EvaluacionesNegocio evaluacionesNegocio = new();
+                ultimaEvaluacion = evaluacionesNegocio.ConsultarEvaluacionPorID(idEvaluacion);
+
+                //le cambiamos el Estado
+                ultimaEvaluacion.EstadoEvaluacion = 3;//  3 = Aprobado Jefatura
+
+                //Lo guardamos nuevamente
+                objeto_Evaluaciones.ModificarEvaluacion(ultimaEvaluacion);
+
+                return Json(new
+                {
+                    success = true,
+                    redirectUrl = Url.Action("Index", "Evaluacion")
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false });
+            }
+        }//fin EnviarEvaluacionAlaJefatura
     }//fin class
   
 }//fin space
