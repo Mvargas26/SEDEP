@@ -57,10 +57,10 @@ namespace Negocios
                 List<SqlParameter> parametros = new()
                 {
                     new SqlParameter("@Operacion", "C"),
-                    new SqlParameter("@IdFuncionario", nueva.IdFuncionario),
-                    new SqlParameter("@Observaciones", (object)nueva.Observaciones ?? DBNull.Value),
-                    new SqlParameter("@FechaCreacion", fechaTratada),
-                new SqlParameter("@EstadoEvaluacion", nueva.EstadoEvaluacion),
+                    new SqlParameter("@idFuncionario", nueva.IdFuncionario),
+                    new SqlParameter("@observaciones", (object)nueva.Observaciones ?? DBNull.Value),
+                    new SqlParameter("@fechaCreacion", fechaTratada),
+                new SqlParameter("@estadoEvaluacion", nueva.EstadoEvaluacion),
                     new SqlParameter("@idConglomerado", nueva.IdConglomerado)
                 };
 
@@ -75,11 +75,6 @@ namespace Negocios
                 return new EvaluacionModel
                 {
                     IdEvaluacion = Convert.ToInt32(row["idEvaluacion"]),
-                    IdFuncionario = row["idFuncionario"].ToString(),
-                    Observaciones = row["Observaciones"]?.ToString(),
-                    FechaCreacion = Convert.ToDateTime(row["fechaCreacion"]),
-                    EstadoEvaluacion = Convert.ToInt32(row["estadoEvaluacion"]),
-                    IdConglomerado = Convert.ToInt32(row["idConglomerado"])
                 };
             }
             catch (Exception ex)

@@ -30,14 +30,7 @@ namespace SEDEP.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult CrearSeguimiento()
-        {
-            // En un escenario real, aquí cargarías la lista de objetivos
-            // que el Encargado definió, y se los pasas a la vista
-            // Por ahora, simplemente retornamos la vista con datos quemados
-            return View();
-        }
+ 
 
         [HttpGet]
         public IActionResult ModificarActualSeguimiento(string tipo, string obj, string objName, string actualValue, string metaValue)
@@ -402,7 +395,38 @@ namespace SEDEP.Controllers
                 return Json(new {success = false});
             }
         }//fin EnviarEvaluacionAlaJefatura
+        #endregion
+
+        #region AprobarComoJefatura
+
+        [HttpGet]
+        public IActionResult SeleccionarSubalternoParaAprobarEvaluacion()
+        {
+            try
+            {
+                int idDepartamento = 1;
+                var listaSubalternos = objeto_FuncionarioNegocios.ObtenerFuncionariosPorDepartamento(idDepartamento);
+                return View(listaSubalternos);
+            }
+            catch (Exception)
+            {
+
+                return View();
+
+            }
+        }//fin SeleccionarSubalternoParaAprobarEvaluacion
+
+
+        [HttpGet]
+        public IActionResult CrearSeguimiento()
+        {
+            // En un escenario real, aquí cargarías la lista de objetivos
+            // que el Encargado definió, y se los pasas a la vista
+            // Por ahora, simplemente retornamos la vista con datos quemados
+            return View();
+        }
+        #endregion
+
     }//fin class
-   #endregion
-    
+  
 }//fin space
