@@ -1,26 +1,79 @@
-﻿@model Modelos.ConglomeradoModel
+﻿@model SEDEP.Controllers.MantenimientosController.EditaConglomeradoDummyModel
+<!-- O usa el espacio de nombres que hayas definido -->
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Edición de Conglomerado";
 }
 
 <div class="container mt-4">
-    <h2 class="mb-4">@ViewData["Title"]</h2>
+    <h2 class="mb-4">Edición de Conglomerado</h2>
 
-    <form asp-action="EditaConglomerado">
+    <!-- Mensajes si existen -->
+    @if (TempData["MensajeError"] != null)
+    {
+        <div class="alert alert-danger">@TempData["MensajeError"]</div>
+    }
+    @if (TempData["MensajeExito"] != null)
+    {
+        <div class="alert alert-success">@TempData["MensajeExito"]</div>
+    }
+
+    <form asp-action="EditaConglomerado" method="post" id="frmEditarConglo">
+        <!-- Campo ID Conglomerado -->
         <div class="mb-3">
-            <label asp-for="IdConglomerado" class="form-label">Id del Conglomerado</label>
-            <input asp-for="IdConglomerado" class="form-control" readonly disabled />
-        </div>
-        <div class="mb-3">
-            <label asp-for="NombreConglomerado" class="form-label">Nombre del Conglomerado</label>
-            <input asp-for="NombreConglomerado" class="form-control" required pattern=".*\S.*" maxlength="255">
+            <label class="form-label">Id del Conglomerado</label>
+            <input class="form-control" readonly
+                   name="Id"
+                   value="@Model.Id" />
         </div>
 
+        <!-- Campo Nombre -->
         <div class="mb-3">
-            <label asp-for="Descripcion" class="form-label">Descripción del Conglomerado</label>
-            <input asp-for="Descripcion" id="Descripcion" class="form-control" value="@Model.Descripcion" required pattern=".*\S.*" maxlength="500">
+            <label class="form-label">Nombre del Conglomerado</label>
+            <input class="form-control" required maxlength="255"
+                   name="Nombre"
+                   value="@Model.Nombre" />
         </div>
+
+        <!-- Campo Descripcion -->
+        <div class="mb-3">
+            <label class="form-label">Descripción</label>
+            <input class="form-control" required maxlength="500"
+                   name="Descripcion"
+                   value="@Model.Descripcion" />
+        </div>
+
+        <h4>Pesos Asignados</h4>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Porcentaje</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Pesos != null)
+                {
+                    for (int i = 0; i < Model.Pesos.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                <!-- Nombre (solo lectura) -->
+                                @Model.Pesos[i].Nombre
+                                <input type="hidden"
+                                       name="Pesos[@i].Nombre"
+                                       value="@Model.Pesos[i].Nombre" />
+                            </td>
+                            <td style="width: 100px;">
+                                <input type="text" class="form-control pesoInput"
+                                       name="Pesos[@i].Porcentaje"
+                                       value="@Model.Pesos[i].Porcentaje" />
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
 
         <div class="d-flex justify-content-between">
             <a href="/Mantenimientos/ManteniConglomerados" class="btn btn-secondary">
@@ -32,3 +85,24 @@
         </div>
     </form>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const frm = document.getElementById('frmEditarConglo');
+            frm.addEventListener('submit', (e) => {
+                let total = 0;
+                const inputs = document.querySelectorAll('.pesoInput');
+                inputs.forEach(inp => {
+                    const val = parseFloat(inp.value) || 0;
+                    total += val;
+                });
+
+                if (total > 100) {
+                    alert('La sumatoria de porcentajes excede el 100% (validación JS).');
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+}

@@ -478,32 +478,55 @@ namespace SEDEP.Controllers
             }
         }
 
+        //modelo "dummy" para cada "peso"
+        public class PesoDummy
+        {
+            public string Nombre { get; set; }
+            public decimal Porcentaje { get; set; }
+        }
+
+        //modelo "dummy" para EditaConglomerado: 
+        public class EditaConglomeradoDummyModel
+        {
+            public int Id { get; set; }
+            public string Nombre { get; set; }
+            public string Descripcion { get; set; }
+            public List<PesoDummy> Pesos { get; set; }
+        }
+
+        [HttpGet]
         public IActionResult EditaConglomerado(int id)
         {
-            return View(objeto_ConglomeradosNegocios.ConsultarConglomeradoID(id));
+            //datos de ejemplo
+            var model = new EditaConglomeradoDummyModel
+            {
+                Id = id,
+                Nombre = "Conglomerado Demo " + id,
+                Descripcion = "Texto descriptivo de prueba",
+                Pesos = new List<PesoDummy>
+        {
+            new PesoDummy { Nombre = "Objetivo 1", Porcentaje = 30 },
+            new PesoDummy { Nombre = "Objetivo 2", Porcentaje = 20 },
+            new PesoDummy { Nombre = "Competencia A", Porcentaje = 25 }
+        }
+            };
+
+            return View(model);
         }
 
         [HttpPost]
-        public IActionResult EditaConglomerado(int id, IFormCollection collection)
+        public IActionResult EditaConglomerado(EditaConglomeradoDummyModel model)
         {
-            try
+            decimal suma = model.Pesos.Sum(x => x.Porcentaje);
+            if (suma > 100)
             {
-                ConglomeradoModel conglomeradoEditar = new()
-                {
-                    IdConglomerado = id,
-                    NombreConglomerado = collection["NombreConglomerado"]!,
-                    Descripcion = collection["Descripcion"]!
-                };
+                TempData["MensajeError"] = "La sumatoria de porcentajes excede el 100% (validación back-end).";
+                return View(model);
+            }
 
-                objeto_ConglomeradosNegocios.ModificarConglomerado(conglomeradoEditar);
-                TempData["MensajeExito"] = $"Conglomerado {conglomeradoEditar.NombreConglomerado} modificado correctamente.";
-                return RedirectToAction(nameof(ManteniConglomerados));
-            }
-            catch (Exception ex)
-            {
-                TempData["MensajeError"] = $"Error al modificar el conglomerado: {ex.Message}";
-                return View();
-            }
+            //si es valido, “simula” guardado
+            TempData["MensajeExito"] = "Cambios guardados (datos quemados, sin DB).";
+            return RedirectToAction("ManteniConglomerados");
         }
 
         public ActionResult BorrarConglomerado(int id)
