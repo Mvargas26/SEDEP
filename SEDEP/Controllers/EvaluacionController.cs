@@ -276,6 +276,7 @@ namespace SEDEP.Controllers
                     var (listaObjetivos, listaCompetencias) = objeto_Evaluaciones.Listar_objetivosYCompetenciasXEvaluacion(ultimaEvaluacion.IdEvaluacion);
                     ViewBag.ListaObjetivos = listaObjetivos;
                     ViewBag.ListaCompetencias = listaCompetencias;
+                    ViewBag.idEvaluacion = ultimaEvaluacion.IdEvaluacion;
 
                     return View(subalterno);
                 }
@@ -289,7 +290,87 @@ namespace SEDEP.Controllers
 
         }
 
-       
+        [HttpPost]
+        public IActionResult RealizarEvaluacionComoFuncionario([FromBody] dynamic evaluacionData)
+        {
+            try
+            {
+                // Convertir a JObject para manipular más fácilmente
+                var jsonData = JObject.Parse(evaluacionData.ToString());
+
+                // Acceder a los arrays
+                var objetivosAsignados = jsonData["objetivosAsignados"];
+                var competenciasAsignadas = jsonData["competenciasAsignadas"];
+                int idEvaluacion = ((JObject)jsonData)["idEvaluacion"]?.Value<int>() ?? 0;
+                string cedulaFuncionario = (string)jsonData["cedFuncionario"] ?? string.Empty;
+                int idConglo = ((JObject)jsonData)["idConglo"]?.Value<int>() ?? 0;
+
+                //Traemos la Evaluacion
+                EvaluacionModel ultimaEvaluacion = new();
+                ultimaEvaluacion = objeto_Evaluaciones.ConsultarEvaluacionComoFuncionario(cedulaFuncionario, idConglo);
+
+                //lista de las evaluaciones a Modificar
+                var objetivosAModificar = new List<EvaluacionXObjetivoModel>();
+
+                foreach (var objetivo in objetivosAsignados)
+                {
+                    objetivosAModificar.Add(new EvaluacionXObjetivoModel
+                    {
+                        IdEvaxObj = Convert.ToInt32(objetivo.id),
+                        ValorObtenido = Convert.ToDecimal(objetivo.actual)
+                    });
+                }
+
+                //ista de las competencias a Evaluar
+                var competenciasAModificar = new List<EvaluacionXcompetenciaModel>();
+
+                foreach (var competencia in competenciasAsignadas)
+                {
+                    competenciasAModificar.Add(new EvaluacionXcompetenciaModel
+                    {
+                        IdEvaxComp = Convert.ToInt32(competencia.id),
+                        ValorObtenido = Convert.ToDecimal(competencia.actual)
+                    });
+                }
+
+                //modificamos los valores de objetivos en la BD
+                foreach (var objetivo in objetivosAModificar)
+                {
+                    //traemos el objetivo que esta en la db
+                    EvaluacionXObjetivoModel objetivoAlterado = objeto_EvaXObjetivo.ConsultarEvaluacionXObjetivoPorID(objetivo.IdEvaxObj);
+                    //solo le cambiamos el valor actual
+                    objetivoAlterado.ValorObtenido = objetivo.ValorObtenido;
+                    //lo guardamos nuevamente
+                    objeto_EvaXObjetivo.ModificarEvaluacionXObjetivo(objetivoAlterado);
+
+                }
+
+                //modificamos los valores de Competencias en la BD
+                foreach (var competencia in competenciasAModificar)
+                {
+                    //traemos el  que esta en la db
+                    EvaluacionXcompetenciaModel CompetenciaAlterada = objeto_EvaXcompetencia.consultarEvaXCompPorID(competencia.IdEvaxComp);
+                    //solo le cambiamos el valor actual
+                    CompetenciaAlterada.ValorObtenido = competencia.ValorObtenido;
+                    //lo guardamos nuevamente
+                    objeto_EvaXcompetencia.ActualizarEvaluacionXCompetencia(CompetenciaAlterada);
+
+                }
+
+
+
+
+                return Json(new { success = true, redirectUrl = Url.Action("Index", "Evaluacion") });
+
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { success = false, error = ex.Message });
+            }
+
+        }
+
 
         #endregion
     }

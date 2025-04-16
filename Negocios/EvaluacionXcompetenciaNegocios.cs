@@ -106,6 +106,38 @@ namespace Negocios
             }
         }//fin EliminarEvaluacionXCompetencia
 
+        public EvaluacionXcompetenciaModel consultarEvaXCompPorID(int idEvaxComp)
+        {
+            try
+            {
+                List<SqlParameter> parametros = new()
+                {
+                    new SqlParameter("@Operacion", "R"),
+                    new SqlParameter("@idEvaxComp", idEvaxComp)
+                };
+
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("[adm].[sp_EvaluacionPorCompetencia_CRUD]", parametros);
+
+                if (dt.Rows.Count == 0)
+                    return null; 
+
+                DataRow row = dt.Rows[0];
+
+                return new EvaluacionXcompetenciaModel
+                {
+                    IdEvaxComp = Convert.ToInt32(row["idEvaxComp"]),
+                    IdEvaluacion = Convert.ToInt32(row["idEvaluacion"]),
+                    IdCompetencia = Convert.ToInt32(row["idCompetencia"]),
+                    ValorObtenido = row["valorObtenido"] != DBNull.Value ? Convert.ToDecimal(row["valorObtenido"]) : 0,
+                    Peso = row["peso"] != DBNull.Value ? Convert.ToDecimal(row["peso"]) : 0,
+                    Meta = row["meta"] != DBNull.Value ? row["meta"].ToString() : string.Empty
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Fallo al consultar evaluación por competencia: " + ex.Message);
+            }
+        }//fin consultarEvaXCompPorID
 
     }//fin class
 }//fin space
