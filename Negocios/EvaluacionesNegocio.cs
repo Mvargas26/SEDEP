@@ -13,7 +13,6 @@ namespace Negocios
     public class EvaluacionesNegocio
     {
 
-        //***************** VARIABLES *******************
         SQLServerContext_Datos objDatos = new SQLServerContext_Datos();
 
         public List<EvaluacionModel> ListarEvaluaciones()
@@ -23,11 +22,11 @@ namespace Negocios
             try
             {
                 List<SqlParameter> parametros = new()
-                {
-                    new SqlParameter("@Accion", "SELECT")
-                };
+            {
+                new SqlParameter("@Operacion", "R")
+            };
 
-                DataTable dt = objDatos.EjecutarSQLconSP_DT("[adm].[sp_CrudEvaluaciones]", parametros);
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("sp_Evaluacion_CRUD", parametros);
 
                 foreach (DataRow row in dt.Rows)
                 {
@@ -55,17 +54,89 @@ namespace Negocios
             {
                 string fechaTratada = nueva.FechaCreacion.ToString("yyyy-MM-dd");
                 List<SqlParameter> parametros = new()
-                {
-                    new SqlParameter("@Operacion", "C"),
-                    new SqlParameter("@IdFuncionario", nueva.IdFuncionario),
-                    new SqlParameter("@Observaciones", (object)nueva.Observaciones ?? DBNull.Value),
-                    new SqlParameter("@FechaCreacion", fechaTratada),
-                new SqlParameter("@EstadoEvaluacion", nueva.EstadoEvaluacion)
-                    new SqlParameter("@idConglomerado", nueva.idConglomerado)
-                };
+            {
+                new SqlParameter("@Operacion", "C"),
+                new SqlParameter("@IdFuncionario", nueva.IdFuncionario),
+                new SqlParameter("@Observaciones", (object)nueva.Observaciones ?? DBNull.Value),
+                new SqlParameter("@FechaCreacion", fechaTratada),
+                new SqlParameter("@EstadoEvaluacion", nueva.EstadoEvaluacion),
+                new SqlParameter("@idConglomerado", nueva.idConglomerado)
+            };
 
-                // Ejecutar el procedimiento almacenado
-                DataTable dt = objDatos.EjecutarSQLconSP_DT("[sp_Evaluacion_CRUD]", parametros);
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("sp_Evaluacion_CRUD", parametros);
+
+                if (dt.Rows.Count == 0)
+                    return null;
+
+                DataRow row = dt.Rows[0];
+
+                return new EvaluacionModel
+                {
+                    IdEvaluacion = Convert.ToInt32(row["idEvaluacion"]),
+                    IdFuncionario = row["idFuncionario"].ToString(),
+                    Observaciones = row["Observaciones"]?.ToString(),
+                    FechaCreacion = Convert.ToDateTime(row["fechaCreacion"]),
+                    idConglomerado = Convert.ToInt32(row["idConglomerado"]),
+                    EstadoEvaluacion = Convert.ToInt32(row["estadoEvaluacion"])
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Fallo al crear evaluación: " + ex.Message);
+            }
+        }
+
+        public void ModificarEvaluacion(EvaluacionModel evaluacion)
+        {
+            try
+            {
+                List<SqlParameter> parametros = new()
+            {
+                new SqlParameter("@Operacion", "U"),
+                new SqlParameter("@IdEvaluacion", evaluacion.IdEvaluacion),
+                new SqlParameter("@IdFuncionario", evaluacion.IdFuncionario),
+                new SqlParameter("@Observaciones", (object)evaluacion.Observaciones ?? DBNull.Value),
+                new SqlParameter("@FechaCreacion", evaluacion.FechaCreacion),
+                new SqlParameter("@EstadoEvaluacion", evaluacion.EstadoEvaluacion),
+                new SqlParameter("@idConglomerado", evaluacion.idConglomerado)
+            };
+
+                objDatos.EjecutarSQLconSP_Void("sp_Evaluacion_CRUD", parametros);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Fallo al modificar evaluación: " + ex.Message);
+            }
+        }
+
+        public void EliminarEvaluacion(int idEvaluacion)
+        {
+            try
+            {
+                List<SqlParameter> parametros = new()
+            {
+                new SqlParameter("@Operacion", "D"),
+                new SqlParameter("@IdEvaluacion", idEvaluacion)
+            };
+
+                objDatos.EjecutarSQLconSP_Void("sp_Evaluacion_CRUD", parametros);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Fallo al eliminar evaluación: " + ex.Message);
+            }
+        }
+
+        public EvaluacionModel ConsultarEvaluacionPorID(int idEvaluacion)
+        {
+            try
+            {
+                List<SqlParameter> parametros = new()
+            {
+                new SqlParameter("@IdEvaluacion", idEvaluacion)
+            };
+
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_ConsultarEvaluacionPorID", parametros);
 
                 if (dt.Rows.Count == 0)
                     return null;
@@ -84,92 +155,19 @@ namespace Negocios
             }
             catch (Exception ex)
             {
-                throw new Exception("Fallo al crear evaluación: " + ex.Message);
-            }
-        }
-
-        public void ModificarEvaluacion(EvaluacionModel evaluacion)
-        {
-            try
-            {
-                List<SqlParameter> parametros = new()
-                {
-                    new SqlParameter("@Accion", "UPDATE"),
-                    new SqlParameter("@IdEvaluacion", evaluacion.IdEvaluacion),
-                    new SqlParameter("@IdFuncionario", evaluacion.IdFuncionario),
-                    new SqlParameter("@Observaciones", (object)evaluacion.Observaciones ?? DBNull.Value),
-                    new SqlParameter("@FechaCreacion", evaluacion.FechaCreacion),
-                    new SqlParameter("@EstadoEvaluacion", evaluacion.EstadoEvaluacion),
-                    new SqlParameter("@idConglomerado", evaluacion.idConglomerado)
-
-                };
-
-                objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudEvaluaciones]", parametros);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Fallo al modificar evaluación: " + ex.Message);
-            }
-        }
-
-        public void EliminarEvaluacion(int idEvaluacion)
-        {
-            try
-            {
-                List<SqlParameter> parametros = new()
-                {
-                    new SqlParameter("@Accion", "DELETE"),
-                    new SqlParameter("@IdEvaluacion", idEvaluacion)
-                };
-
-                objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudEvaluaciones]", parametros);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Fallo al eliminar evaluación: " + ex.Message);
-            }
-        }
-
-        public EvaluacionModel ConsultarEvaluacionPorID(int idEvaluacion)
-        {
-            try
-            {
-                List<SqlParameter> parametros = new()
-                {
-                    new SqlParameter("@IdEvaluacion", idEvaluacion)
-                };
-
-                DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_ConsultarEvaluacionPorID", parametros);
-
-                if (dt.Rows.Count == 0)
-                    return null;
-
-                DataRow row = dt.Rows[0];
-
-                return new EvaluacionModel
-                {
-                    IdEvaluacion = Convert.ToInt32(row["idEvaluacion"]),
-                    IdFuncionario = row["idFuncionario"].ToString(),
-                    Observaciones = row["Observaciones"]?.ToString(),
-                    FechaCreacion = Convert.ToDateTime(row["fechaCreacion"]),
-                    EstadoEvaluacion = Convert.ToInt32(row["estadoEvaluacion"]),
-                };
-            }
-            catch (Exception ex)
-            {
                 throw new Exception("Error al consultar evaluación por ID: " + ex.Message);
             }
-        }//fin
+        }
 
         public EvaluacionModel ConsultarEvaluacionComoFuncionario(string idFuncionario, int idConglomerado)
         {
             try
             {
                 List<SqlParameter> parametros = new()
-        {
-            new SqlParameter("@idFuncionario", idFuncionario),
-            new SqlParameter("@idConglomerado", idConglomerado)
-        };
+            {
+                new SqlParameter("@idFuncionario", idFuncionario),
+                new SqlParameter("@idConglomerado", idConglomerado)
+            };
 
                 DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_consultarEvaluacionComoFuncionario", parametros);
 
@@ -185,22 +183,23 @@ namespace Negocios
                     Observaciones = row["Observaciones"]?.ToString(),
                     FechaCreacion = Convert.ToDateTime(row["fechaCreacion"]),
                     EstadoEvaluacion = Convert.ToInt32(row["estadoEvaluacion"]),
+                    idConglomerado = Convert.ToInt32(row["idConglomerado"])
                 };
             }
             catch (Exception ex)
             {
                 throw new Exception("Error al consultar evaluación del funcionario: " + ex.Message);
             }
-        }//fin 
+        }
 
         public (List<ObjetivoModel>, List<CompetenciasModel>) ListarObjYCompetenciasXConglomerado(int idConglomerado)
         {
             try
             {
                 List<SqlParameter> parametros = new()
-                {
-                    new SqlParameter("@idConglomerado", idConglomerado)
-                };
+            {
+                new SqlParameter("@idConglomerado", idConglomerado)
+            };
 
                 DataSet ds = objDatos.EjecutarSQLconSP_DS("sp_ListaObjetivosYCompetencias", parametros);
 
@@ -241,9 +240,9 @@ namespace Negocios
             {
                 throw new Exception("Error al listar objetivos y competencias por conglomerado: " + ex.Message);
             }
-        }//fin ConsultarEvaluacionPorID
+        }
 
-        public (List<EvaluacionXObjetivoModel>,List <EvaluacionXcompetenciaModel>) Listar_objetivosYCompetenciasXEvaluacion (int idEvaluacion)
+        public (List<EvaluacionXObjetivoModel>, List<EvaluacionXcompetenciaModel>) Listar_objetivosYCompetenciasXEvaluacion(int idEvaluacion)
         {
             List<EvaluacionXObjetivoModel> listaObjetivos = new();
             List<EvaluacionXcompetenciaModel> listaCompetencias = new();
@@ -251,9 +250,9 @@ namespace Negocios
             try
             {
                 List<SqlParameter> parametros = new()
-                {
-                    new SqlParameter("@idEvaluacion", idEvaluacion)
-                };
+            {
+                new SqlParameter("@idEvaluacion", idEvaluacion)
+            };
 
                 DataSet ds = objDatos.EjecutarSQLconSP_DS("sp_objetivosYCompetenciasXEvaluacion", parametros);
 
@@ -293,14 +292,12 @@ namespace Negocios
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                throw new Exception("Error al listar objetivos y competencias por evaluación: " + ex.Message);
             }
 
             return (listaObjetivos, listaCompetencias);
-        }//fin Listar_objetivosYCompetenciasXEvaluacion
-
+        }
     }//fin class
 }//fin space

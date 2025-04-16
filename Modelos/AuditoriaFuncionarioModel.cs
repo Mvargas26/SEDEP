@@ -29,6 +29,7 @@ namespace Modelos
 
         [Required]
         [StringLength(100)]
+
         [Display(Name = "Fecha y Hora")]
         public string FechaHora { get; set; }
 
