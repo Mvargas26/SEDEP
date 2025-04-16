@@ -60,7 +60,7 @@ namespace Negocios
                     new SqlParameter("@IdFuncionario", nueva.IdFuncionario),
                     new SqlParameter("@Observaciones", (object)nueva.Observaciones ?? DBNull.Value),
                     new SqlParameter("@FechaCreacion", fechaTratada),
-                    new SqlParameter("@EstadoEvaluacion", nueva.EstadoEvaluacion),
+                new SqlParameter("@EstadoEvaluacion", nueva.EstadoEvaluacion)
                     new SqlParameter("@idConglomerado", nueva.idConglomerado)
                 };
 
@@ -153,7 +153,6 @@ namespace Negocios
                     Observaciones = row["Observaciones"]?.ToString(),
                     FechaCreacion = Convert.ToDateTime(row["fechaCreacion"]),
                     EstadoEvaluacion = Convert.ToInt32(row["estadoEvaluacion"]),
-                    idConglomerado = Convert.ToInt32(row["idConglomerado"])
                 };
             }
             catch (Exception ex)
@@ -186,7 +185,6 @@ namespace Negocios
                     Observaciones = row["Observaciones"]?.ToString(),
                     FechaCreacion = Convert.ToDateTime(row["fechaCreacion"]),
                     EstadoEvaluacion = Convert.ToInt32(row["estadoEvaluacion"]),
-                    idConglomerado = Convert.ToInt32(row["idConglomerado"])
                 };
             }
             catch (Exception ex)
