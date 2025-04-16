@@ -9,7 +9,7 @@
     <form asp-action="CrearNuevoFuncionario" method="post">
         <div class="mb-3">
             <label asp-for="Funcionario.Cedula" class="form-label">Cedula</label>
-            <input asp-for="Funcionario.Cedula" class="form-control" required pattern=".*\S.*" maxlength="15">
+            <input asp-for="Funcionario.Cedula" class="form-control" required pattern=".*\S.*" maxlength="15" minlength="8">
         </div>
         <div class="mb-3">
             <label asp-for="Funcionario.Nombre" class="form-label">Nombre</label>

@@ -19,57 +19,91 @@ namespace Negocios
         {
             var parametros = new List<SqlParameter>
             {
-                new SqlParameter("@IdConglomerado", model.IdConglomerado),
-                new SqlParameter("@IdTipoObjetivo", (object?)model.IdTipoObjetivo ?? DBNull.Value),
-                new SqlParameter("@IdTipoCompetencia", (object?)model.IdTipoCompetencia ?? DBNull.Value),
+                new SqlParameter("@Operacion", "INSERT"),
+                new SqlParameter("@idConglomerado", model.IdConglomerado),
+                new SqlParameter("@idTipoObjetivo", (object?)model.IdTipoObjetivo ?? DBNull.Value),
+                new SqlParameter("@idTipoCompetencia", (object?)model.IdTipoCompetencia ?? DBNull.Value),
                 new SqlParameter("@Porcentaje", model.Porcentaje)
             };
 
-            _context.EjecutarSQLconSP_Void("sp_CrearPesoPorConglomerado", parametros);
+            _context.EjecutarSQLconSP_Void("SP_PesoXConglomeradoCRUD", parametros);
         }
 
         public void Modificar(PesosConglomeradoModel model)
         {
             var parametros = new List<SqlParameter>
             {
-                new SqlParameter("@IdPesoXConglomerado", model.IdPesoXConglomerado),
-                new SqlParameter("@IdConglomerado", model.IdConglomerado),
-                new SqlParameter("@IdTipoObjetivo", (object?)model.IdTipoObjetivo ?? DBNull.Value),
-                new SqlParameter("@IdTipoCompetencia", (object?)model.IdTipoCompetencia ?? DBNull.Value),
+                new SqlParameter("@Operacion", "UPDATE"),
+                new SqlParameter("@idPesoXConglomerado", model.IdPesoXConglomerado),
+                new SqlParameter("@idConglomerado", model.IdConglomerado),
+                new SqlParameter("@idTipoObjetivo", (object?)model.IdTipoObjetivo ?? DBNull.Value),
+                new SqlParameter("@idTipoCompetencia", (object?)model.IdTipoCompetencia ?? DBNull.Value),
                 new SqlParameter("@Porcentaje", model.Porcentaje)
             };
 
-            _context.EjecutarSQLconSP_Void("sp_CrearPesoPorConglomerado", parametros);
+            _context.EjecutarSQLconSP_Void("SP_PesoXConglomeradoCRUD", parametros);
         }
 
         public void Eliminar(int id)
         {
             var parametros = new List<SqlParameter>
             {
-                new SqlParameter("@IdPesoXConglomerado", id)
+                new SqlParameter("@Operacion", "DELETE"),
+                new SqlParameter("@idPesoXConglomerado", id)
             };
 
-            _context.EjecutarSQLconSP_Void("sp_EliminarPesoPorConglomerado", parametros);
+            _context.EjecutarSQLconSP_Void("SP_PesoXConglomeradoCRUD", parametros);
         }
 
+        //*********************************************************************************************
+
+        //estos select no se si los vayan a ocupar
         public List<PesosConglomeradoModel> ObtenerTodos()
         {
-            var dt = _context.EjecutarSQLconSP_DT("sp_ObtenerPesosPorConglomerado", new List<SqlParameter>());
-            var lista = new List<PesosConglomeradoModel>();
+            List<SqlParameter> parametros = new()
+            {
+                new SqlParameter("@Operacion", "SELECT")
+            };
+
+            DataTable dt = _context.EjecutarSQLconSP_DT("SP_PesoXConglomeradoCRUD", parametros);
+            List<PesosConglomeradoModel> lista = new();
 
             foreach (DataRow row in dt.Rows)
             {
                 lista.Add(new PesosConglomeradoModel
                 {
-                    IdPesoXConglomerado = (int)row["IdPesoXConglomerado"],
-                    IdConglomerado = (int)row["IdConglomerado"],
-                    IdTipoObjetivo = row["IdTipoObjetivo"] != DBNull.Value ? (int?)row["IdTipoObjetivo"] : null,
-                    IdTipoCompetencia = row["IdTipoCompetencia"] != DBNull.Value ? (int?)row["IdTipoCompetencia"] : null,
-                    Porcentaje = (decimal)row["Porcentaje"]
+                    IdPesoXConglomerado = Convert.ToInt32(row["idPesoXConglomerado"]),
+                    IdConglomerado = Convert.ToInt32(row["idConglomerado"]),
+                    IdTipoObjetivo = Convert.ToInt32(row["idTipoObjetivo"]),
+                    IdTipoCompetencia = Convert.ToInt32(row["idTipoCompetencia"]),
+                    Porcentaje = Convert.ToDecimal(row["Porcentaje"])
                 });
             }
 
             return lista;
+        }
+
+        public PesosConglomeradoModel ConsultarPorID(int id)
+        {
+            List<SqlParameter> parametros = new()
+            {
+                new SqlParameter("@Operacion", "SELECT"),
+                new SqlParameter("@idPesoXConglomerado", id)
+            };
+
+            DataTable dt = _context.EjecutarSQLconSP_DT("SP_PesoXConglomeradoCRUD", parametros);
+            if (dt.Rows.Count == 0)
+                return null;
+
+            DataRow row = dt.Rows[0];
+            return new PesosConglomeradoModel
+            {
+                IdPesoXConglomerado = Convert.ToInt32(row["idPesoXConglomerado"]),
+                IdConglomerado = Convert.ToInt32(row["idConglomerado"]),
+                IdTipoObjetivo = Convert.ToInt32(row["idTipoObjetivo"]),
+                IdTipoCompetencia = Convert.ToInt32(row["idTipoCompetencia"]),
+                Porcentaje = Convert.ToDecimal(row["Porcentaje"])
+            };
         }
     }
 }
