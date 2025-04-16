@@ -60,7 +60,7 @@ namespace Negocios
                     new SqlParameter("@IdFuncionario", nueva.IdFuncionario),
                     new SqlParameter("@Observaciones", (object)nueva.Observaciones ?? DBNull.Value),
                     new SqlParameter("@FechaCreacion", fechaTratada),
-                new SqlParameter("@EstadoEvaluacion", nueva.EstadoEvaluacion)
+                new SqlParameter("@EstadoEvaluacion", nueva.EstadoEvaluacion),
                     new SqlParameter("@idConglomerado", nueva.idConglomerado)
                 };
 
