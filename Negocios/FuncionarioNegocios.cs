@@ -30,7 +30,8 @@ namespace Negocios
         {
             new SqlParameter("@Accion", "UPDATE"),
             new SqlParameter("@Cedula", cedula),
-            new SqlParameter("@CodigoSeguridad", codigoSeguridad)
+            new SqlParameter("@CodigoSeguridad", codigoSeguridad),
+            new SqlParameter("@MensajeError", SqlDbType.VarChar, 255) { Direction = ParameterDirection.Output }
         };
 
                 objDatos.EjecutarSQLconSP_Void("adm.sp_CrudFuncionarios", parametros);
@@ -49,7 +50,8 @@ namespace Negocios
                 List<SqlParameter> parametros = new()
         {
             new SqlParameter("@Accion", "CONSULTAID"),
-            new SqlParameter("@Cedula", cedula)
+            new SqlParameter("@Cedula", cedula),
+            new SqlParameter("@MensajeError", SqlDbType.VarChar, 255) { Direction = ParameterDirection.Output } // Parámetro de salida
         };
 
                 DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_CrudFuncionarios", parametros);
@@ -89,7 +91,8 @@ namespace Negocios
             {
                 List<SqlParameter> parametros = new()
             {
-                new SqlParameter("@Accion", "SELECT")
+                new SqlParameter("@Accion", "SELECT"),
+                new SqlParameter("@MensajeError", SqlDbType.VarChar, 255) { Direction = ParameterDirection.Output } // Parámetro de salida
             };
 
                 DataTable dt = objDatos.EjecutarSQLconSP_DT("[adm].[sp_CrudFuncionarios]", parametros);
@@ -137,7 +140,8 @@ namespace Negocios
                 new SqlParameter("@IdDepartamento", funcionarioNuevo.IdDepartamento),
                 new SqlParameter("@IdRol", funcionarioNuevo.IdRol),
                 new SqlParameter("@IdPuesto", funcionarioNuevo.IdPuesto),
-                new SqlParameter("@IdEstadoFuncionario", funcionarioNuevo.IdEstadoFuncionario)
+                new SqlParameter("@IdEstadoFuncionario", funcionarioNuevo.IdEstadoFuncionario),
+                new SqlParameter("@MensajeError", SqlDbType.VarChar, 255) { Direction = ParameterDirection.Output }
             };
 
                 objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudFuncionarios]", parametros);
@@ -166,7 +170,8 @@ namespace Negocios
                 new SqlParameter("@IdDepartamento", funcionario.IdDepartamento) ,
                 new SqlParameter("@IdRol", funcionario.IdRol) ,
                 new SqlParameter("@IdPuesto", funcionario.IdPuesto) ,
-                new SqlParameter("@IdEstadoFuncionario", funcionario.IdEstadoFuncionario)
+                new SqlParameter("@IdEstadoFuncionario", funcionario.IdEstadoFuncionario),
+                new SqlParameter("@MensajeError", SqlDbType.VarChar, 255) { Direction = ParameterDirection.Output }
             };
 
                 objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudFuncionarios]", parametros);
@@ -184,13 +189,23 @@ namespace Negocios
                 List<SqlParameter> parametros = new()
             {
                 new SqlParameter("@Accion", "DELETE"),
-                new SqlParameter("@Cedula", cedula)
+                new SqlParameter("@Cedula", cedula),
+                new SqlParameter("@MensajeError", SqlDbType.VarChar, 255) { Direction = ParameterDirection.Output }
             };
                 objDatos.EjecutarSQLconSP_Void("[adm].[sp_CrudFuncionarios]", parametros);
+
+                // Captura el mensaje de error o éxito
+                string mensajeError = parametros.FirstOrDefault(p => p.ParameterName == "@MensajeError")?.Value?.ToString();
+
+                // Lanza una excepción si el mensaje es un error
+                if (mensajeError.Contains("No"))
+                {
+                    throw new Exception(mensajeError);
+                }
             }
             catch (Exception ex)
             {
-                throw new Exception("Fallo en Funcionario Negocios " + ex);
+                throw new Exception(ex.Message);
             }
         }//fin EliminarFuncionario
 
@@ -200,7 +215,7 @@ namespace Negocios
             {
                 List<SqlParameter> parametros = new()
                 {
-                    new SqlParameter("@idDepartamento", idDepartamento)
+                    new SqlParameter("@idDepartamento", idDepartamento),
                 };
 
                 DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_FuncionariosXDepartamento", parametros);

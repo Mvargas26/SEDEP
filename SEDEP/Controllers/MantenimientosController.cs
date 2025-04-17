@@ -204,8 +204,8 @@ namespace SEDEP.Controllers
             }
             catch (Exception ex)
             {
-                TempData["MensajeError"] = $"Error al borrar el funcionario: {ex.Message}";
-                return View();
+                TempData["MensajeError"] = ex.Message;
+                return RedirectToAction(nameof(ManteniFuncionarios));
             }
         }
 
