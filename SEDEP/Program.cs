@@ -1,6 +1,9 @@
 using Negocios;
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+QuestPDF.Settings.License = LicenseType.Community; // <-- aquí se pone
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

@@ -1,38 +1,91 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Datos;
+using Microsoft.Data.SqlClient;
+using Modelos;
 
 namespace Negocios
 {
     public class ReportesNegocio
     {
-        //crear pdf
-        //descomentar despues que este el sp, para agregar las librerias y que funcione 
+        SQLServerContext_Datos objDatos = new SQLServerContext_Datos();
 
-        /*
-         public byte[] GenerarPdfReporteGenerico(string titulo, List<string> lineas)
-         {
-             using var stream = new MemoryStream();
-             var writer = new PdfWriter(stream);
-             var pdf = new PdfDocument(writer);
-             var doc = new Document(pdf);
+        public List<ReporteMolde> ListarReportes()
+        {
+            try
+            {
+                List<SqlParameter> parametros = new()
+                {
+                    new SqlParameter("@Accion", "SELECT")
+                };
 
-             doc.Add(new Paragraph(titulo).SetBold().SetFontSize(16));
-             doc.Add(new Paragraph($"Fecha: {DateTime.Now:dd/MM/yyyy}").SetFontSize(10));
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_Reportes", parametros);
+                List<ReporteMolde> lista = new();
 
-             doc.Add(new Paragraph("\n"));
+                foreach (DataRow row in dt.Rows)
+                {
+                    lista.Add(new ReporteMolde
+                    {
+                        Cedula = row["cedula"].ToString(),
+                        Nombre = row["Nombre"].ToString(),
+                        IdEva = Convert.ToInt32(row["idEvaluacion"]),
+                        Fecha = Convert.ToDateTime(row["fechaCreacion"]),
+                        Observaciones = row["Observaciones"].ToString(),
+                        Objetivo = row["Objetivo"].ToString(),
+                        Competencia = row["Competencia"].ToString(),
+                        Nota = Convert.ToDouble(row["ValorObtenido"])
+                    });
+                }
 
-             foreach (var linea in lineas)
-             {
-                 doc.Add(new Paragraph(linea));
-             }
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al listar los reportes: " + ex.Message);
+            }
+        }
 
-             doc.Close();
-             return stream.ToArray();
-         }
-        */
+        public List<ReporteMolde> ListarReportesID(string Cedula)
+        {
+            try
+            {
+                List<SqlParameter> parametros = new()
+                {
+                   new SqlParameter("@Accion", "SELECTUNO"),
+                    new SqlParameter("@ID", Cedula)
+                };
+
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("adm.sp_Reportes", parametros);
+                List<ReporteMolde> lista = new();
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    lista.Add(new ReporteMolde
+                    {
+                        Cedula = row["cedula"].ToString(),
+                        Nombre = row["Nombre"].ToString(),
+                        IdEva = Convert.ToInt32(row["idEvaluacion"]),
+                        Fecha = Convert.ToDateTime(row["fechaCreacion"]),
+                        Observaciones = row["Observaciones"].ToString(),
+                        Objetivo = row["Objetivo"].ToString(),
+                        Competencia = row["Competencia"].ToString(),
+                        Nota = Convert.ToDouble(row["ValorObtenido"])
+                    });
+                }
+
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al listar los reportes: " + ex.Message);
+            }
+                
+        }
 
     }
 }
