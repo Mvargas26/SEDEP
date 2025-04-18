@@ -18,6 +18,7 @@ namespace SEDEP.Controllers
         PuestosNegocio _objetoPuesto = new PuestosNegocio();
         FuncionarioXConglomeradoNegocios objeto_funcionarioXConglomerado = new FuncionarioXConglomeradoNegocios();
         PeriodosEvaluacionNegocio _objetoPeriodo = new PeriodosEvaluacionNegocio();
+        RolesNegocios objeto_rol = new RolesNegocios();
 
 
         //***********************************************************************************************
@@ -44,13 +45,15 @@ namespace SEDEP.Controllers
             var puestos = _objetoPuesto.ObtenerPuestos();
             var conglomerados = objeto_ConglomeradosNegocios.ListarConglomerados();
             var departamentos = objeto_departamento.ListarDepartamentos();
+            var roles = objeto_rol.ListarRoles(); // Obtener la lista de roles
             var funcionario = new FuncionarioModel(); // Inicializa un nuevo objeto FuncionarioModel
             FuncionarioViewModel viewModel = new FuncionarioViewModel
             {
                 Funcionario = funcionario, 
                 Puestos = puestos,
                 Conglomerados = conglomerados,
-                Departamentos = departamentos
+                Departamentos = departamentos,
+                Roles = roles // Asigna la lista de roles al ViewModel
             };
 
             return View(viewModel);
@@ -127,14 +130,18 @@ namespace SEDEP.Controllers
             var conglomerados = objeto_ConglomeradosNegocios.ListarConglomerados();
 
             // Obtiene la lista de puestos de la capa de negocios
-            var puestos = _objetoPuesto.ObtenerPuestos(); 
+            var puestos = _objetoPuesto.ObtenerPuestos();
+            var departamentos = objeto_departamento.ListarDepartamentos();
+            var roles = objeto_rol.ListarRoles(); // Obtener la lista de roles
 
             // Crea el ViewModel
             FuncionarioViewModel viewModel = new FuncionarioViewModel
             {
                 Funcionario = funcionario,
                 Puestos = puestos,
-                Conglomerados = conglomerados
+                Conglomerados = conglomerados,
+                Departamentos = departamentos,
+                Roles = roles // Asigna la lista de roles al ViewModel
             };
 
             return View(viewModel);

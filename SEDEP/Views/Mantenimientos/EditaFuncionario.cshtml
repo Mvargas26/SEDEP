@@ -39,25 +39,20 @@
         </div>
 
         <div class="mb-3">
-            <label asp-for="Funcionario.IdDepartamento" class="form-label">Departamento</label>
-            <select asp-for="Funcionario.IdDepartamento" class="form-control" required>
+            <label asp-for="Funcionario.IdDepartamento" class="form-label">Departamentos</label>
+            <select asp-for="Funcionario.IdDepartamento"
+                    asp-items="@(new SelectList(Model.Departamentos, "IdDepartamento", "Departamento"))"
+                    class="form-control" required>
                 <option value="">Seleccione un departamento</option>
-                <option value="1">Finanzas</option>
-                <option value="2">Recursos Humanos</option>
-                <option value="3">Admisiones</option>
-                <option value="4">Registro Académico</option>
-                <option value="5">Biblioteca</option>
-                <option value="6">Tecnología de la Información</option>
             </select>
         </div>
 
         <div class="mb-3">
             <label asp-for="Funcionario.IdRol" class="form-label">Rol</label>
-            <select asp-for="Funcionario.IdRol" class="form-control" required>
+            <select asp-for="Funcionario.IdRol"
+                    asp-items="@(new SelectList(Model.Roles, "idRol", "Rol"))"
+                    class="form-control" required>
                 <option value="">Seleccione un rol</option>
-                <option value="1">Administrador</option>
-                <option value="2">Usuario</option>
-                <option value="3">Supervisor</option>
             </select>
         </div>
 
