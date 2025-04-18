@@ -122,6 +122,8 @@ namespace SEDEP.Controllers
                 return View(viewModel); 
             }
         }
+       
+        [Authorize(Roles = "Administración")]
 
         // Editar funcionario
         [HttpGet("Mantenimientos/EditaFuncionario/{cedula}")]
@@ -200,6 +202,8 @@ namespace SEDEP.Controllers
         }
 
         // Borrar funcionario
+        [Authorize(Roles = "Administración")]
+
         [HttpGet("Mantenimientos/BorrarFuncionario/{cedula}")]
         public IActionResult BorrarFuncionario(string cedula)
         {
@@ -233,6 +237,9 @@ namespace SEDEP.Controllers
         }
         #endregion
         #region OBJETIVOS
+
+        [Authorize(Roles = "Administración,Jefatura")]
+
         public IActionResult GestionObjetivos()
         {
             // Obtener la lista de objetivos desde la base de datos
@@ -248,10 +255,14 @@ namespace SEDEP.Controllers
             }
         }
 
+        [Authorize(Roles = "Administración,Jefatura")]
+
         public IActionResult CrearNuevoObjetivo()
         {
             return View("CreaObjetivo", new ObjetivoModel());
         }
+
+        [Authorize(Roles = "Administración,Jefatura")]
 
         [HttpPost]
         public IActionResult CrearObjetivo(ObjetivoModel nuevoObjetivo)
@@ -276,10 +287,14 @@ namespace SEDEP.Controllers
             }
         }
 
+        [Authorize(Roles = "Administración,Jefatura")]
+
         public IActionResult EditaObjetivo(int id)
         {
             return View(_objetivoNegocios.ConsultarObjetivoID(id));
         } // fin EditaConglomerado
+
+        [Authorize(Roles = "Administración,Jefatura")]
 
         [HttpPost]
         public IActionResult EditarObjetivo(ObjetivoModel objetivoEditado)
@@ -303,6 +318,8 @@ namespace SEDEP.Controllers
                 return View(objetivoEditado);
             }
         }
+
+        [Authorize(Roles = "Administración,Jefatura")]
 
         [HttpPost]
         public ActionResult BorraObjetivo(int id)
@@ -331,6 +348,8 @@ namespace SEDEP.Controllers
 
         #region DEPARTAMENTOS
         // Gestión de Departamentos (ya existente)
+        [Authorize(Roles = "Administración")]
+
         public IActionResult ManteniDepartamentos()
         {
             try
@@ -346,6 +365,8 @@ namespace SEDEP.Controllers
         }
 
         // crear departamento
+        [Authorize(Roles = "Administración")]
+
         public IActionResult CreaDepartamento()
         {
             return View(new DepartamentoModel());
@@ -372,6 +393,7 @@ namespace SEDEP.Controllers
         }
 
         // editar departamento
+        [Authorize(Roles = "Administración")]
         [HttpGet]
         public IActionResult EditaDepartamento(int id)
         {
@@ -400,6 +422,7 @@ namespace SEDEP.Controllers
         }
 
         // borrar departamento
+        [Authorize(Roles = "Administración")]
         [HttpGet]
         public IActionResult BorrarDepartamento(int id)
         {
@@ -436,6 +459,7 @@ namespace SEDEP.Controllers
 
         #region CONGLOMERADOS
         // Gestión de Conglomerados (Nuevo)
+        [Authorize(Roles = "Administración")]
         public IActionResult ManteniConglomerados()
         {
             try
@@ -508,6 +532,8 @@ namespace SEDEP.Controllers
             public List<PesoDummy> Pesos { get; set; }
         }
 
+
+        [Authorize(Roles = "Administración")]
         [HttpGet]
         public IActionResult EditaConglomerado(int id)
         {
@@ -543,6 +569,8 @@ namespace SEDEP.Controllers
             return RedirectToAction("ManteniConglomerados");
         }
 
+
+        [Authorize(Roles = "Administración")]
         public ActionResult BorrarConglomerado(int id)
         {
             return View(objeto_ConglomeradosNegocios.ConsultarConglomeradoID(id));
@@ -839,8 +867,6 @@ namespace SEDEP.Controllers
         }
 
 
-
-
         // Vista para editar un puesto
         public IActionResult EditaPuesto(int id)
         {
@@ -900,6 +926,7 @@ namespace SEDEP.Controllers
 
         #region Periodos
 
+        [Authorize(Roles = "Administración")]
         public IActionResult ManteniPeriodo()
         {
             try
@@ -914,6 +941,7 @@ namespace SEDEP.Controllers
             }
         }
 
+        [Authorize(Roles = "Administración")]
         public IActionResult CreaPeriodo()
         {
             return View(new PeriodoEvaluacionModel());
@@ -939,6 +967,7 @@ namespace SEDEP.Controllers
             }
         }
 
+        [Authorize(Roles = "Administración")]
         [HttpGet("Mantenimientos/EditaPeriodo/{anio}")]
         public IActionResult EditaPeriodo(int anio)
         {
@@ -968,6 +997,7 @@ namespace SEDEP.Controllers
             }
         }
 
+        [Authorize(Roles = "Administración")]
         public IActionResult EliminarPeriodo(int anio)
         {
             try

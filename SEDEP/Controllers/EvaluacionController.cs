@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using AdministracionActivosFijos;
 using Azure.Core;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SEDEP.Controllers
 {
@@ -61,6 +62,7 @@ namespace SEDEP.Controllers
         /// <summary>
         /// Pantalla para que la jefatura seleccione al subalterno a evaluar (EVA2).
         /// </summary>
+        [Authorize(Roles = "Jefatura")]
         [HttpGet]
         public IActionResult SeleccionarSubalterno()
         {
@@ -83,6 +85,7 @@ namespace SEDEP.Controllers
         /// <summary>
         /// Pantalla de evaluación (EVA3) – carga datos según la cédula y el id de conglomerado.
         /// </summary>
+        [Authorize(Roles = "Jefatura")]
         [HttpGet]
         public IActionResult EvaluacionSubalterno(string cedula, int idConglomerado)
         {
@@ -207,6 +210,7 @@ namespace SEDEP.Controllers
             }
         }
 
+        [Authorize(Roles = "Jefatura")]
         [HttpGet]
         public IActionResult ConglomeradosPorFunc(string cedula)
         {
@@ -220,11 +224,12 @@ namespace SEDEP.Controllers
                 return View();
             }
         }
-        
+
         #endregion
 
         #region EvaluacionComoFuncionario
 
+        [Authorize(Roles = "SubAlterno")]
         [HttpGet]
         public IActionResult ElegirCongloComoFuncionario()
         {
@@ -248,6 +253,7 @@ namespace SEDEP.Controllers
             }
         }
 
+        [Authorize(Roles = "SubAlterno")]
         [HttpGet]
         public IActionResult RealizarEvaluacionComoFuncionario(string cedula, int idConglomerado)
         {
@@ -415,6 +421,8 @@ namespace SEDEP.Controllers
         #endregion
 
         #region AprobarComoJefatura
+
+        [Authorize(Roles = "Jefatura")]
         [HttpGet]
         public IActionResult SeleccionarSubalternoParaAprobarEvaluacion()
         {
@@ -449,6 +457,7 @@ namespace SEDEP.Controllers
             return RedirectToAction("ConglomeradosPorFuncAprobarEvaluacion", new { cedula = cedulaSeleccionada });
         }
 
+        [Authorize(Roles = "Jefatura")]
         [HttpGet]
         public IActionResult ConglomeradosPorFuncAprobarEvaluacion(string cedula)
         {
@@ -463,6 +472,7 @@ namespace SEDEP.Controllers
             }
         }
 
+        [Authorize(Roles = "Jefatura")]
         [HttpGet]
         public IActionResult CrearSeguimiento(string cedula, int idConglomerado)
         {

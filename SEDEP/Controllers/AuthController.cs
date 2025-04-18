@@ -98,7 +98,6 @@ namespace SEDEP.Controllers
                      {
                          new Claim(ClaimTypes.Email,funcionario.Correo),
                          new Claim (ClaimTypes.Role,funcionario.Rol)
-
                      };
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -145,7 +144,7 @@ namespace SEDEP.Controllers
                 return RedirectToAction("Login");  // Si no hay cédula en TempData, redirige al login
             }
 
-            return RedirectToAction("Index", "Home");
+            return View();
         }
 
         [HttpPost]

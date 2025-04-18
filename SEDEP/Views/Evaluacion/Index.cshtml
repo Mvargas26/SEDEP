@@ -2,11 +2,27 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+
+@using System.Security.Claims
 @section SideMenu {
+    @{
+        var idRol = User.FindFirst("IdRol")?.Value;
+        var nombreRol = User.FindFirst(ClaimTypes.Role)?.Value;
+    }
+
     <ul class="sidebar-menu">
-        <li><a href="/Evaluacion/SeleccionarSubalterno">Planificar Evaluación a Subalterno</a></li>
-        <li><a href="/Evaluacion/SeleccionarSubalternoParaAprobarEvaluacion">Aprobar Evaluación Subalterno</a></li>
-        <li><a href="/Evaluacion/ElegirCongloComoFuncionario">Realizar Evaluación como Funcionario</a></li>
+        <!-- Opciones para SubAlterno  -->
+        @if (nombreRol == "SubAlterno")
+        {
+            <li><a href="/Evaluacion/ElegirCongloComoFuncionario">Realizar Evaluación como Funcionario</a></li>
+        }
+
+        <!-- Opciones para Jefatura -->
+        @if (nombreRol == "Jefatura")
+        {
+            <li><a href="/Evaluacion/SeleccionarSubalterno">Planificar Evaluación a Subalterno</a></li>
+            <li><a href="/Evaluacion/SeleccionarSubalternoParaAprobarEvaluacion">Aprobar Evaluación Subalterno</a></li>
+        }
     </ul>
 }
 
