@@ -41,9 +41,28 @@ namespace SEDEP.Controllers
         [HttpGet]
         public IActionResult SeleccionarSubalterno()
         {
-            int idDepartamento = 1; // Harcoded para ejemplo
-            var listaSubalternos = objeto_FuncionarioNegocios.ObtenerFuncionariosPorDepartamento(idDepartamento);
-            return View(listaSubalternos);
+            try
+            {
+                //Obtenemos el fun logueado
+                FuncionarioModel funCapturado = new FuncionarioModel();
+                funCapturado = FuncionarioLogueado.retornarDatosFunc();
+
+                int idDepartamento = funCapturado.IdDepartamento;
+                var listaSubalternos = objeto_FuncionarioNegocios.ObtenerFuncionariosPorDepartamento(idDepartamento);
+
+                if (listaSubalternos == null || !listaSubalternos.Any())
+                {
+                    TempData["Error"] = "No hay funcionarios de su departamento registrados en el sistema.";
+                    return View("SeleccionarSubalterno");
+                }
+
+                return View(listaSubalternos);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         [HttpPost]
@@ -210,17 +229,12 @@ namespace SEDEP.Controllers
         {
             try
             {
-                //Esto se debe capturar en el login
-                FuncionarioModel newFuncionarioLogin = new();
-                //newFuncionarioLogin = FuncionarioLogueado.retornarDatosFunc();
+                //Capturamos el funcionario Logueado
+                FuncionarioModel funCapturado = new FuncionarioModel();
+                funCapturado = FuncionarioLogueado.retornarDatosFunc();
 
-                //Eliminar cuando el login este activo
-                newFuncionarioLogin.Cedula = "323456789";
-
-
-                newFuncionarioLogin.IdDepartamento = 1;
                 ViewData["ListaConglomerados"] = objeto_ConglomeradosNegocios.ListarConglomerados();
-                return View(objeto_ConglomeradosNegocios.ConsultarConglomeradoXFuncionario(newFuncionarioLogin.Cedula));
+                return View(objeto_ConglomeradosNegocios.ConsultarConglomeradoXFuncionario(funCapturado.Cedula));
             }
             catch (Exception)
             {
@@ -232,7 +246,6 @@ namespace SEDEP.Controllers
         [HttpGet]
         public IActionResult RealizarEvaluacionComoFuncionario(string cedula, int idConglomerado)
         {
-
             try
             {
                 if (string.IsNullOrEmpty(cedula) || idConglomerado == 0)
@@ -403,7 +416,11 @@ namespace SEDEP.Controllers
         {
             try
             {
-                int idDepartamento = 1;
+                //Capturamos el funcionario Logueado
+                FuncionarioModel funCapturado = new FuncionarioModel();
+                funCapturado = FuncionarioLogueado.retornarDatosFunc();
+
+                int idDepartamento = funCapturado.IdDepartamento;
                 var listaSubalternos = objeto_FuncionarioNegocios.Obt_Func_ConEvaluacionXAprobarXDepart(idDepartamento);
 
                 if (listaSubalternos == null || !listaSubalternos.Any())
@@ -411,7 +428,6 @@ namespace SEDEP.Controllers
                     TempData["Error"] = "No hay evaluaciones por aprobar";
                     return View("SeleccionarSubalternoParaAprobarEvaluacion");
                 }
-
                 return View(listaSubalternos);
             }
             catch (Exception)
@@ -499,7 +515,6 @@ namespace SEDEP.Controllers
             }
 
         }
-        #endregion
 
         [HttpPost]
         public IActionResult CrearSeguimiento([FromBody] dynamic request)
@@ -534,6 +549,11 @@ namespace SEDEP.Controllers
                 return Json(new { success = false });
             }
         }//fin EnviarEvaluacionAlaJefatura
+
+        #endregion
+
+
+
     }//fin class
   
 }//fin space
