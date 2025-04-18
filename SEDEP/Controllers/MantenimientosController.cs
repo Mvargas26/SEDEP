@@ -20,7 +20,7 @@ namespace SEDEP.Controllers
         FuncionarioXConglomeradoNegocios objeto_funcionarioXConglomerado = new FuncionarioXConglomeradoNegocios();
         PeriodosEvaluacionNegocio _objetoPeriodo = new PeriodosEvaluacionNegocio();
         RolesNegocios objeto_rol = new RolesNegocios();
-
+        TiposCompetenciasNegocios objeto_TiposCompenNegocis = new();
 
         //***********************************************************************************************
         #region FUNCIONARIOS
@@ -732,6 +732,7 @@ namespace SEDEP.Controllers
 
         public IActionResult CrearNuevaCompetencia()
         {
+            ViewData["ListaTiposCompetencias"] = objeto_TiposCompenNegocis.ListarTiposCompetencias();
             return View("CrearNuevaCompetencia", new CompetenciasModel());
         }
 

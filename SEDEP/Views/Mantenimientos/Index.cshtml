@@ -2,18 +2,33 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@using System.Security.Claims
+
 @section SideMenu {
+
+    @{
+        var idRol = User.FindFirst("IdRol")?.Value;
+        var nombreRol = User.FindFirst(ClaimTypes.Role)?.Value;
+    }
+
     <ul class="sidebar-menu">
-        <li><a href="/Mantenimientos/ManteniConglomerados">Conglomerados</a></li>
-        <li><a href="/Mantenimientos/InformativaConglomerado">Información por conglomerado</a></li>
-        <li><a href="/Mantenimientos/ManteniDepartamentos">Departamentos</a></li>
-        <li><a href="/Mantenimientos/ManteniFuncionarios">Funcionarios</a></li>
+
+      @*   Si el rol es Administración se le muestra este  *@
+        @if (nombreRol == "Administración")
+        {
+            <li><a href="/Mantenimientos/ManteniConglomerados">Conglomerados</a></li>
+            <li><a href="/Mantenimientos/InformativaConglomerado">Información por conglomerado</a></li>
+            <li><a href="/Mantenimientos/ManteniDepartamentos">Departamentos</a></li>
+            <li><a href="/Mantenimientos/ManteniFuncionarios">Funcionarios</a></li>
+            <li><a href="/Mantenimientos/ManteniPuestos">Puestos</a></li>
+            <li><a href="/Mantenimientos/ManteniPeriodo">Períodos</a></li>
+            <li><a href="#">Modificar logo</a></li>
+        }
+       
         <li><a href="/Mantenimientos/GestionObjetivos ">Objetivos</a></li>
        @*  <li><a href="/Mantenimientos/ManteniMetas">Metas</a></li> *@
         <li><a href="/Mantenimientos/ManteniCompetencias">Competencias</a></li>
-        <li><a href="/Mantenimientos/ManteniPuestos">Puestos</a></li>
-        <li><a href="/Mantenimientos/ManteniPeriodo">Períodos</a></li>
-        <li><a href="#">Modificar logo</a></li>
+
     </ul>
 }
 

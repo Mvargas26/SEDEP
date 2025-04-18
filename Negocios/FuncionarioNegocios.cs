@@ -73,7 +73,8 @@ namespace Negocios
                     Rol = row["Rol"].ToString(),
                     Puesto = row["Puesto"].ToString(),
                     Estado = row["Estado"].ToString(),
-                    CodigoSeguridad = row["CodigoSeguridad"]?.ToString()
+                    CodigoSeguridad = row["CodigoSeguridad"]?.ToString(),
+                    IdDepartamento = Convert.ToInt32(row["idDepartamento"])
                 };
             }
             catch (Exception ex)

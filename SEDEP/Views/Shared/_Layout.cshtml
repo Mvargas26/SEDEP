@@ -11,6 +11,13 @@
 </head>
 
 <body>
+    @*     Obtenemos el rol del que hizo login *@ 
+   @using System.Security.Claims
+    @{
+        var idRol = User.FindFirst("IdRol")?.Value;
+        var nombreRol = User.FindFirst(ClaimTypes.Role)?.Value;
+    }
+
     <partial name="_NotificacionesEmergentes" />
 
     <div class="wrapper">
@@ -30,8 +37,11 @@
             else
             {
                 <ul class="sidebar-menu">
-                    <li><a asp-controller="Auth" asp-action="Login">Login</a></li>
-                    <li><a asp-controller="Mantenimientos" asp-action="Index">Mantenimientos</a></li>
+                    @if (nombreRol != "SubAlterno")
+                    {
+                        <li><a asp-controller="Mantenimientos" asp-action="Index">Mantenimientos</a></li>
+                    }
+                    @* <li><a asp-controller="Auth" asp-action="Login">Login</a></li> *@
                     <li><a asp-controller="Evaluacion" asp-action="Index">Evaluación</a></li>
                     <li><a asp-controller="Reportes" asp-action="Index">Reportes</a></li>
                 </ul>

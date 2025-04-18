@@ -2,7 +2,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Crear Competencia";
 }
-
+@{
+    var listaTiposCompetencias = ViewData["ListaTiposCompetencias"] as List<Modelos.TiposCompetenciasModel> ?? new List<Modelos.TiposCompetenciasModel>();
+}
 <div class="container mt-4">
     <h2 class="mb-4">@ViewData["Title"]</h2>
 
@@ -20,10 +22,10 @@
         <div class="mb-3">
             <label for="IdTipoCompetencia" class="form-label">Tipo de Competencia</label>
             <select id="IdTipoCompetencia" name="IdTipoCompetencia" class="form-control">
-                <option value="1">Competencia nivel Gerencial</option>
-                <option value="2">Competencia nivel  asistencia y Apoyo</option>
-                <option value="3">Competencias Nivel Profesional</option>
-                <option value="4">Competencias Nivel Jefatura</option>
+                @foreach (var tipo in listaTiposCompetencias)
+                {
+                <option value="@tipo.IdTipoCompetencia">@tipo.Tipo</option>
+                }
             </select>
         </div>
 

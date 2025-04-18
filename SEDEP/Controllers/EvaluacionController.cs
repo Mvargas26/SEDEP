@@ -81,9 +81,13 @@ namespace SEDEP.Controllers
         /// </summary>
         [Authorize(Roles = "Jefatura")]
         [HttpGet]
-        public IActionResult EvaluacionSubalterno(string cedula, int idConglomerado)
+        public IActionResult EvaluacionSubalterno(string seleccion)
         {
-            if (string.IsNullOrEmpty(cedula) || idConglomerado == 0)
+            var partes = seleccion.Split('&');
+            var cedula = partes[0];
+            var idConglomeradoString = partes[1];
+
+            if (string.IsNullOrEmpty(cedula) || string.IsNullOrEmpty(idConglomeradoString))
             {
                 TempData["Error"] = "Debe seleccionar un Conglomerado para el funcionario a evaluar.";
                 return RedirectToAction("SeleccionarSubalterno");
@@ -98,6 +102,9 @@ namespace SEDEP.Controllers
                     TempData["Error"] = "Se debe establecer una fecha Maxima para el periodo "+FechaCostaRica.Year;
                     return RedirectToAction("SeleccionarSubalterno");
                 }
+
+                //Convertimos a int el idConglomerado
+                int idConglomerado = Convert.ToInt32(idConglomeradoString);
 
                 //Validamos que aun estemos en el rango de la fecha permitida
                 if (peridoActual.FechaMaxima <= FechaCostaRica)
@@ -244,17 +251,24 @@ namespace SEDEP.Controllers
 
         [Authorize(Roles = "SubAlterno")]
         [HttpGet]
-        public IActionResult RealizarEvaluacionComoFuncionario(string cedula, int idConglomerado)
+        public IActionResult RealizarEvaluacionComoFuncionario(string seleccion)
         {
             try
             {
-                if (string.IsNullOrEmpty(cedula) || idConglomerado == 0)
+                var partes = seleccion.Split('&');
+                var cedula = partes[0];
+                var idConglomeradoString = partes[1];
+
+                if (string.IsNullOrEmpty(cedula) || string.IsNullOrEmpty(idConglomeradoString))
                 {
                     TempData["Error"] = "Debe seleccionar un Conglomerado para el funcionario a evaluar.";
                     return RedirectToAction("SeleccionarSubalterno");
                 }
                 if (!string.IsNullOrEmpty(cedula))
                 {
+                    //Convertimos a int el idConglomerado
+                    int idConglomerado = Convert.ToInt32(idConglomeradoString);
+
                     //Traemos la info necesaria para la vista
                     var subalterno = objeto_FuncionarioNegocios.ConsultarFuncionarioID(cedula);
                     var PesosConglomerados = objeto_ConglomeradosNegocios.ConsultarPesosXConglomerado(idConglomerado);
@@ -465,17 +479,24 @@ namespace SEDEP.Controllers
 
         [Authorize(Roles = "Jefatura")]
         [HttpGet]
-        public IActionResult CrearSeguimiento(string cedula, int idConglomerado)
+        public IActionResult CrearSeguimiento(string seleccion)
         {
             try
             {
-                if (string.IsNullOrEmpty(cedula) || idConglomerado == 0)
+                var partes = seleccion.Split('&');
+                var cedula = partes[0];
+                var idConglomeradoString = partes[1];
+
+                if (string.IsNullOrEmpty(cedula) || string.IsNullOrEmpty(idConglomeradoString))
                 {
                     TempData["Error"] = "Debe seleccionar un Conglomerado para el funcionario a evaluar.";
                     return RedirectToAction("ConglomeradosPorFuncAprobarEvaluacion");
                 }
                 if (!string.IsNullOrEmpty(cedula))
                 {
+                    //Convertimos a int el idConglomerado
+                    int idConglomerado = Convert.ToInt32(idConglomeradoString);
+
                     //Traemos la info necesaria para la vista
                     var subalterno = objeto_FuncionarioNegocios.ConsultarFuncionarioID(cedula);
                     var PesosConglomerados = objeto_ConglomeradosNegocios.ConsultarPesosXConglomerado(idConglomerado);
