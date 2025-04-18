@@ -32,31 +32,6 @@ namespace SEDEP.Controllers
             return View();
         }
 
- 
-
-        [HttpGet]
-        public IActionResult ModificarActualSeguimiento(string tipo, string obj, string objName, string actualValue, string metaValue)
-        {
-            ViewBag.Tipo = tipo;
-            ViewBag.Obj = obj;
-            ViewBag.ObjName = objName;
-            ViewBag.ActualValue = actualValue;
-            ViewBag.MetaValue = metaValue;
-            return View();
-        }
-
-       
-        [HttpGet]
-        public IActionResult ModificarActual(string tipo, string obj, string objName, string actualValue, string metaValue)
-        {
-            ViewBag.Tipo = tipo;
-            ViewBag.Obj = obj;
-            ViewBag.ObjName = objName;
-            ViewBag.ActualValue = actualValue;
-            ViewBag.MetaValue = metaValue;
-            return View();
-        }
-
         #region Planificacion
 
         /// <summary>
