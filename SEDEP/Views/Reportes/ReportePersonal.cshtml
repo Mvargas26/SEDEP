@@ -3,15 +3,21 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Reporte Personal";
 }
-
+@* Muestra un mensaje de error si TempData["Error"] existe *@
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
 <div class="container mt-5">
-    <form asp-action="ReporteID" method="post">
+    @* <form asp-action="ReporteID" method="post">
         <div class="mb-3">
             <label for="subordinado" class="form-label">Seleccionar Funcionario:</label>
             <input type="number" name="Cedula" id="Cedula" class="form-control" placeholder="Ingrese el ID">
         </div>
         <button type="submit" class="btn btn-primary">Buscar</button>
-    </form>
+    </form> *@
 
     @foreach (var rep in Model)
     {

@@ -12,6 +12,12 @@ namespace SEDEP.Controllers
     {
 
         ReportesNegocio Objeto = new ReportesNegocio();
+        PeriodosEvaluacionNegocio objeto_PeriodosEvaluacion = new();
+
+        // Propiedad que devuelve la fecha actual en CR (se calcula cada vez que se accede)
+        private DateTime FechaCostaRica =>
+       TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
+       TimeZoneInfo.FindSystemTimeZoneById("Central America Standard Time")).Date;
 
         public IActionResult Index()
         {
@@ -32,6 +38,22 @@ namespace SEDEP.Controllers
         {
             try
             {
+                PeriodoEvaluacionModel peridoActual = objeto_PeriodosEvaluacion.ConsultarPeriodoPorAnio(FechaCostaRica.Year);
+
+                //Validamos que el periodo ya tenga fecha maxima
+                if (peridoActual == null)
+                {
+                    TempData["Error"] = "Se debe establecer una fecha Maxima para el periodo " + FechaCostaRica.Year;
+                    return View("Index");
+                }
+
+                //Validamos que aun estemos en el rango de la fecha permitida
+                if (peridoActual.FechaMaxima >= FechaCostaRica)
+                {
+                    TempData["Error"] = "Las evaluaciones para el periodo se pueden consultar a partir del : " + peridoActual.FechaMaxima;
+                    return View("Index");
+                }
+
                 var reportes = Objeto.ListarReportes();
                 return View(reportes);
             }

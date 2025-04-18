@@ -1,11 +1,27 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@*     Obtenemos el rol del que hizo login *@ 
+   @using System.Security.Claims
+@{
+    var idRol = User.FindFirst("IdRol")?.Value;
+    var nombreRol = User.FindFirst(ClaimTypes.Role)?.Value;
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
 
 @section SideMenu {
-    <ul class="sidebar-menu">
+<ul class="sidebar-menu">
+        @if (nombreRol == "RH")
+    {
         <li><a href="/Reportes/ReportePersonal">Reporte General</a></li>
-    </ul>
+    }
+</ul>
+   
 }
 
 <div class="welcome">
