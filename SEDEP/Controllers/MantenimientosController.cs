@@ -42,12 +42,14 @@ namespace SEDEP.Controllers
         {
             var puestos = _objetoPuesto.ObtenerPuestos();
             var conglomerados = objeto_ConglomeradosNegocios.ListarConglomerados();
+            var departamentos = objeto_departamento.ListarDepartamentos();
             var funcionario = new FuncionarioModel(); // Inicializa un nuevo objeto FuncionarioModel
             FuncionarioViewModel viewModel = new FuncionarioViewModel
             {
                 Funcionario = funcionario, 
                 Puestos = puestos,
-                Conglomerados = conglomerados
+                Conglomerados = conglomerados,
+                Departamentos = departamentos
             };
 
             return View(viewModel);
