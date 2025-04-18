@@ -83,6 +83,12 @@ namespace SEDEP.Controllers
         [HttpGet]
         public IActionResult EvaluacionSubalterno(string seleccion)
         {
+            if (string.IsNullOrEmpty(seleccion))
+            {
+                TempData["Error"] = "Debe seleccionar un Conglomerado para el funcionario a evaluar.";
+                return RedirectToAction("SeleccionarSubalterno");
+            }
+
             var partes = seleccion.Split('&');
             var cedula = partes[0];
             var idConglomeradoString = partes[1];
@@ -255,6 +261,12 @@ namespace SEDEP.Controllers
         {
             try
             {
+                if (string.IsNullOrEmpty(seleccion))
+                {
+                    TempData["Error"] = "Debe seleccionar un Conglomerado.";
+                    return RedirectToAction("Index");
+                }
+
                 var partes = seleccion.Split('&');
                 var cedula = partes[0];
                 var idConglomeradoString = partes[1];
@@ -483,6 +495,12 @@ namespace SEDEP.Controllers
         {
             try
             {
+                if (string.IsNullOrEmpty(seleccion))
+                {
+                    TempData["Error"] = "Debe seleccionar un Conglomerado.";
+                    return RedirectToAction("Index");
+                }
+
                 var partes = seleccion.Split('&');
                 var cedula = partes[0];
                 var idConglomeradoString = partes[1];
