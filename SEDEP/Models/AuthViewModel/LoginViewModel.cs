@@ -27,8 +27,8 @@ namespace SEDEP.Models.AuthViewModel
 
             string cedula = value.ToString()!;
 
-            // Nacional: 9 dígitos exactos
-            if (Regex.IsMatch(cedula, @"^\d{9}$"))
+            // Nacional: 8 dígitos exactos
+            if (Regex.IsMatch(cedula, @"^\d{8}$"))
             {
                 return ValidationResult.Success!;
             }

@@ -4,6 +4,10 @@ using Negocios;
 using System;
 using System.Collections.Generic;
 using SEDEP.Models.AuthViewModel;
+using AdministracionActivosFijos;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 
 namespace SEDEP.Controllers
 {
@@ -28,8 +32,8 @@ namespace SEDEP.Controllers
         [HttpPost]
 
         //Usar async solo si se habilia await al enviar correo.
-        //public async Task<IActionResult> Login(LoginViewModel model)
-        public IActionResult Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
+       // public IActionResult Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -63,7 +67,8 @@ namespace SEDEP.Controllers
                 return View(model);
             }
 
-
+            //capturo la info del func logueado
+            FuncionarioLogueado.capturarDatosFunc(funcionario);
 
             // Limpiar intentos fallidos si el login es correcto
             intentosFallidos.Remove(cedula);
@@ -81,25 +86,32 @@ namespace SEDEP.Controllers
             _funcionarioNegocios.EstablecerCodigoSeguridad(cedula, codigoSeguridad);
 
             // envia el correo
-            //await _correoService.EnviarCodigoSeguridad(funcionario.Correo, codigoSeguridad);
+            await _correoService.EnviarCodigoSeguridad(funcionario.Correo, codigoSeguridad);
 
             // pasa la cedula a la vista de verificar codigo
             TempData["Cedula"] = cedula;
 
             TempData["Origen"] = "Login";
+
+
+            List<Claim> claims = new List<Claim>()
+                     {
+                         new Claim(ClaimTypes.Email,funcionario.Correo),
+                         new Claim (ClaimTypes.Role,funcionario.Rol)
+
+                     };
+            ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            AuthenticationProperties authenticationProperties = new AuthenticationProperties()
+            {
+                AllowRefresh = true
+            };
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity), authenticationProperties);
+
             return RedirectToAction("VerificarCodigo", "Auth");
 
-
-            // En producción podrías usar esto:
-            /*
-            return funcionario.Rol switch
-            {
-                "Administración" => RedirectToAction("DashboardAdmin", "Home"),
-                "Jefatura" => RedirectToAction("DashboardJefatura", "Home"),
-                "SubAlterno" => RedirectToAction("DashboardUser", "Home"),
-                _ => RedirectToAction("Login")
-            };
-            */
         }
 
         private void RegistrarIntentoFallido(string cedula)
@@ -133,7 +145,7 @@ namespace SEDEP.Controllers
                 return RedirectToAction("Login");  // Si no hay cédula en TempData, redirige al login
             }
 
-            return View();
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
@@ -247,6 +259,11 @@ namespace SEDEP.Controllers
 
             TempData["MensajeExito"] = "🔑 Contraseña actualizada correctamente. Puede iniciar sesión.";
             return RedirectToAction("Login");
+        }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }

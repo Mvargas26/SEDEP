@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Modelos;
 using Negocios;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -24,6 +25,8 @@ namespace SEDEP.Controllers
         //***********************************************************************************************
         #region FUNCIONARIOS
         // Gestión de Funcionarios
+        [Authorize(Roles = "Administración")]
+
         public IActionResult ManteniFuncionarios()
         {
             try
@@ -38,6 +41,8 @@ namespace SEDEP.Controllers
                 return View(new List<FuncionarioModel>()); // Retorna una lista vacía si ocurre un error
             }
         }
+
+        [Authorize(Roles = "Administración")]
 
         [HttpGet]
         public IActionResult CrearNuevoFuncionario()

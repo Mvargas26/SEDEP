@@ -1,3 +1,6 @@
+using AdministracionActivosFijos;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Negocios;
 using SEDEP.Models;
@@ -40,5 +43,16 @@ namespace SEDEP.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-    }
-}
+
+        public async Task<IActionResult> CerrarSesion()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            //destruimos tambien el objeto capturado en el login
+            FuncionarioLogueado.CerrarSesion();
+
+            return RedirectToAction("Login", "Auth");
+        }
+
+    }//fin class
+}//fin space

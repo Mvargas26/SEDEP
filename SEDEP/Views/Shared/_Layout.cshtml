@@ -30,11 +30,12 @@
             else
             {
                 <ul class="sidebar-menu">
-                    <li><a href="~/Auth/Login">Login</a></li> @* Se le coloca temporalmente para que se pueda acceder a la página de login *@
-                    <li><a href="~/Mantenimientos">Mantenimientos</a></li>
-                    <li><a href="~/Evaluacion">Evaluación</a></li>
-                    <li><a href="~/Reportes">Reportes</a></li>
+                    <li><a asp-controller="Auth" asp-action="Login">Login</a></li>
+                    <li><a asp-controller="Mantenimientos" asp-action="Index">Mantenimientos</a></li>
+                    <li><a asp-controller="Evaluacion" asp-action="Index">Evaluación</a></li>
+                    <li><a asp-controller="Reportes" asp-action="Index">Reportes</a></li>
                 </ul>
+
             }
         </nav>
 
@@ -45,7 +46,7 @@
                 <div class="user-menu">
                     <button id="userIcon" class="user-icon" type="button">👤</button>
                     <ul id="userMenu" class="dropdown-menu">
-                        <li><a href="/logout">Cerrar sesión</a></li>
+                        <li><a asp-controller="Home" asp-action="CerrarSesion">Cerrar sesión</a></li>
                     </ul>
                 </div>
             </header>
