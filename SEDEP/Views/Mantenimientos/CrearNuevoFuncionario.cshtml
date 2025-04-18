@@ -37,16 +37,11 @@
         </div>
 
         <div class="mb-3">
-            <label asp-for="Funcionario.IdDepartamento" class="form-label">Departamento</label>
-            <select asp-for="Funcionario.IdDepartamento" class="form-control" required>
-                <option value="">Seleccione un departamento</option>
-                <option value="1">Finanzas</option>
-                <option value="2">Recursos Humanos</option>
-                <option value="3">Admisiones</option>
-                <option value="4">Registro Académico</option>
-                <option value="5">Biblioteca</option>
-                <option value="6">Tecnología de la Información</option>
-                <!-- Opciones dinámicas aquí -->
+            <label asp-for="Funcionario.Departamento" class="form-label">Departamentos</label>
+            <select asp-for="Funcionario.Departamento"
+                    asp-items="@(new SelectList(Model.Departamentos, "IdDepartamento", "Departamento"))"
+                    class="form-control" required>
+                <option value="">Seleccione un Departamento</option>
             </select>
         </div>
 
