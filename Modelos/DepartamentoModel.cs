@@ -12,7 +12,7 @@ namespace Modelos
     {
 
         public int IdDepartamento { get; set; }  
-        public string Departamento { get; set; }
+        public string? Departamento { get; set; }
 
     } //Fin clase
 
