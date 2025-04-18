@@ -20,7 +20,7 @@ namespace SEDEP.Controllers
         EvaluacionesNegocio objeto_Evaluaciones = new();
         EvaluacionXObjetivosNegocio objeto_EvaXObjetivo = new();
         EvaluacionXcompetenciaNegocios objeto_EvaXcompetencia = new();
-
+        PeriodosEvaluacionNegocio objeto_PeriodosEvaluacion = new();
         // Propiedad que devuelve la fecha actual en CR (se calcula cada vez que se accede)
         private DateTime FechaCostaRica =>
        TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
@@ -93,6 +93,22 @@ namespace SEDEP.Controllers
             }
             if (!string.IsNullOrEmpty(cedula))
             {
+                PeriodoEvaluacionModel peridoActual  = objeto_PeriodosEvaluacion.ConsultarPeriodoPorAnio(FechaCostaRica.Year);
+                
+                //Validamos que el periodo ya tenga fecha maxima
+                if (peridoActual == null)
+                {
+                    TempData["Error"] = "Se debe establecer una fecha Maxima para el periodo "+FechaCostaRica.Year;
+                    return RedirectToAction("SeleccionarSubalterno");
+                }
+
+                //Validamos que aun estemos en el rango de la fecha permitida
+                if (peridoActual.FechaMaxima <= FechaCostaRica)
+                {
+                    TempData["Error"] = "La fecha límite para planificar evaluaciones se cumplió el: "+ peridoActual.FechaMaxima;
+                    return RedirectToAction("SeleccionarSubalterno");
+                }
+
                 var subalterno = objeto_FuncionarioNegocios.ConsultarFuncionarioID(cedula);
                 var PesosConglomerados = objeto_ConglomeradosNegocios.ConsultarPesosXConglomerado(idConglomerado);
 
