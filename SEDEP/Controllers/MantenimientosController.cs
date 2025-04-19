@@ -51,6 +51,7 @@ namespace SEDEP.Controllers
             var conglomerados = objeto_ConglomeradosNegocios.ListarConglomerados();
             var departamentos = objeto_departamento.ListarDepartamentos();
             var roles = objeto_rol.ListarRoles(); // Obtener la lista de roles
+            var estados = objeto_funcionario.ListarEstadosFuncionario();
             var funcionario = new FuncionarioModel(); // Inicializa un nuevo objeto FuncionarioModel
             FuncionarioViewModel viewModel = new FuncionarioViewModel
             {
@@ -58,7 +59,8 @@ namespace SEDEP.Controllers
                 Puestos = puestos,
                 Conglomerados = conglomerados,
                 Departamentos = departamentos,
-                Roles = roles // Asigna la lista de roles al ViewModel
+                Roles = roles, // Asigna la lista de roles al ViewModel
+                EstadosFuncionario = estados
             };
 
             return View(viewModel);
@@ -140,6 +142,7 @@ namespace SEDEP.Controllers
             var puestos = _objetoPuesto.ObtenerPuestos();
             var departamentos = objeto_departamento.ListarDepartamentos();
             var roles = objeto_rol.ListarRoles(); // Obtener la lista de roles
+            var estados = objeto_funcionario.ListarEstadosFuncionario();
 
             // Crea el ViewModel
             FuncionarioViewModel viewModel = new FuncionarioViewModel
@@ -148,7 +151,8 @@ namespace SEDEP.Controllers
                 Puestos = puestos,
                 Conglomerados = conglomerados,
                 Departamentos = departamentos,
-                Roles = roles // Asigna la lista de roles al ViewModel
+                Roles = roles,// Asigna la lista de roles al ViewModel
+                EstadosFuncionario = estados
             };
 
             return View(viewModel);
