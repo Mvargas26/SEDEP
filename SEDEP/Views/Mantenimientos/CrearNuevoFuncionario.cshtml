@@ -81,6 +81,7 @@
                     <label class="form-check-label">@item.NombreConglomerado</label>
                 </div>
             }
+            <span id="checkboxError" class="text-danger" style="display:none;">Debe seleccionar al menos un conglomerado.</span>
         </div>
         <div class="d-flex justify-content-between">
             <a href="/Mantenimientos/ManteniFuncionarios" class="btn btn-secondary">
@@ -90,5 +91,17 @@
                 <i class="fas fa-save"></i> Guardar
             </button>
         </div>
+        <script>
+            document.querySelector("form").addEventListener("submit", function (e) {
+                const checkboxes = document.querySelectorAll('input[name="IdConglomeradosSeleccionados"]:checked');
+                const error = document.getElementById('checkboxError');
+                if (checkboxes.length === 0) {
+                    e.preventDefault(); // Previene el envío
+                    error.style.display = 'block';
+                } else {
+                    error.style.display = 'none';
+                }
+            });
+        </script>
     </form>
 </div>
