@@ -281,5 +281,37 @@ namespace Negocios
                 throw new Exception("Error al obtener los funcionarios por departamento: " + ex.Message);
             }
         }
+        // para ver todos los estados posibles de funcionario 
+        public List<EstadoFuncionarioModel> ListarEstadosFuncionario()
+        {
+            List<EstadoFuncionarioModel> lista = new();
+
+            try
+            {
+               
+                List<SqlParameter> parametros = new()
+        {
+            new SqlParameter("@Accion", "SELECT")
+            
+        };
+
+                DataTable dt = objDatos.EjecutarSQLconSP_DT("dbo.sp_CrudEstadoFuncionarios", parametros);
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    lista.Add(new EstadoFuncionarioModel
+                    {
+                        IdEstadoFuncionario = Convert.ToInt32(row["idEstadofunc"]),
+                        Estado = row["EstadoFuncionario"].ToString()
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al listar estados de funcionario: " + ex.Message);
+            }
+
+            return lista;
+        }
     }//fn class
 }//fn space

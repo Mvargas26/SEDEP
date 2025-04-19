@@ -67,11 +67,12 @@
 
         <div class="mb-3">
             <label asp-for="Funcionario.IdEstadoFuncionario" class="form-label">Estado del Funcionario</label>
-            <select asp-for="Funcionario.IdEstadoFuncionario" class="form-control" required>
+            <select asp-for="Funcionario.IdEstadoFuncionario"
+                    asp-items="@(new SelectList(Model.EstadosFuncionario, "IdEstadoFuncionario", "Estado"))"
+                    class="form-select" required>
                 <option value="">Seleccione un estado</option>
-                <option value="1">Activo</option>
-                <option value="2">Inactivo</option>
             </select>
+            <span asp-validation-for="Funcionario.IdEstadoFuncionario" class="text-danger"></span>
         </div>
         <div class="mb-3">
             <label class="form-label">Conglomerados</label>
