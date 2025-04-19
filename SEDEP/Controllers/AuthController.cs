@@ -150,10 +150,23 @@ namespace SEDEP.Controllers
         [HttpPost]
         public IActionResult VerificarCodigo(string cedula, string codigoSeguridad)
         {
+            if (string.IsNullOrEmpty(cedula))
+            { 
+                cedula = TempData["Cedula"]?.ToString();
+            }
+            else
+            {
+                TempData["Cedula"] = cedula;
+            }
+
+            if (string.IsNullOrEmpty(cedula))
+            {
+                return RedirectToAction("Login");
+            }
+
             var funcionario = _funcionarioNegocios.ConsultarFuncionarioID(cedula);
 
-             //if (funcionario != null && funcionario.CodigoSeguridad == codigoSeguridad)
-            if (true)
+            if (funcionario != null && funcionario.CodigoSeguridad == codigoSeguridad)
             {
                 var origen = TempData["Origen"]?.ToString();
 
@@ -172,6 +185,7 @@ namespace SEDEP.Controllers
             else
             {
                 ModelState.AddModelError("", "Código incorrecto.");
+                TempData["Cedula"] = cedula;
                 return View();
             }
         }
