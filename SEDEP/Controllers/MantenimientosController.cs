@@ -21,6 +21,8 @@ namespace SEDEP.Controllers
         PeriodosEvaluacionNegocio _objetoPeriodo = new PeriodosEvaluacionNegocio();
         RolesNegocios objeto_rol = new RolesNegocios();
         TiposCompetenciasNegocios objeto_TiposCompenNegocis = new();
+        PesosConglomeradoNegocio objeto_PesosXConglomerados = new();
+        TiposObjetivosNegocios objeto_TiposObjetivoNegocios = new();
 
         //***********************************************************************************************
         #region FUNCIONARIOS
@@ -541,18 +543,23 @@ namespace SEDEP.Controllers
         [HttpGet]
         public IActionResult EditaConglomerado(int id)
         {
-            //datos de ejemplo
+            var ListaPesosXConglomerados = objeto_PesosXConglomerados.ListarPorIdConglomerado(id);
+
+            ViewData["ListaPesosXConglomerados"] = ListaPesosXConglomerados;
+            ViewData["ListaTiposObjetivos"] = objeto_TiposObjetivoNegocios.ListarTiposObjetivos();
+            ViewData["ListaTiposCompetencias"] = objeto_TiposCompenNegocis.ListarTiposCompetencias();
+
             var model = new EditaConglomeradoDummyModel
             {
                 Id = id,
                 Nombre = "Conglomerado Demo " + id,
                 Descripcion = "Texto descriptivo de prueba",
                 Pesos = new List<PesoDummy>
-        {
-            new PesoDummy { Nombre = "Objetivo 1", Porcentaje = 30 },
-            new PesoDummy { Nombre = "Objetivo 2", Porcentaje = 20 },
-            new PesoDummy { Nombre = "Competencia A", Porcentaje = 25 }
-        }
+                {
+                    new PesoDummy { Nombre = "Objetivo 1", Porcentaje = 30 },
+                    new PesoDummy { Nombre = "Objetivo 2", Porcentaje = 20 },
+                    new PesoDummy { Nombre = "Competencia A", Porcentaje = 25 }
+                }
             };
 
             return View(model);

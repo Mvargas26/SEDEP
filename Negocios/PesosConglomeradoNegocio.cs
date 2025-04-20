@@ -105,5 +105,33 @@ namespace Negocios
                 Porcentaje = Convert.ToDecimal(row["Porcentaje"])
             };
         }
-    }
-}
+
+        public List<PesosConglomeradoModel> ListarPorIdConglomerado(int idConglomerado)
+        {
+            List<SqlParameter> parametros = new()
+            {
+                new SqlParameter("@Operacion", "SELECT"),
+                new SqlParameter("@idConglomerado", idConglomerado)
+            };
+
+            DataTable dt = _context.EjecutarSQLconSP_DT("SP_PesoXConglomeradoCRUD", parametros);
+            List<PesosConglomeradoModel> lista = new();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                lista.Add(new PesosConglomeradoModel
+                {
+                    IdPesoXConglomerado = Convert.ToInt32(row["idPesoXConglomerado"]),
+                    IdConglomerado = Convert.ToInt32(row["idConglomerado"]),
+                    IdTipoObjetivo = row["idTipoObjetivo"] != DBNull.Value ? Convert.ToInt32(row["idTipoObjetivo"]) : (int?)null,
+                    IdTipoCompetencia = row["idTipoCompetencia"] != DBNull.Value ? Convert.ToInt32(row["idTipoCompetencia"]) : (int?)null,
+                    Porcentaje = Convert.ToDecimal(row["Porcentaje"])
+                });
+            }
+
+            return lista;
+        }
+
+
+    }//fn class
+}//fin space

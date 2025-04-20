@@ -1,8 +1,14 @@
 ﻿@model SEDEP.Controllers.MantenimientosController.EditaConglomeradoDummyModel
-<!-- O usa el espacio de nombres que hayas definido -->
+
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Edición de Conglomerado";
+}
+@using Modelos
+@{
+    var pesos = ViewData["ListaPesosXConglomerados"] as List<PesosConglomeradoModel>;
+    var listaTiposObjetivos = ViewData["ListaTiposObjetivos"] as List<TiposObjetivosModel>;
+    var listaTiposCompetencias = ViewData["ListaTiposCompetencias"] as List<TiposCompetenciasModel>;
 }
 
 <div class="container mt-4">
@@ -52,25 +58,38 @@
                 </tr>
             </thead>
             <tbody>
-                @if (Model.Pesos != null)
+                @if (pesos != null && pesos.Count > 0)
                 {
-                    for (int i = 0; i < Model.Pesos.Count; i++)
+                    foreach (var item in pesos)
                     {
+                        var nombreTipo = listaTiposObjetivos?.FirstOrDefault(t => t.IdTipoObjetivo == item?.IdTipoObjetivo)?.Tipo;
+                        var nombreTipoCompet = listaTiposCompetencias?.FirstOrDefault(t => t.IdTipoCompetencia == item?.IdTipoCompetencia)?.Tipo;
+                        var nombreFinal = nombreTipo ?? nombreTipoCompet ?? "Desconocido";
+
+                        var idTipoObjetivo = item?.IdTipoObjetivo ?? 0;
+                        var idTipoCompetencia = item?.IdTipoCompetencia ?? 0;
+                        var idTipo = idTipoObjetivo != 0 ? idTipoObjetivo : idTipoCompetencia;
+                        var tipo = idTipoObjetivo != 0 ? "Objetivo" : "Competencia";
                         <tr>
-                            <td>
-                                <!-- Nombre (solo lectura) -->
-                                @Model.Pesos[i].Nombre
-                                <input type="hidden"
-                                       name="Pesos[@i].Nombre"
-                                       value="@Model.Pesos[i].Nombre" />
-                            </td>
+                            <td><strong>@nombreFinal</strong></td>
+                            <td><strong>@(item?.Porcentaje.ToString("0") ?? "0")%</strong></td>
                             <td style="width: 100px;">
-                                <input type="text" class="form-control pesoInput"
-                                       name="Pesos[@i].Porcentaje"
-                                       value="@Model.Pesos[i].Porcentaje" />
+                                <input type="number" class="form-control input-calificacion"
+                                       name="Pesos[@pesos.IndexOf(item)].Porcentaje"
+                                       value="@item?.Porcentaje"
+                                       placeholder="@(item?.Porcentaje.ToString("0") ?? "0")%" />
+                            </td>
+                            <td class="d-none" data-tipo-id="@idTipo" data-tipo-categoria="@tipo">
+                                @idTipo
                             </td>
                         </tr>
                     }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="text-center">No hay pesos asociados a este conglomerado</td>
+                    </tr>
                 }
             </tbody>
         </table>
