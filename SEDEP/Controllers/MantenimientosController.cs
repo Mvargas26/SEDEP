@@ -527,6 +527,7 @@ namespace SEDEP.Controllers
         {
             public string Nombre { get; set; }
             public decimal Porcentaje { get; set; }
+            public int id {  get; set; }
         }
 
         //modelo "dummy" para EditaConglomerado: 
@@ -552,8 +553,8 @@ namespace SEDEP.Controllers
             var model = new EditaConglomeradoDummyModel
             {
                 Id = id,
-                Nombre = "Conglomerado Demo " + id,
-                Descripcion = "Texto descriptivo de prueba",
+                Nombre = " ",
+                Descripcion = " ",
                 Pesos = new List<PesoDummy>
                 {
                     new PesoDummy { Nombre = "Objetivo 1", Porcentaje = 30 },
@@ -568,16 +569,45 @@ namespace SEDEP.Controllers
         [HttpPost]
         public IActionResult EditaConglomerado(EditaConglomeradoDummyModel model)
         {
-            decimal suma = model.Pesos.Sum(x => x.Porcentaje);
-            if (suma > 100)
+            try
             {
-                TempData["MensajeError"] = "La sumatoria de porcentajes excede el 100% (validación back-end).";
-                return View(model);
-            }
+                //validamos numeros negativos
+                foreach (var item in model.Pesos)
+                {
+                    if (item.Porcentaje <=0)
+                    {
+                        TempData["MensajeError"] = "No se permiten numeros negativos o el numero 0";
+                        return RedirectToAction(nameof(ManteniConglomerados));
+                    }
+                }
+                //Obtenemos la suma Total
+                decimal suma = model.Pesos.Sum(x => x.Porcentaje);
 
-            //si es valido, “simula” guardado
-            TempData["MensajeExito"] = "Cambios guardados (datos quemados, sin DB).";
-            return RedirectToAction("ManteniConglomerados");
+                //validamos la suma
+                if (suma > 100 || suma < 100)
+                {
+                    TempData["MensajeError"] = "Debe asignar el 100%.";
+                    return RedirectToAction(nameof(ManteniConglomerados));
+                }
+
+                foreach (var item in model.Pesos)
+                {
+                    //Obtenemos el pesoXConglomerado a modificar x el id unico
+                    var pesoXCongloAModificar = objeto_PesosXConglomerados.ConsultarPorID(item.id);
+                    //le asignamos el nuevo segun el usuario
+                    pesoXCongloAModificar.Porcentaje = item.Porcentaje;
+                    //Lo volvemos a guardar
+                    objeto_PesosXConglomerados.Modificar(pesoXCongloAModificar);
+                }
+                TempData["MensajeExito"] = "Cambios guardados.";
+                return RedirectToAction(nameof(ManteniConglomerados));
+            }
+            catch (Exception ex)
+            {
+
+                TempData["MensajeError"] = "Error al modificar. "+ex.Message;
+                return RedirectToAction(nameof(ManteniConglomerados));
+            }
         }
 
 

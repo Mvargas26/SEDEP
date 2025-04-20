@@ -100,8 +100,8 @@ namespace Negocios
             {
                 IdPesoXConglomerado = Convert.ToInt32(row["idPesoXConglomerado"]),
                 IdConglomerado = Convert.ToInt32(row["idConglomerado"]),
-                IdTipoObjetivo = Convert.ToInt32(row["idTipoObjetivo"]),
-                IdTipoCompetencia = Convert.ToInt32(row["idTipoCompetencia"]),
+                IdTipoObjetivo = row["idTipoObjetivo"] != DBNull.Value ? Convert.ToInt32(row["idTipoObjetivo"]) : (int?)null,
+                IdTipoCompetencia = row["idTipoCompetencia"] != DBNull.Value ? Convert.ToInt32(row["idTipoCompetencia"]) : (int?)null,
                 Porcentaje = Convert.ToDecimal(row["Porcentaje"])
             };
         }

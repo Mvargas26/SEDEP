@@ -30,7 +30,7 @@
             <label class="form-label">Id del Conglomerado</label>
             <input class="form-control" readonly
                    name="Id"
-                   value="@Model.Id" />
+                   value="@Model.Id" disabled />
         </div>
 
         <!-- Campo Nombre -->
@@ -77,11 +77,13 @@
                                 <input type="number" class="form-control input-calificacion"
                                        name="Pesos[@pesos.IndexOf(item)].Porcentaje"
                                        value="@item?.Porcentaje"
-                                       placeholder="@(item?.Porcentaje.ToString("0") ?? "0")%" />
+                                       placeholder="@(item?.Porcentaje.ToString("0") ?? "0")%"/>
                             </td>
                             <td class="d-none" data-tipo-id="@idTipo" data-tipo-categoria="@tipo">
                                 @idTipo
                             </td>
+                            <!-- Campo hidden para enviar el ID -->
+                            <input type="hidden" name="Pesos[@pesos.IndexOf(item)].id"value="@item?.IdPesoXConglomerado" />
                         </tr>
                     }
                 }
